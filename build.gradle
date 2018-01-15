@@ -1,0 +1,39 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+buildDir = 'build'
+version = '1.0'
+ext {
+	groupId = 'ch.crearex'
+	artifactName = 'json'
+}
+
+dependencies {	
+	testCompile 'junit:junit:4.12';
+	testCompile 'org.hamcrest:hamcrest-all:1.3';
+}
+
+repositories {
+	mavenCentral()
+}
+
+jar {
+	baseName = project.groupId + '.' + project.artifactName
+	version = project.version
+    manifest {
+        attributes("Implementation-Title": "ch.crearex.json",
+                   "Implementation-Version": version,
+				   "Group-Id": project.groupId,
+				   "Bundle-Version": version,
+				   "Artifact-Name": project.artifactName,
+				   "Created-By": "Markus Niedermann")
+		from 'METAINF/MANIFEST.MF'
+    }
+}
+
+javadoc {
+	title = 'Crearex JSON API ' + project.version
+}
+
+task wrapper(type: Wrapper) {
+}

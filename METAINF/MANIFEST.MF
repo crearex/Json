@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Crearex JSON Library
+Bundle-SymbolicName: ch.crearex.json
+Export-Package: ch.crearex.json,
+ ch.crearex.json.impl,
+ ch.crearex.json.dom,
+ ch.crearex.json.schema
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"

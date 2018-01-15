@@ -1,0 +1,24 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"title": "Person",
+    "type": "object",
+	"properties": {
+		"id": {"type": ["string", "number"]},
+		"name": { "type": "string" },
+		"age": { "type": "number" },
+		"address": {
+			"type": "object",
+			"properties": {
+				"city": { "type": "string" },
+				"code": { "type": "number" }
+			}
+		},
+		"hobby": {
+			"type": "object",
+			"properties": {
+				"name": { "type": "string" }
+			}
+		}
+	},
+	"required": ["name", "age", "address"]	
+}
