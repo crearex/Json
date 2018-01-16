@@ -194,41 +194,41 @@ public class TestJsonParser {
 		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')}>"));
 		
 		result = "";
-		text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Ebnat\"}";
+		text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Zürich\"}";
 		json.parse(text);
-		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Ebnat')}>"));
+		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Zürich')}>"));
 	}
 	
 	@Test
 	public void testSimpleObjectStream() {
-		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Ebnat\"}";
+		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Z\\u00FCrich\"}";
 		ByteArrayInputStream is = new ByteArrayInputStream(text.getBytes());
 		json.parse(is);
-		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Ebnat')}>"));
+		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Zürich')}>"));
 	}
 	
 	@Test
 	public void testSimpleObjectReader() {
-		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Ebnat\"}";
+		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Zürich\"}";
 		StringReader reader = new StringReader(text);
 		json.parse(reader);
-		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Ebnat')}>"));
+		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Zürich')}>"));
 	}
 	
 	@Test
 	public void testSimpleObjectOutputStream() throws IOException {
-		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Ebnat\"}";
+		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Zürich\"}";
 		char[] textArr = text.toCharArray();
 		OutputStream os = json.toOutputStream();
 		for(char ch: textArr) {
 			os.write(ch);
 		}
-		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Ebnat')}>"));
+		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Zürich')}>"));
 	}
 	
 	@Test
 	public void testSimpleObjectFile() throws IOException {
-		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\", \"city\":\"Ebnat\"}";
+		String text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\", \"city\":\"Zürich\"}";
 		File file = File.createTempFile("JSON-Test", ".json");
 		try {
 			try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
@@ -238,7 +238,7 @@ public class TestJsonParser {
 		} finally {
 			file.delete();
 		}
-		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Ebnat')}>"));
+		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Zürich')}>"));
 	}
 	
 	@Test
@@ -270,9 +270,9 @@ public class TestJsonParser {
 		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')}>"));
 		
 		result = "";
-		text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Ebnat\"}";
+		text = "{ \"name\" : \"Markus\" ,\n \"nachname\" : \"Niedermann\",\"city\":\"Zürich\"}";
 		json.parse(text);
-		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Ebnat')}>"));
+		assertThat(result, is("<{(p=name)('Markus')(p=nachname)('Niedermann')(p=city)('Zürich')}>"));
 	}
 	
 	@Test
@@ -296,9 +296,9 @@ public class TestJsonParser {
 		assertThat(result, is("<{(p=person){(p=name)('Markus')}}>"));
 		
 		result = "";
-		text = "{\"car\":\"VW\", \"person\": {\"name\":\"Markus\"}, \"city\":\"Ebnat\"}";
+		text = "{\"car\":\"VW\", \"person\": {\"name\":\"Markus\"}, \"city\":\"Zürich\"}";
 		json.parse(text);
-		assertThat(result, is("<{(p=car)('VW')(p=person){(p=name)('Markus')}(p=city)('Ebnat')}>"));
+		assertThat(result, is("<{(p=car)('VW')(p=person){(p=name)('Markus')}(p=city)('Zürich')}>"));
 	}
 	
 	@Test

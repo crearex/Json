@@ -1,11 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 buildDir = 'build'
 version = '1.0'
 ext {
 	groupId = 'ch.crearex'
-	artifactName = 'json'
+	artifactId = 'ch.crearex.json'
 }
 
 dependencies {	
@@ -18,14 +19,14 @@ repositories {
 }
 
 jar {
-	baseName = project.groupId + '.' + project.artifactName
+	baseName = project.groupId + '.' + project.artifactId
 	version = project.version
     manifest {
         attributes("Implementation-Title": "ch.crearex.json",
                    "Implementation-Version": version,
 				   "Group-Id": project.groupId,
-				   "Bundle-Version": version,
-				   "Artifact-Name": project.artifactName,
+				   "Artifact-Id": project.artifactId,
+				   "Bundle-Version": project.version,
 				   "Created-By": "Markus Niedermann")
 		from 'METAINF/MANIFEST.MF'
     }
@@ -33,6 +34,40 @@ jar {
 
 javadoc {
 	title = 'Crearex JSON API ' + project.version
+}
+
+task sourceJar(type: Jar) {
+   baseName = project.artifactId
+   version = project.version
+   from sourceSets.main.allJava
+   classifier "sources"
+}
+
+task javadocJar(type: Jar) {
+   baseName = project.artifactId
+   version = project.version
+   from javadoc
+   classifier "javadoc"
+}
+ 
+publishing {
+	repositories {
+        maven {
+            url "D:/ws/repository"
+        }
+		mavenCentral()
+    }
+    publications {
+		maven(MavenPublication) {
+        	groupId project.groupId
+            artifactId project.artifactId
+            version project.version
+            from components.java
+			
+			artifact sourceJar
+			artifact javadocJar
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
