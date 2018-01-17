@@ -31,7 +31,7 @@ class JsonParserStateMachine {
 	private final Stack<PartParser> braceParserStack = new Stack<PartParser>();
 	private PartParser partParser;
 	
-	JsonParserStateMachine(Source source, JsonContextBase context) {
+	JsonParserStateMachine(final Source source, final JsonContextBase context) {
 		this.context = context;
 		this.source = source;
 		

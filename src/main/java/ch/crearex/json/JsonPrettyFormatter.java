@@ -47,7 +47,7 @@ public class JsonPrettyFormatter implements JsonCallback {
 		this.writer = target;
 	}
 	
-	public JsonPrettyFormatter(StringBuilder target) {
+	public JsonPrettyFormatter(final StringBuilder target) {
 		this.writer = new Writer() {
 			@Override
 			public void write(char[] cbuf, int offset, int len) throws IOException {
@@ -61,7 +61,7 @@ public class JsonPrettyFormatter implements JsonCallback {
 			}};
 	}
 	
-	public JsonPrettyFormatter(StringBuffer target) {
+	public JsonPrettyFormatter(final StringBuffer target) {
 		this.writer = new Writer() {
 			@Override
 			public void write(char[] cbuf, int offset, int len) throws IOException {
