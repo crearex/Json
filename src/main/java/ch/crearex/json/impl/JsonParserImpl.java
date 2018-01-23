@@ -25,11 +25,18 @@ public class JsonParserImpl implements JsonParser {
 		this.parser = new JsonParserStateMachine(source, context);
 	}
 	
+	@Override
+	public JsonParserImpl clear() {
+		source.clear();
+		parser.reset();
+		return this;
+	}
+	
 	/* (non-Javadoc)
 	 * @see ch.crearex.json.Json#setResolveStrings(boolean)
 	 */
 	@Override
-	public JsonParser setResolveStrings(boolean resolveStrings) {
+	public JsonParserImpl setResolveStrings(boolean resolveStrings) {
 		this.parser.setResolveStrings(resolveStrings);
 		return this;
 	}
@@ -43,7 +50,7 @@ public class JsonParserImpl implements JsonParser {
 	 * @see ch.crearex.json.Json#reset()
 	 */
 	@Override
-	public JsonParser reset() {
+	public JsonParserImpl reset() {
 		parser.reset();
 		source.resetEolCounter();
 		return this;
@@ -53,7 +60,7 @@ public class JsonParserImpl implements JsonParser {
 	 * @see ch.crearex.json.Json#parse(java.lang.String)
 	 */
 	@Override
-	public JsonParser parse(String text) {
+	public JsonParserImpl parse(String text) {
 		return parse(text.toCharArray());
 	}
 	
@@ -61,7 +68,7 @@ public class JsonParserImpl implements JsonParser {
 	 * @see ch.crearex.json.Json#parse(char[])
 	 */
 	@Override
-	public JsonParser parse(char[] buffer) {
+	public JsonParserImpl parse(char[] buffer) {
 		try {
 			source.addData(buffer);
 			parser.parse();
@@ -76,7 +83,7 @@ public class JsonParserImpl implements JsonParser {
 	 * @see ch.crearex.json.Json#parse(char[], int, int)
 	 */
 	@Override
-	public JsonParser parse(char[] buffer, int index, int length) {
+	public JsonParserImpl parse(char[] buffer, int index, int length) {
 		try {
 			source.addData(buffer, index, length);
 			parser.parse();
@@ -91,7 +98,7 @@ public class JsonParserImpl implements JsonParser {
 	 * @see ch.crearex.json.Json#parse(char)
 	 */
 	@Override
-	public JsonParser parse(char ch) {
+	public JsonParserImpl parse(char ch) {
 		try {
 			source.addData(ch);
 			parser.parse();
@@ -103,7 +110,7 @@ public class JsonParserImpl implements JsonParser {
 	}
 
 	@Override
-	public JsonParser parse(File file) {
+	public JsonParserImpl parse(File file) {
 		try(BufferedReader reader = new BufferedReader(new FileReader(file))) {
 			parse(reader);
 		} catch(JsonIllegalSyntaxException e) {
@@ -119,7 +126,7 @@ public class JsonParserImpl implements JsonParser {
 	}
 
 	@Override
-	public JsonParser parse(InputStream source) {
+	public JsonParserImpl parse(InputStream source) {
 		BufferedReader reader = null;
 		try {
 			reader = new BufferedReader(new InputStreamReader(source, JsonParser.CHARSET_NAME));
@@ -130,7 +137,7 @@ public class JsonParserImpl implements JsonParser {
 	}
 
 	@Override
-	public JsonParser parse(Reader reader) {
+	public JsonParserImpl parse(Reader reader) {
 		final int BUFFER_SIZE = 4096;
 		char[] buffer = new char[BUFFER_SIZE];
 		try {

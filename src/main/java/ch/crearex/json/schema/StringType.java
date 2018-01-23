@@ -9,6 +9,11 @@ public class StringType extends ValueType {
 	}
 
 	@Override
+	public String getName() {
+		return SchemaConstants.STRING_TYPE;
+	}
+	
+	@Override
 	public boolean matchesDomType(Class<?> type)  {
 		return JsonStringValue.class.isAssignableFrom(type);
 	}

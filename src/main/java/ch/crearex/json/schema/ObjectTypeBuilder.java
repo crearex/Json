@@ -21,8 +21,18 @@ public class ObjectTypeBuilder implements TypeBuilder {
 	@Override
 	public ObjectType build(JsonObject definition) {
 		ObjectType type = new ObjectType(
-				definition.getString(SchemaConstants.TITLE_NAME, ""),
-				definition.getString(SchemaConstants.DESCRIPTION_NAME, ""));
+				definition.getString(SchemaConstants.TITLE_NAME, null),
+				definition.getString(SchemaConstants.DESCRIPTION_NAME, null),
+				definition.getString(SchemaConstants.SCHEMA_ID, null));
+		
+//		if(type.hasReferenceId()) {
+//			
+//			String subschemaId = type.getId();
+//			String expandedSubschemaId = context.expandSchemaId(subschemaId);
+//			context.registerSchemaDefinition(expandedSubschemaId, type);
+//		}
+
+		context.pushSchemaDefinition(type);
 		
 		JsonObject properties = definition.getObject(SchemaConstants.PROPERTIES_NAME);
 		if(properties!=null) {
@@ -43,13 +53,15 @@ public class ObjectTypeBuilder implements TypeBuilder {
 			}
 		}
 		
+		context.popSchemaDefinition();
+		
 		return type;
 	}
 
 	private void defineProperty(ObjectType type, String propertyName, JsonElement value) {
 		if(value instanceof JsonObject) {
 			JsonObject valueDefinition = (JsonObject)value;
-			SchemaType[] valueType = context.getTypeFactory().createType(valueDefinition);
+			SchemaType[] valueType = context.getTypeFactory().createPossibleTypes(valueDefinition);
 			type.addProperty(propertyName, valueType);
 		} else {
 			type.addProperty(propertyName, null);

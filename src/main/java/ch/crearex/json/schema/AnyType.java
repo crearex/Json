@@ -21,5 +21,10 @@ public class AnyType implements SchemaType {
 	public boolean isNullable() {
 		return nullable;
 	}
+
+	@Override
+	public String getName() {
+		return SchemaConstants.ANY_TYPE;
+	}
 	
 }

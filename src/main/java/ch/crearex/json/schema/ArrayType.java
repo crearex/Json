@@ -4,18 +4,23 @@ import ch.crearex.json.dom.JsonArray;
 
 public class ArrayType extends ContainerType {
 	
-	private SchemaType[] itemType = new SchemaType[] { SchemaType.ANY };
+	private SchemaType[] itemTypes = new SchemaType[] { SchemaType.ANY };
 	
 	public ArrayType(String title, String description) {
 		super(title, description);
 	}
+	
+	@Override
+	public String getName() {
+		return SchemaConstants.ARRAY_TYPE;
+	}
 
-	public void addItemType(SchemaType[] itemType) {
-		this.itemType = itemType;
+	public void addItemTypes(SchemaType[] itemTypes) {
+		this.itemTypes = itemTypes;
 	}
 	
-	public SchemaType[] getItemType() {
-		return itemType;
+	public SchemaType[] getItemTypes() {
+		return itemTypes;
 	}
 	
 	@Override
@@ -38,5 +43,16 @@ public class ArrayType extends ContainerType {
 			retVal += " " + description + ".";
 		}
 		return retVal;
+	}
+
+	@Override
+	public void visit(ContainerVisitor visitor) {
+		visitor.visit(this);
+		for(SchemaType itemType: this.itemTypes) {
+			if(itemType instanceof ContainerType) {
+				((ContainerType)itemType).visit(visitor);
+			}
+		}
+		
 	}
 }

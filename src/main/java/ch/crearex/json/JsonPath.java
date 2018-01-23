@@ -216,15 +216,19 @@ public class JsonPath implements Iterable<JsonPathEntry> {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		boolean first = true;
+		boolean x = true;
+		int first = 1;
 		// a path always begins with a PATH_SEPARATOR
 		//builder.append(PATH_SEPARATOR);
 		for(JsonPathEntry entry: path) {
 			if(entry.isRoot()) {
 				builder.append(PATH_SEPARATOR);
+				if(!entry.hasData()) {
+					first++;
+				}
 			}
-			if(first) {
-				first = false;
+			if(first>0) {
+				first--;
 			} else if(entry.hasData()){
 				builder.append(PATH_SEPARATOR);
 			}

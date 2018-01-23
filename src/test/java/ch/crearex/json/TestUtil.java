@@ -2,6 +2,7 @@ package ch.crearex.json;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 import ch.crearex.json.test.schema.TestJsonSchema;
 
@@ -15,5 +16,9 @@ public class TestUtil {
 			}
 		}
 		return builder.toString();
+	}
+
+	public static URL getResourceUrl(String resourceName) {
+		return TestJsonSchema.class.getResource(resourceName);
 	}
 }

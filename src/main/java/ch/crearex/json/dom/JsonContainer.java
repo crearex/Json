@@ -37,10 +37,12 @@ public abstract class JsonContainer implements JsonElement {
 	
 	public JsonPath getPath() {
 		JsonPath path = new JsonPath();
-		JsonContainer prev = this.parent;
+		JsonContainer child = this;
+		JsonContainer prev = child.parent;
 		while(prev != null) {
-			path.addFirst(prev.getPathEntryForChild(this));
-			prev = prev.parent;
+			path.addFirst(prev.getPathEntryForChild(child));
+			child = prev;
+			prev = child.parent;
 		}
 		path.addFirst(JsonPathEntry.createEmptyEntry(true));
 		return path;

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import ch.crearex.json.dom.JsonDomBuilder;
+import ch.crearex.json.impl.Source;
 
 
 /**
@@ -83,5 +84,10 @@ public interface JsonParser {
 	OutputStream toOutputStream();
 	
 	JsonContext getContext();
+	
+	/**
+	 * Clears all remaining characters (remaining because of an exception).
+	 */
+	JsonParser clear();
 
 }

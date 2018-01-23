@@ -47,7 +47,7 @@ public class ValidationData {
 		ObjectType objectType = (ObjectType)type;
 		for(String requiredProperty: objectType.getRequiredPropertyNames()) {
 			if(!readPropertyNames.contains(requiredProperty)) {
-				context.notifySchemaViolation("Required Property " + context.getPath().concat(requiredProperty) + " missing!");
+				context.notifySchemaViolation("Required Property '" + context.getPath().concat(requiredProperty) + "' missing!");
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class ValidationData {
 	void addProperty(JsonSchemaContext context, String propertyName) {
 		nextPropertyName = propertyName;
 		if(readPropertyNames.contains(propertyName)) {
-			context.notifySchemaViolation("Property "+context.getPath().concat(propertyName) +" already defined!");
+			context.notifySchemaViolation("Property '"+context.getPath().concat(propertyName) +"' already defined!");
 		}
 		readPropertyNames.add(propertyName);
 	}
@@ -76,7 +76,7 @@ public class ValidationData {
 		} else if(validator instanceof ArrayTypeValidator) {
 			return validator.validateArrayEntryType(context, domTypeClass);
 		} else {
-			throw new JsonSchemaException("Illegal validator type at "+context.getPath()+"!");
+			throw new JsonSchemaException("Illegal validator type at '"+context.getPath()+"'!");
 		}
 	}
 

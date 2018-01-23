@@ -12,20 +12,20 @@ public class ObjectTypeValidator implements Validator {
 	}
 	@Override
 	public SchemaType validateArrayEntryType(JsonSchemaContext context, Class<?> propertyType) {
-		context.notifySchemaViolation("Unexpected Array Validation for " + context.getPath() + "!");
+		context.notifySchemaViolation("Unexpected Array Validation for '" + context.getPath() + "'!");
 		return SchemaType.ANY;
 	}
 	
 	@Override
 	public SchemaType validatePropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
-		SchemaType[] schemaPropertyType = type.getPropertyType(propertyName);
-		for(SchemaType type: schemaPropertyType) {
+		SchemaType[] possibleTypes = type.getPropertyTypes(propertyName);
+		for(SchemaType type: possibleTypes) {
 			if(type.matchesDomType(propertyType)) {
 				return type;
 			}	
 		}
 		
-		context.notifySchemaViolation("Unexpected Property Type for " + context.getPath() + "!");
+		context.notifySchemaViolation("Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes));
 		return SchemaType.ANY;
 	}
 

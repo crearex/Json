@@ -96,6 +96,13 @@ public class Source {
 		this.eolPattern = eolPattern;
 	}
 	
+	public void clear() {
+		chunks.clear();
+		chunk = null;
+		putBackIndex = -1;
+		eolCounter = 0;
+	}
+	
 	public Source resetEolCounter() {
 		return setEolCounter(0);
 	}

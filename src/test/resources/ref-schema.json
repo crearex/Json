@@ -1,0 +1,20 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://something.com/ref-schema.json",
+	"title": "Person",
+    "type": "object",
+	"properties": {
+		"name": {"$ref": "#/definitions/nameType"},
+		"age":  {"$ref": "#ageTypeId"},
+	},
+	"definitions": {
+        "ageType": {
+            "$id": "#ageTypeId",
+            "type": "number"
+        },
+		"nameType": {
+            "name": "string"
+        }
+    },
+	"required": ["name"]	
+}

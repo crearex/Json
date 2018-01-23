@@ -17,7 +17,7 @@ public class ArrayTypeBuilder implements TypeBuilder {
 		
 		JsonObject items = definition.getObject(SchemaConstants.ITEMS_NAME);
 		
-		type.addItemType(context.getTypeFactory().createType(items));
+		type.addItemTypes(context.getTypeFactory().createPossibleTypes(items));
 		return type;
 	}
 }

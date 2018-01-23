@@ -1,5 +1,6 @@
 {
 	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://something.com/json-schema.json",
 	"title": "Person",
     "type": "object",
 	"properties": {

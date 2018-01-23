@@ -7,6 +7,11 @@ public class NumberType extends ValueType {
 	protected NumberType(String title, String description) {
 		super(title, description);
 	}
+	
+	@Override
+	public String getName() {
+		return SchemaConstants.NUMBER_TYPE;
+	}
 
 	@Override
 	public boolean matchesDomType(Class<?> type)  {

@@ -126,5 +126,10 @@ public class CrearexJson implements Json {
 		parser.getContext().setJsonCallback(builder);
 		return this;
 	}
+
+	@Override
+	public void clear() {
+		parser.clear();
+	}
 	
 }

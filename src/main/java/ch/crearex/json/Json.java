@@ -84,4 +84,10 @@ public interface Json {
 
 	JsonDocument parse(String text);
 
+
+	/**
+	 * Clears all remaining characters (because of an exception).
+	 */
+	void clear();
+
 }

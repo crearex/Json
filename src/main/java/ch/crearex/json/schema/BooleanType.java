@@ -9,6 +9,11 @@ public class BooleanType extends ValueType {
 	}
 	
 	@Override
+	public String getName() {
+		return SchemaConstants.BOOLEAN_TYPE;
+	}
+	
+	@Override
 	public boolean matchesDomType(Class<?> type)  {
 		return JsonBooleanValue.class.isAssignableFrom(type);
 	}

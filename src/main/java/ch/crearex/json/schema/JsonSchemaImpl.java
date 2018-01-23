@@ -15,7 +15,7 @@ public class JsonSchemaImpl implements JsonSchema {
 	
 	public JsonSchemaImpl(JsonDocument schemaDoc, URL jsonSchemaOriginUrl) {
 		this.jsonSchemaOriginUrl = jsonSchemaOriginUrl;
-		BuilderContext context = new BuilderContext();
+		BuilderContext context = new BuilderContext(jsonSchemaOriginUrl);
 		SchemaBuilder schemaBuilder = new SchemaBuilder(context);
 		schemaRootType = schemaBuilder.build(schemaDoc);
 	}
@@ -29,8 +29,8 @@ public class JsonSchemaImpl implements JsonSchema {
 
 	@Override
 	public void endDocument(JsonContext context) {
-		JsonContextBase baseContext = (JsonContextBase)context;
-		SchemaStack stack = baseContext.getSchemaStack();
+		//JsonContextBase baseContext = (JsonContextBase)context;
+		//SchemaStack stack = baseContext.getSchemaStack();
 	}
 
 	@Override
