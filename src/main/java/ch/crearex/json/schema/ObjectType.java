@@ -35,7 +35,7 @@ public class ObjectType extends ContainerType {
 	
 	@Override
 	public String toString() {
-		String retVal = "Object";
+		String retVal = SchemaConstants.OBJECT_TYPE;
 		String title = getTitle();
 		String description = getDescription();
 		if(!title.isEmpty() || !description.isEmpty()) {

@@ -28,7 +28,7 @@ import ch.crearex.json.schema.JsonSchemaValidationException;
 public class TestReferences {
 
 	@Test
-	public void testSingleIdReference() throws Exception {
+	public void testClearJson() throws Exception {
 		String textOk = "{\"name\":\"Hans\", \"age\": 33}";
 		Json json = new CrearexJson();
 		URL schemaUrl = TestUtil.getResourceUrl("/ref-schema.json");
@@ -37,6 +37,7 @@ public class TestReferences {
 		int age = doc.getRootObject().getInteger("age", -1);
 		assertThat(age, is(33));
 		
+		// age has a wrong type
 		String textFailure = "{\"name\":\"Hans\", \"age\": \"33\"}";
 		try {
 			doc = json.parse(textFailure);
@@ -46,6 +47,7 @@ public class TestReferences {
 			// ok
 		}	
 		
+		// everything ok
 		json.clear();
 		textFailure = "{\"name\":\"Hans\", \"age\": 33}";
 		try {
@@ -55,6 +57,7 @@ public class TestReferences {
 			assertTrue(false);
 		}
 		
+		// name missing
 		json.clear();
 		textFailure = "{\"age\": 33}";
 		try {
@@ -65,6 +68,33 @@ public class TestReferences {
 			// ok
 		}
 		
+		// name has a wrong type
+		json.clear();
+		textFailure = "{\"name\": 1234, \"age\": 33}";
+		try {
+			doc = json.parse(textFailure);
+			assertTrue(false);
+		} catch(JsonSchemaValidationException e) {
+			System.out.println(e.getMessage());
+			// ok
+		}	
+		
+	}
+	
+	@Test
+	public void testWrongInternalReferencecedType() throws Exception {
+
+		String textFailure = "{\"name\": 12345, \"age\": 33}";
+		try {
+			Json json = new CrearexJson();
+			URL schemaUrl = TestUtil.getResourceUrl("/ref-schema.json");
+			json.setSchema(schemaUrl);
+			JsonDocument doc = json.parse(textFailure);
+			assertTrue(false);
+		} catch(JsonSchemaValidationException e) {
+			System.out.println(e.getMessage());
+			// ok
+		}		
 	}
 	
 	@Test
@@ -81,5 +111,44 @@ public class TestReferences {
 			System.out.println(e.getMessage());
 			// ok
 		}		
+	}
+	
+	@Test
+	public void testObjectRefType() throws Exception {
+
+		String textOK = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":9000}}";
+		try {
+			Json json = new CrearexJson();
+			URL schemaUrl = TestUtil.getResourceUrl("/ref-schema.json");
+			json.setSchema(schemaUrl);
+			JsonDocument doc = json.parse(textOK);
+			
+		} catch(JsonSchemaValidationException e) {
+			System.out.println(e.getMessage());
+			assertTrue(false);
+		}	
+		
+		textOK = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":\"9000\"}}";
+		try {
+			Json json = new CrearexJson();
+			URL schemaUrl = TestUtil.getResourceUrl("/ref-schema.json");
+			json.setSchema(schemaUrl);
+			JsonDocument doc = json.parse(textOK);
+			
+		} catch(JsonSchemaValidationException e) {
+			System.out.println(e.getMessage());
+			assertTrue(false);
+		}	
+		
+		String textFailed = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":true}}";
+		try {
+			Json json = new CrearexJson();
+			URL schemaUrl = TestUtil.getResourceUrl("/ref-schema.json");
+			json.setSchema(schemaUrl);
+			JsonDocument doc = json.parse(textFailed);
+			assertTrue(false);
+		} catch(JsonSchemaValidationException e) {
+			System.out.println(e.getMessage());			
+		}
 	}
 }

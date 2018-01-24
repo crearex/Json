@@ -14,7 +14,7 @@ class PropertyColonParser extends PartParser {
 		parser.skipWhitespaces();
 		char ch = parser.getNext();
 		if(ch != JsonParser.COLON) {
-			throw new JsonIllegalSyntaxException("Illegal Syntax: Property name separator colon missing!")
+			throw new JsonIllegalSyntaxException("Illegal Syntax: Property name separator (:) missing!")
 				.setPath(context.getPath())
 				.setLineNumber(parser.getLineNumber());
 		}

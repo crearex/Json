@@ -30,7 +30,7 @@ public class ArrayType extends ContainerType {
 
 	@Override
 	public String toString() {
-		String retVal = "Array";
+		String retVal = SchemaConstants.ARRAY_TYPE;
 		String title = getTitle();
 		String description = getDescription();
 		if(!title.isEmpty() || !description.isEmpty()) {

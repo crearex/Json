@@ -20,7 +20,7 @@ public class BooleanType extends ValueType {
 	
 	@Override
 	public String toString() {
-		String retVal = "Boolean";
+		String retVal = SchemaConstants.BOOLEAN_TYPE;
 		String title = getTitle();
 		String description = getDescription();
 		if(!title.isEmpty() || !description.isEmpty()) {

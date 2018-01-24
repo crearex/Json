@@ -20,7 +20,7 @@ public class NumberType extends ValueType {
 	
 	@Override
 	public String toString() {
-		String retVal = "Number";
+		String retVal = SchemaConstants.NUMBER_TYPE;
 		String title = getTitle();
 		String description = getDescription();
 		if(!title.isEmpty() || !description.isEmpty()) {

@@ -27,7 +27,7 @@ public class TypeFactory {
 				String internalId = entry.getKey();
 				if (!(entry.getValue() instanceof JsonObject)) {
 					throw new JsonSchemaException(
-							"Illegal type for inline schema " + typeDefinition.getPath().concat(internalId) + "!");
+							"Illegal type for inline schema '" + typeDefinition.getPath().concat(internalId) + "'!");
 				}
 				JsonObject internalSchemaTypeDefinition = (JsonObject) entry.getValue();
 				
@@ -150,11 +150,11 @@ public class TypeFactory {
 	}
 
 	private SchemaType createType(String typeName, JsonObject schemaTypeDefinition) {
-		TypeBuilder builder = createBuilder(typeName);
+		TypeBuilder builder = createTypeBuilder(typeName);
 		return builder.build(schemaTypeDefinition);
 	}
 
-	private TypeBuilder createBuilder(String typeName) {
+	private TypeBuilder createTypeBuilder(String typeName) {
 		if (typeName == null) {
 			typeName = "";
 		}

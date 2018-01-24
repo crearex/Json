@@ -20,7 +20,7 @@ public class StringType extends ValueType {
 	
 	@Override
 	public String toString() {
-		String retVal = "String";
+		String retVal = SchemaConstants.STRING_TYPE;
 		String title = getTitle();
 		String description = getDescription();
 		if(!title.isEmpty() || !description.isEmpty()) {
