@@ -77,6 +77,8 @@ public interface Json {
 	Json reset();
 
 	JsonDocument parse(File file);
+	
+	JsonDocument parse(URL url);
 
 	JsonDocument parse(InputStream source);
 

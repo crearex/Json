@@ -1,14 +1,19 @@
 package ch.crearex.json.schema;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
+import ch.crearex.json.Json;
 import ch.crearex.json.JsonPath;
 import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.impl.CrearexJson;
 
 public class TypeFactory {
 
@@ -20,25 +25,21 @@ public class TypeFactory {
 
 	SchemaType[] createPossibleTypes(JsonObject typeDefinition) {
 
-		//HashMap<String, SchemaType> internalTypes = null;
 		if (typeDefinition.isObject(SchemaConstants.DEFINITIONS)) {
-			//internalTypes = new HashMap<String, SchemaType>();
 			for (Map.Entry<String, JsonElement> entry : typeDefinition.getObject(SchemaConstants.DEFINITIONS)) {
-				String internalId = entry.getKey();
+				String definitionName = entry.getKey();
 				if (!(entry.getValue() instanceof JsonObject)) {
-					throw new JsonSchemaException(
-							"Illegal type for inline schema '" + typeDefinition.getPath().concat(internalId) + "'!");
+					throw new JsonSchemaException("Illegal type for inline schema '"
+							+ typeDefinition.getPath().concat(definitionName) + "'!");
 				}
 				JsonObject internalSchemaTypeDefinition = (JsonObject) entry.getValue();
-				
+
 				final SchemaType internalType;
 				if (internalSchemaTypeDefinition.isString(SchemaConstants.INTERNAL_REFERENCE)) {
-					internalType = getInternalReferencedType(internalSchemaTypeDefinition);
+					internalType = getReferencedType(internalSchemaTypeDefinition);
 				} else {
 					String internalContentType = internalSchemaTypeDefinition.getString(SchemaConstants.TYPE_NAME, "");
-					internalType = createType(
-							internalContentType,
-							internalSchemaTypeDefinition);
+					internalType = createType(internalContentType, internalSchemaTypeDefinition);
 				}
 				if (internalSchemaTypeDefinition.isString(SchemaConstants.SCHEMA_ID)) {
 					context.registerSchemaDefinition(
@@ -46,22 +47,18 @@ public class TypeFactory {
 							internalType);
 				}
 
+				String internalId = "" + SchemaConstants.HASH + SchemaConstants.PATH_SEPARATOR + SchemaConstants.DEFINITIONS
+						+ SchemaConstants.PATH_SEPARATOR + definitionName;
 				context.registerSchemaDefinition(expandId(internalId, typeDefinition), internalType);
 			}
 		}
 
 		if (typeDefinition.isString(SchemaConstants.INTERNAL_REFERENCE)) {
-//			String subschemaId = typeDefinition.getString(SchemaConstants.INTERNAL_REFERENCE);
-//			String expandedSubschemaId = expandId(subschemaId, typeDefinition);
-//			SchemaType subschemaTypeDefiniton = context.getSchemaDefinitionForSubschemaId(expandedSubschemaId);
-			return new SchemaType[] { getInternalReferencedType(typeDefinition) };
+			return new SchemaType[] { getReferencedType(typeDefinition) };
 		}
 
 		if (typeDefinition.isString(SchemaConstants.TYPE_NAME)) {
 			SchemaType type = createType(typeDefinition.getString(SchemaConstants.TYPE_NAME), typeDefinition);
-//			if (type instanceof ContainerType) {
-//				((ContainerType) type).setInternalTypes(internalTypes);
-//			}
 			return new SchemaType[] { type };
 		} else if (typeDefinition.isArray(SchemaConstants.TYPE_NAME)) {
 			JsonArray array = typeDefinition.getArray(SchemaConstants.TYPE_NAME);
@@ -76,62 +73,90 @@ public class TypeFactory {
 		}
 		throw new JsonSchemaException("Illegal schema type declaration in " + typeDefinition.getPath() + "!");
 	}
-	
-	private SchemaType getInternalReferencedType(JsonObject typeDefinition) {
+
+	private SchemaType getReferencedType(JsonObject typeDefinition) {
 		if (!typeDefinition.isString(SchemaConstants.INTERNAL_REFERENCE)) {
 			throw new JsonSchemaException(typeDefinition.getPath() + " does not contain an internal reference ($ref)!");
 		}
 		try {
-			String subschemaId = typeDefinition.getString(SchemaConstants.INTERNAL_REFERENCE);
-			String expandedSubschemaId = expandId(subschemaId, typeDefinition);
-			SchemaType subschemaTypeDefiniton = context.getSchemaDefinitionForSubschemaId(expandedSubschemaId);
-			return subschemaTypeDefiniton;
-		} catch(JsonSchemaException e) {
-			throw new JsonSchemaException("Get internal referenced type for '"+typeDefinition.getPath()+"' failed! " + e.getMessage(), e);
+			String reference = typeDefinition.getString(SchemaConstants.INTERNAL_REFERENCE);
+			if(reference.indexOf(SchemaConstants.HASH) == 0) {
+				String expandedReference = expandId(reference, typeDefinition);
+				SchemaType type = context.getSchemaDefinition(expandedReference);
+				return type;
+			} else {
+				SchemaType type = context.tryGetSchemaDefinition(reference);
+				if(type == null) {
+					type = readReferencedSchema(reference);
+				}
+				return type;
+			}
+		} catch (JsonSchemaException e) {
+			throw new JsonSchemaException(
+					"Get internal referenced type for '" + typeDefinition.getPath() + "' failed! " + e.getMessage(), e);
 		}
 	}
 
-	// private SchemaType createType(JsonObject typeDefinition) {
-	// String typeName = typeDefinition.getString(SchemaConstants.TYPE_NAME);
-	// SchemaType type = createType(typeName, typeDefinition);
-	// return type;
-	// }
+	private SchemaType readReferencedSchema(String schemaId) {
+		File originPath = new File(context.getOriginUrl().getFile()).getParentFile();
+		
+		
+	    final URL referencedSchemaOriginUrl;
+		int lastSlashIndex = schemaId.lastIndexOf(SchemaConstants.PATH_SEPARATOR);
+		if(lastSlashIndex == -1) {
+			referencedSchemaOriginUrl = convertToUrl(originPath, schemaId);
+		} else {
+			String partialSchemaId = removeCommonPath(schemaId, context.getRootId());
+			referencedSchemaOriginUrl = convertToUrl(originPath, partialSchemaId);
+		}
+
+		BuilderContext referencedContext = new BuilderContext(referencedSchemaOriginUrl, context.getSchemaTypeMap());
+		SchemaBuilder schemaBuilder = new SchemaBuilder(referencedContext);
+		return schemaBuilder.build(new CrearexJson().parse(referencedSchemaOriginUrl));
+	}
+	
+	private String removeCommonPath(String schemaId, String rootId) {
+		int start = 0;
+		int end = rootId.indexOf(SchemaConstants.PATH_SEPARATOR);
+		while(end != -1) {
+			if(schemaId.length() < end) {
+				break;
+			}
+			String schemaPart = schemaId.substring(start, end);
+			String rootPart = rootId.substring(start, end);
+			if(schemaPart.equals(rootPart)) {
+				start = end;
+				end = rootId.indexOf(SchemaConstants.PATH_SEPARATOR, start+1);
+			} else {
+				break;
+			}
+		}
+		if(start>0) {
+			String partialName = schemaId.substring(start + 1);
+			return partialName;
+		}
+		return schemaId;
+	}
+
+	private URL convertToUrl(File originPath, String schemaId) {
+		File schemaFile = new File(originPath, schemaId);
+		if(!schemaFile.isFile()) {
+			throw new JsonSchemaException("Read referenced JSON Schema '"+schemaFile+"' failed! File does not exist.");
+		}
+		try {
+			return schemaFile.toURI().toURL();
+		} catch (MalformedURLException e) {
+			throw new JsonSchemaException("Read referenced JSON Schema '"+schemaFile+"' failed! " + e, e);
+		}
+	}
 
 	private String expandId(String internalId, JsonObject schemaTypeDefinition) {
 		if (internalId.indexOf(SchemaConstants.HASH) == 0) {
-			return expandSchemaId(internalId, schemaTypeDefinition);
+			return concat(context.getRootId(), SchemaConstants.HASH, internalId);
 		} else {
-			return expandInternalId(internalId, schemaTypeDefinition);
+			return internalId;
 		}
 	}
-
-	private String expandSchemaId(String schemaID, JsonObject schemaTypeDefinition) {
-		return concat(context.getRootId(), SchemaConstants.HASH, schemaID);
-	}
-
-	private String expandInternalId(String internalId, JsonObject schemaTypeDefinition) {
-		JsonPath path = schemaTypeDefinition.getPath();
-		String expandedId = path.toString() + SchemaConstants.DEFINITIONS + SchemaConstants.PATH_SEPARATOR + internalId;
-
-		expandedId = concat(context.getRootId(), SchemaConstants.HASH, expandedId);
-		return expandedId;
-	}
-
-	// private JsonObject resolveRootSchema(JsonObject rootSchema) {
-	// String rootSchemaId = rootSchema.getString(SchemaConstants.SCHEMA_ID,
-	// ""+SchemaConstants.HASH);
-	// if(rootSchemaId.indexOf(SchemaConstants.HASH) == 0) {
-	// while (rootSchema.hasParent()) {
-	// rootSchemaId = rootSchema.getString(SchemaConstants.SCHEMA_ID,
-	// ""+SchemaConstants.HASH);
-	// if(rootSchemaId.charAt(0)!=SchemaConstants.HASH) {
-	// break;
-	// }
-	// rootSchema.getParent();
-	// }
-	// }
-	// return rootSchema;
-	// }
 
 	private String concat(String first, char separator, String last) {
 		boolean add = false;

@@ -19,6 +19,7 @@ import ch.crearex.json.dom.JsonDomBuilder;
 import ch.crearex.json.schema.JsonSchemaException;
 import ch.crearex.json.schema.JsonSchemaImpl;
 import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaTypeMap;
 
 /**
  * Crearex default factory for creating JSON Parsers.
@@ -60,11 +61,11 @@ public class CrearexJsonParserFactory implements JsonParserFactory {
 	}
 
 	@Override
-	public JsonSchema createJsonSchema(String jsonSchema) {	
-		JsonDocument schemaDoc = doParseSchema(jsonSchema);
+	public JsonSchema createJsonSchema(String jsonSchemaContent) {	
+		JsonDocument schemaDoc = doParseSchema(jsonSchemaContent);
 		JsonSchema schema = null;
 		if(schemaDoc.getRootObject().hasProperty(SchemaConstants.SCHEMA_URI_NAME)) {
-			schema = new JsonSchemaImpl(schemaDoc, null);
+			schema = new JsonSchemaImpl(schemaDoc, null, new SchemaTypeMap());
 			return schema;
 		}
 		throw new JsonSchemaException("Unknown JSON Schema!");
@@ -86,10 +87,10 @@ public class CrearexJsonParserFactory implements JsonParserFactory {
 	
 	@Override
 	public JsonSchema createJsonSchema(URL jsonSchemaOriginUrl) {
-		JsonDocument schemaDoc = doParseSchema(jsonSchemaOriginUrl);
 		JsonSchema schema = null;
+		JsonDocument schemaDoc = doParseSchema(jsonSchemaOriginUrl);		
 		if(schemaDoc.getRootObject().hasProperty(SchemaConstants.SCHEMA_URI_NAME)) {
-			schema = new JsonSchemaImpl(schemaDoc, jsonSchemaOriginUrl);
+			schema = new JsonSchemaImpl(schemaDoc, jsonSchemaOriginUrl, new SchemaTypeMap());
 			return schema;
 		}
 		throw new JsonSchemaException("Unknown JSON Schema: " + jsonSchemaOriginUrl);

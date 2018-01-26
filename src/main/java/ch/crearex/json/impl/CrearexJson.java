@@ -1,13 +1,16 @@
 package ch.crearex.json.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
 
 import ch.crearex.json.Json;
+import ch.crearex.json.JsonBuilderException;
 import ch.crearex.json.JsonContextBase;
 import ch.crearex.json.JsonDomCallback;
+import ch.crearex.json.JsonException;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonParserFactory;
 import ch.crearex.json.JsonSchema;
@@ -77,6 +80,15 @@ public class CrearexJson implements Json {
 	public JsonDocument parse(File file) {
 		parser.parse(file);
 		return domBuilder.getDocument();
+	}
+	
+	@Override
+	public JsonDocument parse(URL url) {
+		try(InputStream is = url.openStream()) {
+			return parse(is);
+		} catch (IOException e) {
+			throw new JsonBuilderException("Parse URL '"+url+"' failed! " + e.getMessage(), e);
+		}
 	}
 	
 	@Override

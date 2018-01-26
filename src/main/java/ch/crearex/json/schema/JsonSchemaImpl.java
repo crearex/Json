@@ -13,11 +13,11 @@ public class JsonSchemaImpl implements JsonSchema {
 	private final SchemaType schemaRootType;
 	private final URL jsonSchemaOriginUrl;
 	
-	public JsonSchemaImpl(JsonDocument schemaDoc, URL jsonSchemaOriginUrl) {
+	public JsonSchemaImpl(JsonDocument schemaDoc, URL jsonSchemaOriginUrl, SchemaTypeMap schemaTypeMap) {
 		this.jsonSchemaOriginUrl = jsonSchemaOriginUrl;
-		BuilderContext context = new BuilderContext(jsonSchemaOriginUrl);
+		BuilderContext context = new BuilderContext(jsonSchemaOriginUrl, schemaTypeMap);
 		SchemaBuilder schemaBuilder = new SchemaBuilder(context);
-		schemaRootType = schemaBuilder.build(schemaDoc);
+		this.schemaRootType = schemaBuilder.build(schemaDoc);
 	}
 	
 	@Override

@@ -6,7 +6,8 @@
 	"properties": {
 		"name": {"$ref": "#/definitions/nameType"},
 		"age":  {"$ref": "#ageTypeId"},
-		"addr": {"$ref": "#addrTypeId"}
+		"addr": {"$ref": "#addrTypeId"},
+		"contact": {"$ref": "http://something.com/contact-schema.json"}
 	},
 	"definitions": {
         "ageType": {

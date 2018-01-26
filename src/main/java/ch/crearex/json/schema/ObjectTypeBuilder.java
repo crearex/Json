@@ -33,27 +33,28 @@ public class ObjectTypeBuilder implements TypeBuilder {
 //		}
 
 		context.pushSchemaDefinition(type);
-		
-		JsonObject properties = definition.getObject(SchemaConstants.PROPERTIES_NAME);
-		if(properties!=null) {
-			for(Map.Entry<String, JsonElement> entry: properties) {
-				String propertyName = entry.getKey();
-				JsonElement value = entry.getValue();
-				defineProperty(type, propertyName, value);
-			}
-		}
-		
-		JsonArray requiredProperties = definition.getArray(SchemaConstants.REQUIRED_NAME);
-		if(requiredProperties != null) {
-			for(JsonElement entry: requiredProperties) {
-				if(entry instanceof JsonString) {
-					JsonString propName = (JsonString)entry;
-					type.addRequiredProperty(propName.asString());
+		try {
+			JsonObject properties = definition.getObject(SchemaConstants.PROPERTIES_NAME);
+			if(properties!=null) {
+				for(Map.Entry<String, JsonElement> entry: properties) {
+					String propertyName = entry.getKey();
+					JsonElement value = entry.getValue();
+					defineProperty(type, propertyName, value);
 				}
 			}
+			
+			JsonArray requiredProperties = definition.getArray(SchemaConstants.REQUIRED_NAME);
+			if(requiredProperties != null) {
+				for(JsonElement entry: requiredProperties) {
+					if(entry instanceof JsonString) {
+						JsonString propName = (JsonString)entry;
+						type.addRequiredProperty(propName.asString());
+					}
+				}
+			}
+		} finally {
+			context.popSchemaDefinition();
 		}
-		
-		context.popSchemaDefinition();
 		
 		return type;
 	}
