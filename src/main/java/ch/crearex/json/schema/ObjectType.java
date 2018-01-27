@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonObject;
 
 public class ObjectType extends ContainerType {
@@ -90,6 +91,51 @@ public class ObjectType extends ContainerType {
 				}
 			}
 		}
+	}
+
+	SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
+		SchemaType[] possibleTypes = getPropertyTypes(propertyName);
+		if(possibleTypes == null) {
+			// there is no schema definition for this property = unknown property
+			return SchemaType.ANY_NULLABLE;
+		}
+		for(SchemaType type: possibleTypes) {
+			if(type.matchesDomType(propertyType)) {
+				return type;
+			}	
+		}
+		context.notifySchemaViolation("Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes));
+		return SchemaType.ANY_NULLABLE;
+	}
+
+	void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+		SchemaType type = resolveType(propertyName, value);
+		if(type == null) {
+			return;
+		}
+		if(type.isNullable() && value.isNull()) {
+			return;
+		}
+		
+		if(type instanceof ValueType) {
+			((ValueType)type).validate(context, propertyName, value);
+			return;
+		}
+		
+		context.notifySchemaViolation("Illegal property type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: " + type.getName());
+	}
+
+	private SchemaType resolveType(String propertyName, JsonSimpleValue value) {
+		SchemaType[] possibleTypes = properties.get(propertyName);
+		if(possibleTypes == null) {
+			return null;
+		}
+		for(SchemaType type: possibleTypes) {
+			if(type.matchesDomType(value.getClass())) {
+				return type;
+			}
+		}
+		return null;
 	}
 
 }

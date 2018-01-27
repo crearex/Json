@@ -1,5 +1,6 @@
 package ch.crearex.json.schema;
 
+import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.impl.JsonStringValue;
 
 public class StringType extends ValueType {
@@ -33,5 +34,11 @@ public class StringType extends ValueType {
 			retVal += " " + description + ".";
 		}
 		return retVal;
+	}
+
+	@Override
+	public void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

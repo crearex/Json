@@ -18,6 +18,8 @@ public class ArrayTypeBuilder implements TypeBuilder {
 		JsonObject items = definition.getObject(SchemaConstants.ITEMS_NAME);
 		
 		type.addItemTypes(context.getTypeFactory().createPossibleTypes(items));
+		
+		type.setNullable(SchemaUtil.isNullableType(definition));
 		return type;
 	}
 }

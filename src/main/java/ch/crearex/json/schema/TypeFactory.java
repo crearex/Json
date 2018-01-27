@@ -100,7 +100,6 @@ public class TypeFactory {
 	private SchemaType readReferencedSchema(String schemaId) {
 		File originPath = new File(context.getOriginUrl().getFile()).getParentFile();
 		
-		
 	    final URL referencedSchemaOriginUrl;
 		int lastSlashIndex = schemaId.lastIndexOf(SchemaConstants.PATH_SEPARATOR);
 		if(lastSlashIndex == -1) {

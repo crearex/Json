@@ -1,5 +1,7 @@
 package ch.crearex.json.schema;
 
+import ch.crearex.json.JsonSimpleValue;
+
 public abstract class ValueType implements SchemaType {
 	private final String title;
 	private final String description;
@@ -23,4 +25,6 @@ public abstract class ValueType implements SchemaType {
 	public boolean isNullable() {
 		return this.nullable;
 	}
+	
+	public abstract void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value);
 }

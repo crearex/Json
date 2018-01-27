@@ -421,6 +421,10 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 		return null;
 	}
 
+	public JsonElement getProperty(String propertyName) {
+		return properties.get(propertyName);
+	}
+
 	
 
 	

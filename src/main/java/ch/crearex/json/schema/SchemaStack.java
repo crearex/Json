@@ -31,8 +31,7 @@ public class SchemaStack {
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
-			SchemaType nextType = validatonData.validateBeginObject(schemaContext);
-			//SchemaType nextType = validatonData.getNextContainerType(schemaContext);
+			ObjectType nextType = validatonData.getNextPropertiesObjectType(schemaContext);
 			stack.addFirst(new ValidationData(nextType));
 		} catch(JsonSchemaException e) {
 			throw e;
@@ -102,6 +101,7 @@ public class SchemaStack {
 		schemaContext.setAdaptedContext(context);
 		try {
 			ValidationData validationData = stack.getFirst();
+			validationData.validateSimpleType(schemaContext, value);
 			validationData.validateSimpleValue(schemaContext, value);
 		} catch(JsonSchemaException e) {
 			throw e;

@@ -1,5 +1,10 @@
 package ch.crearex.json.schema;
 
+import ch.crearex.json.dom.JsonArray;
+import ch.crearex.json.dom.JsonElement;
+import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.dom.JsonString;
+
 public class SchemaUtil {
 	private static final char COMMA = ',';
 	
@@ -12,5 +17,16 @@ public class SchemaUtil {
 			summary.append(schemata[index].getName());
 		}
 		return summary.toString();
+	}
+
+	public static boolean isNullableType(JsonObject definition) {
+		JsonElement type = definition.getProperty(SchemaConstants.TYPE_NAME);
+		if(type instanceof JsonString) {
+			return ((JsonString)type).isNull();
+		}
+		if(type instanceof JsonArray) {
+			return ((JsonArray)type).contains(SchemaConstants.NULL_TYPE);
+		}
+		return false;
 	}
 }

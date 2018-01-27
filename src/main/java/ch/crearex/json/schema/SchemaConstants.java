@@ -17,6 +17,7 @@ public interface SchemaConstants {
 	String STRING_TYPE = "string";
 	String NUMBER_TYPE = "number";
 	String BOOLEAN_TYPE = "boolean";
+	String NULL_TYPE = "null";
 	String ANY_TYPE = "any";
 	
 	String REQUIRED_NAME = "required";

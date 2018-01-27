@@ -36,5 +36,6 @@ public interface JsonSimpleValue {
 	 * transmitted by a stream.
 	 */
 	String getRawValue();
+	String getTypeName();
 		
 }

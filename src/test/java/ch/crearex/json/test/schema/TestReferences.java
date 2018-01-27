@@ -43,7 +43,7 @@ public class TestReferences {
 			doc = json.parse(textFailure);
 			assertTrue(false);
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			// ok
 		}	
 		
@@ -64,7 +64,7 @@ public class TestReferences {
 			doc = json.parse(textFailure);
 			assertTrue(false);
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			// ok
 		}
 		
@@ -75,7 +75,7 @@ public class TestReferences {
 			doc = json.parse(textFailure);
 			assertTrue(false);
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			// ok
 		}	
 		
@@ -92,7 +92,7 @@ public class TestReferences {
 			JsonDocument doc = json.parse(textFailure);
 			assertTrue(false);
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			// ok
 		}		
 	}
@@ -108,7 +108,7 @@ public class TestReferences {
 			JsonDocument doc = json.parse(textFailure);
 			assertTrue(false);
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			// ok
 		}		
 	}
@@ -116,6 +116,7 @@ public class TestReferences {
 	@Test
 	public void testObjectRefType() throws Exception {
 
+		// zip as number
 		String textOK = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":9000}}";
 		try {
 			Json json = new CrearexJson();
@@ -124,10 +125,11 @@ public class TestReferences {
 			JsonDocument doc = json.parse(textOK);
 			
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			assertTrue(false);
 		}	
 		
+		// zip as string
 		textOK = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":\"9000\"}}";
 		try {
 			Json json = new CrearexJson();
@@ -136,10 +138,11 @@ public class TestReferences {
 			JsonDocument doc = json.parse(textOK);
 			
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());
+			//System.out.println(e.getMessage());
 			assertTrue(false);
 		}	
 		
+		// zip as boolean: wrong type
 		String textFailed = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":true}}";
 		try {
 			Json json = new CrearexJson();
@@ -148,7 +151,40 @@ public class TestReferences {
 			JsonDocument doc = json.parse(textFailed);
 			assertTrue(false);
 		} catch(JsonSchemaValidationException e) {
-			System.out.println(e.getMessage());			
+			//System.out.println(e.getMessage());
+			// ok
 		}
+	}
+	
+	@Test
+	public void testObjectExternalRefType() throws Exception {
+		// mobile as number
+		String textOK = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":9000}, "+
+		"\"contact\":{\"mobile\":\"1234\"}}";
+		try {
+			Json json = new CrearexJson();
+			URL schemaUrl = TestUtil.getResourceUrl("/ref-schema.json");
+			json.setSchema(schemaUrl);
+			JsonDocument doc = json.parse(textOK);
+			
+		} catch(JsonSchemaValidationException e) {
+			//System.out.println(e.getMessage());
+			assertTrue(false);
+		}	
+		
+		// mobile as number: wrong type
+		textOK = "{\"name\": \"Hans\", \"age\": 33, \"addr\":{\"city\":\"Chur\", \"zip\":9000}, "+
+				"\"contact\":{\"mobile\":1234}}";
+		try {
+			Json json = new CrearexJson();
+			URL schemaUrl = TestUtil.getResourceUrl("/ref-schema.json");
+			json.setSchema(schemaUrl);
+			JsonDocument doc = json.parse(textOK);
+			assertTrue(false);
+		} catch (JsonSchemaValidationException e) {
+			//System.out.println(e.getMessage());
+			// ok
+		}
+	
 	}
 }

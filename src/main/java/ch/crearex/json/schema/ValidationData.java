@@ -11,40 +11,51 @@ import ch.crearex.json.impl.JsonNullValue;
 
 public class ValidationData {
 
-	private final SchemaType type;
-	private Validator validator;
+	private final SchemaType actualContainerType;
 	
 	private String nextPropertyName = null;
 	private HashSet<String> readPropertyNames;
 	
 	ValidationData(SchemaType type) {
-		this.type = type;
+		this.actualContainerType = type;
 		if(type instanceof ObjectType) {
-			ObjectType objectType = (ObjectType)type;
-			validator = new ObjectTypeValidator(objectType);
 			readPropertyNames = new HashSet<String>();
 		} else if(type instanceof ArrayType) {
-			ArrayType arrayType = (ArrayType)type;
-			validator = new ArrayTypeValidator(arrayType);
+			// nothing to do
 		} else {
-			throw new JsonSchemaException("Illegal validationtype: " + type.getClass().getSimpleName());
+			throw new JsonSchemaException("Unexpected validation datatype: " + type.getClass().getSimpleName());
 		}
 	}
+	
 	@Override
 	public String toString() {
-		return type.toString();
+		return actualContainerType.toString();
 	}
 	
-	SchemaType validateBeginObject(JsonSchemaContext context) {
-		return validateType(context, JsonObject.class);
+	ObjectType getNextPropertiesObjectType(JsonSchemaContext context) {
+		if(actualContainerType instanceof ObjectType) {
+			SchemaType nextType = ((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, JsonObject.class);
+			if(nextType instanceof ObjectType) {
+				return (ObjectType)nextType;
+			}
+			throw new JsonSchemaException("Unexpected "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE);
+		} 
+		throw new JsonSchemaException("Unexpected validation type '"+actualContainerType.getName()+"' for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE);
 	}
 
-	SchemaType validateBeginArray(JsonSchemaContext context) {
-		return validateType(context, JsonArray.class);
+	ArrayType validateBeginArray(JsonSchemaContext context) {
+		if(actualContainerType instanceof ArrayType) {
+			SchemaType nextType = ((ArrayType)actualContainerType).getEntryType(context, ArrayType.class);
+			if(nextType instanceof ArrayType) {
+				return (ArrayType)nextType;
+			}
+			throw new JsonSchemaException("Unexpected "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE);
+		} 
+		throw new JsonSchemaException("Unexpected validation type "+actualContainerType.getName()+" for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE);
 	}
 
 	protected void validateObjectFinal(JsonSchemaContext context) {
-		ObjectType objectType = (ObjectType)type;
+		ObjectType objectType = (ObjectType)actualContainerType;
 		for(String requiredProperty: objectType.getRequiredPropertyNames()) {
 			if(!readPropertyNames.contains(requiredProperty)) {
 				context.notifySchemaViolation("Required Property '" + context.getPath().concat(requiredProperty) + "' missing!");
@@ -62,36 +73,40 @@ public class ValidationData {
 		}
 		readPropertyNames.add(propertyName);
 	}
+	
+	String getNextProperty() {
+		return nextPropertyName;
+	}
 
 	void validateSimpleValue(JsonSchemaContext context, JsonSimpleValue value) {
-		validateType(context, value.getClass());
+		if(actualContainerType instanceof ObjectType) {
+			((ObjectType)actualContainerType).validatePropertyValue(context, nextPropertyName, value);
+		} else if(actualContainerType instanceof ArrayType) {
+			((ArrayType)actualContainerType).validateEntryValue(context, value);
+		} else {
+			throw new JsonSchemaException("Unexpected schema type type at '"+context.getPath()+"'!");
+		}
 	}
 	
-	private SchemaType validateType(JsonSchemaContext context, Class<?> domTypeClass) {
+	SchemaType validateSimpleType(JsonSchemaContext context, JsonSimpleValue value) {
+		Class<?> domTypeClass = value.getClass();
+		// TODO null allowed heisst nicht ANY...
 		if(isNullAllowed(context, domTypeClass)) {
 			return SchemaType.ANY;
 		}
-		if(validator instanceof ObjectTypeValidator) {
-			return validator.validatePropertyType(context, nextPropertyName, domTypeClass);
-		} else if(validator instanceof ArrayTypeValidator) {
-			return validator.validateArrayEntryType(context, domTypeClass);
+		
+		if(actualContainerType instanceof ObjectType) {
+			return ((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, domTypeClass);
+		} else if(actualContainerType instanceof ArrayType) {
+			return ((ArrayType)actualContainerType).getEntryType(context, domTypeClass);
 		} else {
-			throw new JsonSchemaException("Illegal validator type at '"+context.getPath()+"'!");
+			throw new JsonSchemaException("Unexpected schema type type at '"+context.getPath()+"'!");
 		}
 	}
 
 	private boolean isNullAllowed(JsonSchemaContext context, Class<?> domTypeClass) {
-		return type.isNullable() && JsonNullValue.class.isAssignableFrom(domTypeClass);
+		return actualContainerType.isNullable() && JsonNullValue.class.isAssignableFrom(domTypeClass);
 	}
-	
-//	SchemaType getNextContainerType(JsonSchemaContext context) {
-//		if(type instanceof ObjectType) {
-//			return ((ObjectType)type).getPropertyType(nextPropertyName);
-//		} else if(type instanceof ArrayType) {
-//			return ((ArrayType)type).getItemType();
-//		} else {
-//			throw new JsonSchemaException("Illegal container type at "+context.getPath()+"!");
-//		}
-//	}
+
 
 }

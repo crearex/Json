@@ -9,7 +9,7 @@ import ch.crearex.json.JsonPathEntry;
 import ch.crearex.json.JsonUtil;
 import ch.crearex.json.JsonSimpleValue;
 
-public class JsonValImpl implements JsonSimpleValue {
+public abstract class JsonValImpl implements JsonSimpleValue {
 
 	private static final char DOT = '.';
 	

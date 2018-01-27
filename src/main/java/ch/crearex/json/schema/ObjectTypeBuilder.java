@@ -24,13 +24,6 @@ public class ObjectTypeBuilder implements TypeBuilder {
 				definition.getString(SchemaConstants.TITLE_NAME, null),
 				definition.getString(SchemaConstants.DESCRIPTION_NAME, null),
 				definition.getString(SchemaConstants.SCHEMA_ID, null));
-		
-//		if(type.hasReferenceId()) {
-//			
-//			String subschemaId = type.getId();
-//			String expandedSubschemaId = context.expandSchemaId(subschemaId);
-//			context.registerSchemaDefinition(expandedSubschemaId, type);
-//		}
 
 		context.pushSchemaDefinition(type);
 		try {
@@ -52,6 +45,8 @@ public class ObjectTypeBuilder implements TypeBuilder {
 					}
 				}
 			}
+			
+			type.setNullable(SchemaUtil.isNullableType(definition));
 		} finally {
 			context.popSchemaDefinition();
 		}

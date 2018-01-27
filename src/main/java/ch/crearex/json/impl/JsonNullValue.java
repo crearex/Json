@@ -3,6 +3,7 @@ package ch.crearex.json.impl;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonNullValue extends JsonValImpl implements JsonSimpleValue {
 	
@@ -18,6 +19,11 @@ public class JsonNullValue extends JsonValImpl implements JsonSimpleValue {
 	@Override
 	public String toString() {
 		return JsonParser.JSON_NULL;
+	}
+
+	@Override
+	public String getTypeName() {
+		return SchemaConstants.NULL_TYPE;
 	}
 
 }

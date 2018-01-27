@@ -2,6 +2,7 @@ package ch.crearex.json.impl;
 
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonStringValue extends JsonValImpl implements JsonSimpleValue {
 
@@ -12,6 +13,11 @@ public class JsonStringValue extends JsonValImpl implements JsonSimpleValue {
 	@Override
 	public boolean isString() {
 		return true;
+	}
+
+	@Override
+	public String getTypeName() {
+		return SchemaConstants.STRING_TYPE;
 	}
 	
 }

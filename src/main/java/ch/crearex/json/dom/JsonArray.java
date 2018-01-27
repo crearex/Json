@@ -331,4 +331,17 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 		}
 	}
 
+	/**
+	 * Returns if one array entry is: <code>entry.equals(arrayEntry.toString()) == true</code>
+	 */
+	public boolean contains(String entry) {
+		for(JsonElement elem: children) {
+			if(entry.equals(elem.toString())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 }

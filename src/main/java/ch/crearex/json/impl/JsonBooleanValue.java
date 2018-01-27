@@ -3,6 +3,7 @@ package ch.crearex.json.impl;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonBooleanValue extends JsonValImpl implements JsonSimpleValue {
 
@@ -30,6 +31,11 @@ public class JsonBooleanValue extends JsonValImpl implements JsonSimpleValue {
 		} else {
 			return JsonParser.JSON_FALSE;
 		}
+	}
+
+	@Override
+	public String getTypeName() {
+		return SchemaConstants.BOOLEAN_TYPE;
 	}
 
 }

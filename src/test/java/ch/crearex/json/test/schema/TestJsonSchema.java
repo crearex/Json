@@ -50,6 +50,14 @@ public class TestJsonSchema {
 	}
 	
 	@Test
+	public void testIgnoreUnknownProperty() throws Exception {
+		String text = "{\"name\":\"Felix\", \"height\":185, \"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+	}
+	
+	@Test
 	public void testVariableType() throws Exception {
 		String text = "{\"id\":\"hello\",\"name\":\"Felix\",\"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
 		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);

@@ -8,6 +8,7 @@ import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
+import ch.crearex.json.schema.SchemaConstants;
 
 /**
  * Immutable JSON DOM Value.
@@ -24,8 +25,23 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	public static final JsonValue FALSE = new JsonValue(false);
 	
 	private final String value;
-	private final boolean isNumber;
-	private final boolean isIntegral;
+	
+	private enum ValueType {
+		STRING(SchemaConstants.OBJECT_TYPE),
+		NUMBER(SchemaConstants.NUMBER_TYPE),
+		INTEGRAL_NUMBER(SchemaConstants.NUMBER_TYPE),
+		BOOLEAN(SchemaConstants.BOOLEAN_TYPE),
+		NULL(SchemaConstants.NULL_TYPE);
+		private final String schemaTypeName;
+		private ValueType(String schemaTypeName) {
+			this.schemaTypeName = schemaTypeName;
+		}
+		public String getSchemaTypeName() {
+			return schemaTypeName;
+		}
+	}
+	
+	private final ValueType valueType;
 	private JsonContainer parent;
 
 	/**
@@ -33,8 +49,7 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	 */
 	public JsonValue() {
 		this.value = null;
-		isNumber = false;
-		isIntegral = false;
+		this.valueType = ValueType.NULL;
 	}
 	
 	/**
@@ -42,8 +57,11 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	 */
 	public JsonValue(String value) {
 		this.value = value;
-		isNumber = false;
-		isIntegral = false;
+		if(value == null) {
+			this.valueType = ValueType.NULL;
+		} else {
+			this.valueType = ValueType.STRING;
+		}
 	}
 	
 	public JsonValue(boolean value) {
@@ -52,56 +70,47 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 		} else {
 			this.value = JsonParser.JSON_FALSE;
 		}
-		isNumber = false;
-		isIntegral = false;
+		this.valueType = ValueType.BOOLEAN;
 	}
 	
 	public JsonValue(byte value) {
 		this.value = Byte.toString(value);
-		isNumber = true;
-		isIntegral = true;
+		this.valueType = ValueType.INTEGRAL_NUMBER;
 	}
 	
 	public JsonValue(short value) {
 		this.value = Short.toString(value);
-		isNumber = true;
-		isIntegral = true;
+		this.valueType = ValueType.INTEGRAL_NUMBER;
 	}
 	
 	public JsonValue(int value) {
 		this.value = Integer.toString(value);
-		isNumber = true;
-		isIntegral = true;
+		this.valueType = ValueType.INTEGRAL_NUMBER;
 	}
 	
 	public JsonValue(BigInteger value) {
 		this.value = value.toString();
-		isNumber = true;
-		isIntegral = true;
+		this.valueType = ValueType.INTEGRAL_NUMBER;
 	}
 	
 	public JsonValue(long value) {
 		this.value = Long.toString(value);
-		isNumber = true;
-		isIntegral = true;
+		this.valueType = ValueType.INTEGRAL_NUMBER;
 	}
 	
 	public JsonValue(double value) {
 		this.value = formatDecimal(value);
-		isNumber = true;
-		isIntegral = false;
+	    this.valueType = ValueType.NUMBER;
 	}
 	
 	public JsonValue(float value) {
 		this.value = formatDecimal(value);
-		isNumber = true;
-		isIntegral = false;
+		this.valueType = ValueType.NUMBER;
 	}
 	
 	public JsonValue(BigDecimal value) {
 		this.value = value.toString();
-		isNumber = true;
-		isIntegral = false;
+		this.valueType = ValueType.NUMBER;
 	}
 	
 	@Override
@@ -208,33 +217,27 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 
 	@Override
 	public boolean isNull() {
-		if(value == null) {
-			return true;
-		}
-		return JsonParser.JSON_NULL.equals(value);
+		return valueType == ValueType.NULL;
 	}
 	
 	@Override
 	public boolean isBoolean() {
-		if(value == null) {
-			return false;
-		}
-		return JsonParser.JSON_TRUE.equals(value) || JsonParser.JSON_FALSE.equals(value);
+		return valueType == ValueType.BOOLEAN;
 	}
 
 	@Override
 	public boolean isNumber() {
-		return isNumber;
+		return valueType == ValueType.NUMBER;
 	}
 	
 	@Override
 	public boolean isIntegral() {
-		return isIntegral;
+		return valueType == ValueType.INTEGRAL_NUMBER;
 	}
 
 	@Override
 	public boolean isString() {
-		return value!=null && !isNumber && !isBoolean();
+		return valueType == ValueType.STRING;
 	}
 
 	@Override
@@ -272,6 +275,11 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 
 	void setParent(JsonContainer parent) {
 		this.parent = parent;
+	}
+
+	@Override
+	public String getTypeName() {
+		return valueType.getSchemaTypeName();
 	}
 
 }
