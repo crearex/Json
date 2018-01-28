@@ -18,6 +18,7 @@ import ch.crearex.json.TestUtil;
 import ch.crearex.json.dom.JsonDocument;
 import ch.crearex.json.dom.SchemaValidationStatus;
 import ch.crearex.json.impl.CrearexJson;
+import ch.crearex.json.schema.JsonSchemaValidationException;
 
 public class TestJson {
 	
@@ -41,8 +42,8 @@ public class TestJson {
 		
 		json.setSchema(TestUtil.readResource("/json-schema.json")).setSchemaCallback( new JsonSchemaCallback() {
 			@Override
-			public void schemaViolation(JsonPath path, String message) {
-				schemaMessages.add(path.toString() + ": " + message);
+			public void schemaViolation(JsonSchemaValidationException violation) {
+				schemaMessages.add(violation.getPath() + ": " + violation.getMessage());
 			}
 		});
 		doc = json.parse(text);

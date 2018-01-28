@@ -9,13 +9,11 @@ import ch.crearex.json.JsonSimpleValue;
 
 public class SchemaStack {
 
-	private final SchemaType schemaRootType;
 	private final LinkedList<ValidationData> stack = new LinkedList<ValidationData>();
 	private final JsonSchemaContext schemaContext;
 	private boolean beginRootContainer = true;
 	
-	SchemaStack(SchemaType schemaRootType, JsonSchemaCallback schemaCallback, URL jsonSchemaOriginUrl) {
-		this.schemaRootType = schemaRootType;
+	SchemaStack(ContainerType schemaRootType, JsonSchemaCallback schemaCallback, URL jsonSchemaOriginUrl) {
 		this.schemaContext = new JsonSchemaContextImpl(schemaCallback, jsonSchemaOriginUrl);
 		stack.addFirst(new ValidationData(schemaRootType));
 	}
@@ -31,7 +29,7 @@ public class SchemaStack {
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
-			ObjectType nextType = validatonData.getNextPropertiesObjectType(schemaContext);
+			ObjectType nextType = validatonData.getNextObjectType(schemaContext);
 			stack.addFirst(new ValidationData(nextType));
 		} catch(JsonSchemaException e) {
 			throw e;
@@ -49,8 +47,7 @@ public class SchemaStack {
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
-			SchemaType nextType = validatonData.validateBeginArray(schemaContext);
-			//SchemaType nextType = validatonData.getNextContainerType(schemaContext);
+			ContainerType nextType = validatonData.getNextArrayType(schemaContext);
 			stack.addFirst(new ValidationData(nextType));
 		} catch(JsonSchemaException e) {
 			throw e;
@@ -93,7 +90,7 @@ public class SchemaStack {
 		} catch(JsonSchemaException e) {
 			throw e;
 		} catch(Exception e) {
-			throw new JsonSchemaException("Validate array failed: " + e.getMessage(), e);
+			throw new JsonSchemaException("Add property '"+context.getPath().concat(propertyName)+"' to validation data failed: " + e.getMessage(), e);
 		}
 	}
 
@@ -106,7 +103,7 @@ public class SchemaStack {
 		} catch(JsonSchemaException e) {
 			throw e;
 		} catch(Exception e) {
-			throw new JsonSchemaException("Validate array failed: " + e.getMessage(), e);
+			throw new JsonSchemaException("Validate '"+context.getPath()+"' failed: " + e.getMessage(), e);
 		}
 	}
 

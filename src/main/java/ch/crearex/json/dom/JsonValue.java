@@ -227,7 +227,7 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 
 	@Override
 	public boolean isNumber() {
-		return valueType == ValueType.NUMBER;
+		return valueType == ValueType.NUMBER || valueType == ValueType.INTEGRAL_NUMBER;
 	}
 	
 	@Override

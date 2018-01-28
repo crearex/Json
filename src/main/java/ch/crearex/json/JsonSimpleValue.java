@@ -36,6 +36,10 @@ public interface JsonSimpleValue {
 	 * transmitted by a stream.
 	 */
 	String getRawValue();
+	
+	/**
+	 * Returns the JSON Schema type name of this simple value.
+	 */
 	String getTypeName();
 		
 }

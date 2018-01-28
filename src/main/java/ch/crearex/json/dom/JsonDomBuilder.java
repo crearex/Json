@@ -167,7 +167,7 @@ public class JsonDomBuilder implements JsonValueFactoryProviderCallback {
 	void notifyEndDocument() {
 		if(context.hasSchemaStack()) {
 			if(context.getSchemaStack().getSchemaContext().hasValidationErrors()) {
-				document.setValidationResult(SchemaValidationStatus.INVALID, context.getSchemaStack().getSchemaContext().getValidationErrorMessages());
+				document.setValidationResult(SchemaValidationStatus.INVALID, context.getSchemaStack().getSchemaContext().getValidationExceptions());
 			} else {
 				document.setValidationResult(SchemaValidationStatus.VALID, null);
 			}

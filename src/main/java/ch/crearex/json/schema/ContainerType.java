@@ -26,7 +26,8 @@ public abstract class ContainerType implements SchemaType {
 		return description;
 	}
 
-	ContainerType setNullable(boolean nullable) {
+	@Override
+	public ContainerType setNullable(boolean nullable) {
 		this.nullable = nullable;
 		return this;
 	}

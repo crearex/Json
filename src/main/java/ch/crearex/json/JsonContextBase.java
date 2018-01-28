@@ -419,8 +419,8 @@ public abstract class JsonContextBase implements JsonContext {
 	JsonSchemaCallback createDefaultSchemaCallback() {
 		return new JsonSchemaCallback() {
 			@Override
-			public void schemaViolation(JsonPath path, String message) {
-				throw new JsonSchemaValidationException(message).setPath(path);
+			public void schemaViolation(JsonSchemaValidationException violation) {
+				throw violation;
 			}};
 	}
 	

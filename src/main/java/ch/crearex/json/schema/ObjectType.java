@@ -11,6 +11,7 @@ import ch.crearex.json.dom.JsonObject;
 
 public class ObjectType extends ContainerType {
 	
+	static final ObjectType EMTPY_OBJECT = new ObjectType("", "", null);
 	private HashMap<String, SchemaType[]> properties = new HashMap<String, SchemaType[]>();
 	private HashSet<String> requiredPropertyNames = new HashSet<String>();
 	
@@ -19,7 +20,7 @@ public class ObjectType extends ContainerType {
 	public ObjectType(String title, String description, String id) {
 		super(title, description);
 		
-		if(id!=null && id.trim().isEmpty()) {
+		if((id!=null) && id.trim().isEmpty()) {
 			throw new JsonSchemaException("The ID of a Object must not be an empty string!");
 		}
 		this.id = id;
@@ -93,19 +94,22 @@ public class ObjectType extends ContainerType {
 		}
 	}
 
+	/**
+	 * Returns the matching property type or null if the property was not found.
+	 */
 	SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
 		SchemaType[] possibleTypes = getPropertyTypes(propertyName);
 		if(possibleTypes == null) {
 			// there is no schema definition for this property = unknown property
-			return SchemaType.ANY_NULLABLE;
+			return null;
 		}
 		for(SchemaType type: possibleTypes) {
 			if(type.matchesDomType(propertyType)) {
 				return type;
 			}	
 		}
-		context.notifySchemaViolation("Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes));
-		return SchemaType.ANY_NULLABLE;
+		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes)));
+		return null;
 	}
 
 	void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
@@ -122,7 +126,7 @@ public class ObjectType extends ContainerType {
 			return;
 		}
 		
-		context.notifySchemaViolation("Illegal property type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: " + type.getName());
+		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal property type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: " + type.getName()));
 	}
 
 	private SchemaType resolveType(String propertyName, JsonSimpleValue value) {

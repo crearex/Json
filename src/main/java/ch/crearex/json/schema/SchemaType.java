@@ -8,5 +8,6 @@ public interface SchemaType {
 	
 	boolean matchesDomType(Class<?> type);
 	boolean isNullable();
+	SchemaType setNullable(boolean nullable);
 	String getName();
 }

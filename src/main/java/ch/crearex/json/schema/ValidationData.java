@@ -3,27 +3,21 @@ package ch.crearex.json.schema;
 import java.util.HashSet;
 
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.JsonContext;
-import ch.crearex.json.JsonPath;
 import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.impl.JsonNullValue;
 
 public class ValidationData {
 
-	private final SchemaType actualContainerType;
+	private final ContainerType actualContainerType;
 	
 	private String nextPropertyName = null;
 	private HashSet<String> readPropertyNames;
 	
-	ValidationData(SchemaType type) {
+	ValidationData(ContainerType type) {
 		this.actualContainerType = type;
 		if(type instanceof ObjectType) {
 			readPropertyNames = new HashSet<String>();
-		} else if(type instanceof ArrayType) {
-			// nothing to do
-		} else {
-			throw new JsonSchemaException("Unexpected validation datatype: " + type.getClass().getSimpleName());
 		}
 	}
 	
@@ -32,33 +26,60 @@ public class ValidationData {
 		return actualContainerType.toString();
 	}
 	
-	ObjectType getNextPropertiesObjectType(JsonSchemaContext context) {
+	ObjectType getNextObjectType(JsonSchemaContext context) {
 		if(actualContainerType instanceof ObjectType) {
 			SchemaType nextType = ((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, JsonObject.class);
+			if(nextType == null) {
+				return ObjectType.EMTPY_OBJECT;
+			}
 			if(nextType instanceof ObjectType) {
 				return (ObjectType)nextType;
 			}
 			throw new JsonSchemaException("Unexpected "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE);
-		} 
-		throw new JsonSchemaException("Unexpected validation type '"+actualContainerType.getName()+"' for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE);
+		}
+		
+		
+		// actualContainerType is an ArrayType
+		SchemaType nextType = ((ArrayType)actualContainerType).getEntryType(context, ArrayType.class);
+		if(nextType == null) {
+			return ObjectType.EMTPY_OBJECT;
+		}
+		if(nextType instanceof ObjectType) {
+			return (ObjectType)nextType;
+		}
+
+		throw new JsonSchemaException("Unexpected "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE);
 	}
 
-	ArrayType validateBeginArray(JsonSchemaContext context) {
-		if(actualContainerType instanceof ArrayType) {
-			SchemaType nextType = ((ArrayType)actualContainerType).getEntryType(context, ArrayType.class);
+	ArrayType getNextArrayType(JsonSchemaContext context) {
+		if(actualContainerType instanceof ObjectType) {
+			SchemaType nextType = ((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, JsonArray.class);
+			if(nextType == null) {
+				return ArrayType.EMTPTY_ARRAY;
+			}
 			if(nextType instanceof ArrayType) {
 				return (ArrayType)nextType;
 			}
-			throw new JsonSchemaException("Unexpected "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE);
+			throw new JsonSchemaException("Unexpected "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE);
 		} 
-		throw new JsonSchemaException("Unexpected validation type "+actualContainerType.getName()+" for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE);
+		
+		// actualContainerType it an array
+		SchemaType nextType = ((ArrayType)actualContainerType).getEntryType(context, ArrayType.class);
+		if(nextType == null) {
+			return ArrayType.EMTPTY_ARRAY;
+		}
+		if(nextType instanceof ArrayType) {
+			return (ArrayType)nextType;
+		}
+		
+		throw new JsonSchemaException("Unexpected "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE);
 	}
 
-	protected void validateObjectFinal(JsonSchemaContext context) {
+	void validateObjectFinal(JsonSchemaContext context) {
 		ObjectType objectType = (ObjectType)actualContainerType;
 		for(String requiredProperty: objectType.getRequiredPropertyNames()) {
 			if(!readPropertyNames.contains(requiredProperty)) {
-				context.notifySchemaViolation("Required Property '" + context.getPath().concat(requiredProperty) + "' missing!");
+				context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Required Property '" + context.getPath().concat(requiredProperty) + "' missing!"));
 			}
 		}
 	}
@@ -69,7 +90,7 @@ public class ValidationData {
 	void addProperty(JsonSchemaContext context, String propertyName) {
 		nextPropertyName = propertyName;
 		if(readPropertyNames.contains(propertyName)) {
-			context.notifySchemaViolation("Property '"+context.getPath().concat(propertyName) +"' already defined!");
+			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Property '"+context.getPath().concat(propertyName) +"' already defined!"));
 		}
 		readPropertyNames.add(propertyName);
 	}
@@ -84,29 +105,32 @@ public class ValidationData {
 		} else if(actualContainerType instanceof ArrayType) {
 			((ArrayType)actualContainerType).validateEntryValue(context, value);
 		} else {
-			throw new JsonSchemaException("Unexpected schema type type at '"+context.getPath()+"'!");
+			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected schema type type at '"+context.getPath()+"'!"));
 		}
 	}
 	
-	SchemaType validateSimpleType(JsonSchemaContext context, JsonSimpleValue value) {
+	void validateSimpleType(JsonSchemaContext context, JsonSimpleValue value) {
 		Class<?> domTypeClass = value.getClass();
-		// TODO null allowed heisst nicht ANY...
-		if(isNullAllowed(context, domTypeClass)) {
-			return SchemaType.ANY;
-		}
 		
 		if(actualContainerType instanceof ObjectType) {
-			return ((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, domTypeClass);
+			((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, domTypeClass);
+// The nullable check is already done in getEntryType()!	
+//			if(propertyType != null) {
+//				if(!propertyType.isNullable() && value.isNull()) {
+//					context.notifySchemaViolation("Property value '"+context.getPath()+"' must not be " + SchemaConstants.NULL_TYPE + "!");
+//				}
+//			}
 		} else if(actualContainerType instanceof ArrayType) {
-			return ((ArrayType)actualContainerType).getEntryType(context, domTypeClass);
+			((ArrayType)actualContainerType).getEntryType(context, domTypeClass);
+// The nullable check is already done in getEntryType()!			
+//			if(entryType != null) {
+//				if(!entryType.isNullable() && value.isNull()) {
+//					context.notifySchemaViolation("Array value of '"+context.getPath()+"' must not be " + SchemaConstants.NULL_TYPE + "!");
+//				}
+//			}
 		} else {
-			throw new JsonSchemaException("Unexpected schema type type at '"+context.getPath()+"'!");
+			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected schema type type at '"+context.getPath()+"'!"));
 		}
 	}
-
-	private boolean isNullAllowed(JsonSchemaContext context, Class<?> domTypeClass) {
-		return actualContainerType.isNullable() && JsonNullValue.class.isAssignableFrom(domTypeClass);
-	}
-
 
 }

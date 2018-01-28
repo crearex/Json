@@ -62,10 +62,21 @@ public class TypeFactory {
 			return new SchemaType[] { type };
 		} else if (typeDefinition.isArray(SchemaConstants.TYPE_NAME)) {
 			JsonArray array = typeDefinition.getArray(SchemaConstants.TYPE_NAME);
-			SchemaType[] retArr = new SchemaType[array.size()];
+			int retArrLength = array.size();
+			boolean nullable = SchemaType.DEFAULT_NULLABLE;
+			if(array.contains(SchemaConstants.NULL_TYPE)) {
+				nullable = true;
+				retArrLength--;
+			}
+			SchemaType[] retArr = new SchemaType[retArrLength];
 			int index = 0;
 			for (JsonElement elem : array) {
-				SchemaType type = createType(elem.toString(), typeDefinition);
+				String typeName = elem.toString();
+				if(typeName.equals(SchemaConstants.NULL_TYPE)) {
+					continue;
+				}
+				SchemaType type = createType(typeName, typeDefinition);
+				type.setNullable(nullable);
 				retArr[index] = type;
 				index++;
 			}

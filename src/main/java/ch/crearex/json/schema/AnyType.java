@@ -12,7 +12,8 @@ public class AnyType implements SchemaType {
 		return true;
 	}
 
-	AnyType setNullable(boolean nullable) {
+	@Override
+	public AnyType setNullable(boolean nullable) {
 		this.nullable = nullable;
 		return this;
 	}

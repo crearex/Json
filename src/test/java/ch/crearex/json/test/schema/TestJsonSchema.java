@@ -22,6 +22,7 @@ import ch.crearex.json.dom.JsonDomBuilder;
 import ch.crearex.json.dom.SchemaValidationStatus;
 import ch.crearex.json.impl.CrearexJson;
 import ch.crearex.json.impl.CrearexJsonParserFactory;
+import ch.crearex.json.schema.JsonSchemaValidationException;
 
 public class TestJsonSchema {
 	private final JsonParserFactory parserFactory = new CrearexJsonParserFactory();
@@ -31,8 +32,8 @@ public class TestJsonSchema {
 	
 	private JsonSchemaCallback schemaCallback = new JsonSchemaCallback() {
 		@Override
-		public void schemaViolation(JsonPath path, String message) {
-			result = "[" + path + "] " + message + "\r\n";
+		public void schemaViolation(JsonSchemaValidationException violation) {
+			result = "[" + violation.getPath() + "] " + violation.getMessage() + "\r\n";
 		}
 	};
 	
@@ -50,8 +51,27 @@ public class TestJsonSchema {
 	}
 	
 	@Test
-	public void testIgnoreUnknownProperty() throws Exception {
+	public void testIgnoreUnknownNumberProperty() throws Exception {
+		// height is undefined
 		String text = "{\"name\":\"Felix\", \"height\":185, \"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+	}
+	
+	@Test
+	public void testIgnoreUnknownObjectProperty() throws Exception {
+		// body is undefined
+		String text = "{\"name\":\"Felix\", \"body\":{\"height\":185}, \"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+	}
+	
+	@Test
+	public void testIgnoreUnknownArrayProperty() throws Exception {
+		// body is undefined
+		String text = "{\"name\":\"Felix\", \"numbers\":[1,2,3], \"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
 		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
 		parser.parse(text);
 		assertThat(result.isEmpty(), is(true));

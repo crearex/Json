@@ -15,7 +15,7 @@ public class JsonSchemaContextImpl extends JsonContextAdapter implements JsonSch
 	private final URL schemaOriginUrl;
 	
 	// Lazy creation
-	private ArrayList<String> validationErrorMessages = null;
+	private ArrayList<JsonSchemaValidationException> validationExceptions = null;
 	
 	public JsonSchemaContextImpl(JsonSchemaCallback schemaCallback, URL jsonSchemaOriginUrl) {
 		this(null, schemaCallback, jsonSchemaOriginUrl);
@@ -26,10 +26,6 @@ public class JsonSchemaContextImpl extends JsonContextAdapter implements JsonSch
 		this.schemaCallback = schemaCallback;
 		this.schemaOriginUrl = jsonSchemaOriginUrl;
 	}
-
-//	public JsonSchemaCallback getSchemaCallback() {
-//		return schemaCallback;
-//	}
 
 	@Override
 	public boolean hasSchemaOriginUrl() {
@@ -42,22 +38,22 @@ public class JsonSchemaContextImpl extends JsonContextAdapter implements JsonSch
 	}
 
 	@Override
-	public void notifySchemaViolation(String errorMessage) {
-		if(validationErrorMessages == null) {
-			validationErrorMessages = new ArrayList<String>();
+	public void notifySchemaViolation(JsonSchemaValidationException violation) {
+		if(validationExceptions == null) {
+			validationExceptions = new ArrayList<JsonSchemaValidationException>();
 		}
-		validationErrorMessages.add(errorMessage);
-		schemaCallback.schemaViolation(getPath(), errorMessage);
+		validationExceptions.add(violation);
+		schemaCallback.schemaViolation(violation);
 	}
 	
 	@Override
 	public boolean hasValidationErrors() {
-		return validationErrorMessages != null;
+		return validationExceptions != null;
 	}
 	
 	@Override
-	public List<String> getValidationErrorMessages() {
-		return Collections.unmodifiableList(validationErrorMessages);
+	public List<JsonSchemaValidationException> getValidationExceptions() {
+		return Collections.unmodifiableList(validationExceptions);
 	}
 
 }

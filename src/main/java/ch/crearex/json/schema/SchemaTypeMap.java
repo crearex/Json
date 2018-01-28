@@ -7,7 +7,8 @@ public class SchemaTypeMap {
 	
 	public void registerSchemaDefinition(String fullQualifiedSchemaId, SchemaType type) {
 		if(schemaTypes.containsKey(fullQualifiedSchemaId)) {
-			throw new JsonSchemaException("Schema ID '"+fullQualifiedSchemaId+"' already defined!");
+			return;
+			// throw new JsonSchemaException("Schema ID '"+fullQualifiedSchemaId+"' already defined!");
 		}
 		schemaTypes.put(fullQualifiedSchemaId, type);
 	}

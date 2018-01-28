@@ -19,7 +19,7 @@ public class JsonDocument {
 
 	private JsonContainer root = null;
 	private SchemaValidationStatus validationStatus = SchemaValidationStatus.NOT_VALIDATED;
-	private List<String> validationErrorMessages = null;
+	private List<JsonSchemaValidationException> validationErrors = null;
 	
 	public static JsonDocument createEmptyDocument() {
 		return new JsonDocument();
@@ -126,7 +126,7 @@ public class JsonDocument {
 		
 		JsonDomContext context = new JsonDomContext(schema).setSchemaCallback(new JsonSchemaCallback() {
 			@Override
-			public void schemaViolation(JsonPath path, String errorMessage) {
+			public void schemaViolation(JsonSchemaValidationException violation) {
 				// do supress the default exception
 			}
 		});
@@ -134,14 +134,14 @@ public class JsonDocument {
 			traverse(schema, context);
 			JsonSchemaContext schemaContext = context.getSchemaStack().getSchemaContext();
 			if(schemaContext.hasValidationErrors()) {
-				setValidationResult(SchemaValidationStatus.INVALID, schemaContext.getValidationErrorMessages());
+				setValidationResult(SchemaValidationStatus.INVALID, schemaContext.getValidationExceptions());
 			} else {
 				setValidationResult(SchemaValidationStatus.VALID, null);
 			}		
 			return validationStatus;
 		} catch(JsonSchemaValidationException e) {
 			JsonSchemaContext schemaContext = context.getSchemaStack().getSchemaContext();
-			setValidationResult(SchemaValidationStatus.INVALID, schemaContext.getValidationErrorMessages());
+			setValidationResult(SchemaValidationStatus.INVALID, schemaContext.getValidationExceptions());
 			throw e;
 		} catch(JsonSchemaException e) {
 			setValidationResult(SchemaValidationStatus.INVALID, null);
@@ -152,20 +152,20 @@ public class JsonDocument {
 		}
 	}
 	
-	void setValidationResult(SchemaValidationStatus validationStatus, List<String> validationErrorMessages) {
+	void setValidationResult(SchemaValidationStatus validationStatus, List<JsonSchemaValidationException> validationErrorMessages) {
 		this.validationStatus = validationStatus;
-		this.validationErrorMessages = validationErrorMessages;
+		this.validationErrors = validationErrorMessages;
 	}
 	
 	public SchemaValidationStatus getValidationStatus() {
 		return validationStatus;
 	}
 	
-	public List<String> getValidationErrorMessages() {
-		return validationErrorMessages;
+	public List<JsonSchemaValidationException> getValidationErrors() {
+		return validationErrors;
 	}
 	
 	public boolean hasValidationErrorMessages() {
-		return validationErrorMessages != null;
+		return validationErrors != null;
 	}
 }

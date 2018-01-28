@@ -10,7 +10,7 @@ import ch.crearex.json.dom.JsonDocument;
 
 public class JsonSchemaImpl implements JsonSchema {
 
-	private final SchemaType schemaRootType;
+	private final ContainerType schemaRootType;
 	private final URL jsonSchemaOriginUrl;
 	
 	public JsonSchemaImpl(JsonDocument schemaDoc, URL jsonSchemaOriginUrl, SchemaTypeMap schemaTypeMap) {
