@@ -8,6 +8,7 @@ import java.util.Set;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.impl.JsonNullValue;
 
 public class ObjectType extends ContainerType {
 	
@@ -99,7 +100,7 @@ public class ObjectType extends ContainerType {
 	 */
 	SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
 		SchemaType[] possibleTypes = getPropertyTypes(propertyName);
-		if(possibleTypes == null) {
+		if((possibleTypes == null) || (possibleTypes.length == 0)) {
 			// there is no schema definition for this property = unknown property
 			return null;
 		}
@@ -107,6 +108,12 @@ public class ObjectType extends ContainerType {
 			if(type.matchesDomType(propertyType)) {
 				return type;
 			}	
+		}
+		
+		if(JsonNullValue.class.isAssignableFrom(propertyType)) {
+			if(possibleTypes[0].isNullable()) {
+				return possibleTypes[0];
+			}
 		}
 		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes)));
 		return null;

@@ -2,6 +2,7 @@ package ch.crearex.json.schema;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonArray;
+import ch.crearex.json.impl.JsonNullValue;
 
 public class ArrayType extends ContainerType {
 
@@ -70,7 +71,7 @@ public class ArrayType extends ContainerType {
 	 * Returns the type of the array entry or null if not found!
 	 */
 	SchemaType getEntryType(JsonSchemaContext context, Class<?> entryType) {
-		if(possibleItemTypes == null) {
+		if((possibleItemTypes == null) || (possibleItemTypes.length == 0)) {
 			return null;
 		}
 		for(SchemaType type: possibleItemTypes) {
@@ -78,6 +79,13 @@ public class ArrayType extends ContainerType {
 				return type;
 			}	
 		}
+		
+		if(JsonNullValue.class.isAssignableFrom(entryType)) {
+			if(possibleItemTypes[0].isNullable()) {
+				return possibleItemTypes[0];
+			}
+		}
+		
 		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type in '" + 
 				context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleItemTypes)));
 		return null;

@@ -51,6 +51,38 @@ public class TestJsonSchema {
 	}
 	
 	@Test
+	public void testSimpleNull() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"weight\":80,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+		
+		text = "{\"name\":\"Felix\",\"age\":25,\"weight\":null,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+		
+		text = "{\"name\":\"Felix\",\"age\":25,\"weight\":\"80\",\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(false));
+	}
+	
+	@Test
+	public void testSimpleNull2() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"weight\":null,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+	}
+	
+	@Test
+	public void testSimpleNull3() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"weight\":\"80\",\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(false));
+	}
+	
+	@Test
 	public void testIgnoreUnknownNumberProperty() throws Exception {
 		// height is undefined
 		String text = "{\"name\":\"Felix\", \"height\":185, \"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
