@@ -57,10 +57,10 @@ public class ObjectTypeBuilder implements TypeBuilder {
 	private void defineProperty(ObjectType type, String propertyName, JsonElement value) {
 		if(value instanceof JsonObject) {
 			JsonObject valueDefinition = (JsonObject)value;
-			SchemaType[] possibleValueTypes = context.getTypeFactory().createPossibleTypes(valueDefinition);
+			SchemaType[] possibleValueTypes = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
 			type.addProperty(propertyName, possibleValueTypes);
 		} else {
-			throw new JsonSchemaException("Illegal type definition at '" + value.getPath() + "'! Expected {\"type\": \"typename\"} or internal reference.");
+			throw new JsonSchemaException("Illegal JSON Schema type definition at '" + value.getPath() + "'! Expected {\"type\": \"typename\"} or internal reference.");
 		}
 	}
 

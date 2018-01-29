@@ -6,7 +6,10 @@ import ch.crearex.json.impl.JsonNullValue;
 
 public class ArrayType extends ContainerType {
 
-	static final ArrayType EMTPTY_ARRAY = new ArrayType("", "");
+	static final ArrayType EMTPTY_ARRAY = new ArrayType("", "") {
+		void validateEntryValue(JsonSchemaContext context, JsonSimpleValue value) {
+		}
+	};
 	private static final SchemaType[] EMPTY_TYPE_LIST = new SchemaType[0];
 
 	private SchemaType[] possibleItemTypes = null;

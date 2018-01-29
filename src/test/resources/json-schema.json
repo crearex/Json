@@ -8,6 +8,12 @@
 		"name": { "type": "string" },
 		"age": { "type": "number" },
 		"weight": {"type": ["number", "null"]},
+		"car": {
+			"type": ["object", "null"],
+			"properties": {
+				"color": { "enum": ["red", "green", "blue", null] }
+			}
+		},
 		"address": {
 			"type": "object",
 			"properties": {

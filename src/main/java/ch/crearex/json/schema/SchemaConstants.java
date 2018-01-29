@@ -5,6 +5,7 @@ public interface SchemaConstants {
 	String SCHEMA_ID = "$id";
 	String INTERNAL_REFERENCE = "$ref";
 	String TYPE_NAME = "type";
+	String ENUM_NAME = "enum";
 	String DEFINITIONS = "definitions";
 	
 	String TITLE_NAME = "title";

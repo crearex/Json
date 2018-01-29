@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import ch.crearex.json.dom.JsonObject;
+
 class BuilderContext {
 
 	private final TypeFactory typeFactory;
+	private final TypeFactory enumFactory;
 	private final URL jsonSchemaOriginUrl;
 	private final SchemaTypeMap schemaTypeMap;
 	private String schemaVersion;
@@ -20,7 +23,8 @@ class BuilderContext {
 	BuilderContext(URL jsonSchemaOriginUrl, SchemaTypeMap schemaTypeMap) {
 		this.jsonSchemaOriginUrl = jsonSchemaOriginUrl;
 		this.schemaTypeMap = schemaTypeMap;
-		this.typeFactory = new TypeFactory(this);
+		this.typeFactory = new SchemaTypeFactory(this);
+		this.enumFactory = new EnumTypeFactory(this);
 	}
 	
 	SchemaTypeMap getSchemaTypeMap() {
@@ -31,8 +35,14 @@ class BuilderContext {
 		return jsonSchemaOriginUrl;
 	}
 	
-	public TypeFactory getTypeFactory() {
-		return typeFactory;
+	public TypeFactory getTypeFactory(JsonObject schemaDefinition) {
+		if(schemaDefinition.hasProperty(SchemaConstants.TYPE_NAME) ||
+		   schemaDefinition.hasProperty(SchemaConstants.INTERNAL_REFERENCE)) {
+			return typeFactory;
+		} else if(schemaDefinition.hasProperty(SchemaConstants.ENUM_NAME)) {
+			return enumFactory;
+		}
+		throw new JsonSchemaException("Create type factory failed! Missing type definition: type, enum.");
 	}
 
 	public void setSchemaVersion(String schemaVersion) {

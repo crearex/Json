@@ -12,7 +12,10 @@ import ch.crearex.json.impl.JsonNullValue;
 
 public class ObjectType extends ContainerType {
 	
-	static final ObjectType EMTPY_OBJECT = new ObjectType("", "", null);
+	static final ObjectType EMTPY_OBJECT = new ObjectType("", "", null) {
+		void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+		}
+	};
 	private HashMap<String, SchemaType[]> properties = new HashMap<String, SchemaType[]>();
 	private HashSet<String> requiredPropertyNames = new HashSet<String>();
 	

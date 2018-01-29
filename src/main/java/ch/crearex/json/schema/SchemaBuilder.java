@@ -16,7 +16,7 @@ class SchemaBuilder {
 		context.setSchemaVersion(root.getString(SchemaConstants.SCHEMA_URI_NAME));
 		context.setRootId(root.getString(SchemaConstants.SCHEMA_ID));
 		String typeName = root.getString(SchemaConstants.TYPE_NAME);
-		SchemaType[] type = context.getTypeFactory().createPossibleTypes(root);
+		SchemaType[] type = context.getTypeFactory(root).createPossibleTypes(root);
 		switch(typeName) {
 			case SchemaConstants.OBJECT_TYPE: {
 				ObjectType rootType = (ObjectType)type[0];
