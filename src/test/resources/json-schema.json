@@ -11,7 +11,8 @@
 		"car": {
 			"type": ["object", "null"],
 			"properties": {
-				"color": { "enum": ["red", "green", "blue", null] }
+				"color": { "enum": ["red", "green", "blue", null] },
+				"doors": { "const": 5}
 			}
 		},
 		"address": {

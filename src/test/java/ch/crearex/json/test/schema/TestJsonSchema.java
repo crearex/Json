@@ -91,7 +91,7 @@ public class TestJsonSchema {
 	}
 	
 	@Test
-	public void testObjectNull2() throws Exception {
+	public void testEnum() throws Exception {
 		String text = "{\"name\":\"Felix\",\"age\":25,\"car\":{\"color\":\"blue\"},\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
 		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
 		parser.parse(text);
@@ -99,7 +99,7 @@ public class TestJsonSchema {
 	}
 	
 	@Test
-	public void testObjectNull3() throws Exception {
+	public void testEnum2() throws Exception {
 		String text = "{\"name\":\"Felix\",\"age\":25,\"car\":{\"color\":123},\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
 		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
 		parser.parse(text);
@@ -107,13 +107,36 @@ public class TestJsonSchema {
 	}
 	
 	@Test
-	public void testObjectNull4() throws Exception {
+	public void testEnum3() throws Exception {
 		String text = "{\"name\":\"Felix\",\"age\":25,\"car\":{\"color\":null},\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
 		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
 		parser.parse(text);
 		assertThat(result.isEmpty(), is(true));
 	}
 	
+	@Test
+	public void testConstOk() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"car\":{\"color\":\"blue\", \"doors\":5},\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+	}
+	
+	@Test
+	public void testConstWrongValue() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"car\":{\"color\":\"blue\", \"doors\":3},\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(false));
+	}
+	
+	@Test
+	public void testConstWrongType() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"car\":{\"color\":\"blue\", \"doors\":\"5\"},\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(false));
+	}
 	
 	@Test
 	public void testIgnoreUnknownNumberProperty() throws Exception {

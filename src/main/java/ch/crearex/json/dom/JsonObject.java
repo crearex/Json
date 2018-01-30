@@ -12,6 +12,7 @@ import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonPath;
 import ch.crearex.json.JsonPathEntry;
 import ch.crearex.json.JsonUtil;
+import ch.crearex.json.schema.SchemaConstants;
 import ch.crearex.json.JsonSimpleValue;
 
 public class JsonObject extends JsonContainer implements Iterable<Map.Entry<String, JsonElement>>{
@@ -423,6 +424,11 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 
 	public JsonElement getProperty(String propertyName) {
 		return properties.get(propertyName);
+	}
+
+	@Override
+	public String getTypeName() {
+		return SchemaConstants.OBJECT_TYPE;
 	}
 
 	

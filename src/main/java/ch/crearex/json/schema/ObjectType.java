@@ -118,7 +118,7 @@ public class ObjectType extends ContainerType {
 				return possibleTypes[0];
 			}
 		}
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes)));
+		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes) + "."));
 		return null;
 	}
 

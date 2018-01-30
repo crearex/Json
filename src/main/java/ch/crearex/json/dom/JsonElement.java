@@ -11,4 +11,5 @@ import ch.crearex.json.JsonPath;
 public interface JsonElement {
 	void traverse(JsonDomContext context, JsonCallback callback);
 	JsonPath getPath();
+	String getTypeName();
 }

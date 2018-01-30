@@ -6,6 +6,7 @@ public interface SchemaConstants {
 	String INTERNAL_REFERENCE = "$ref";
 	String TYPE_NAME = "type";
 	String ENUM_NAME = "enum";
+	String CONST_NAME = "const";
 	String DEFINITIONS = "definitions";
 	
 	String TITLE_NAME = "title";
@@ -25,6 +26,7 @@ public interface SchemaConstants {
 	char HASH = '#';
 	char PATH_SEPARATOR = '/';
 	String INTERNAL_ID_PREFIX = "" + HASH + PATH_SEPARATOR;
+	
 	
 	
 	

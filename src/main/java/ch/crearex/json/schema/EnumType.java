@@ -3,7 +3,6 @@ package ch.crearex.json.schema;
 import java.util.HashSet;
 
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.dom.JsonElement;
 
 public class EnumType extends ValueType {
 
@@ -59,8 +58,22 @@ public class EnumType extends ValueType {
 			}
 		}
 		if(!match) {
-			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), ""));
+			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Value at '"+context.getPath()+"' = '"+value+"' does not match enum ["+getEnumValuesAsList()+"]"));
 		}
+	}
+
+	private String getEnumValuesAsList() {
+		StringBuilder enumList = new StringBuilder();
+		boolean first = true;
+		for(JsonSimpleValue enumValue: values) {
+			if(first) {
+				first = false;
+			} else {
+				enumList.append(", ");
+			}
+			enumList.append(enumValue.toString());
+		}
+		return enumList.toString();
 	}
 
 }

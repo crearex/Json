@@ -6,11 +6,8 @@ import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
 
 class EnumTypeFactory implements TypeFactory {
-
-	private final BuilderContext context;
 	
 	EnumTypeFactory(BuilderContext context) {
-		this.context = context;
 	}
 
 	@Override

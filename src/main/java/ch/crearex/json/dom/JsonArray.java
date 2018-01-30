@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.SchemaConstants;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
@@ -342,6 +343,11 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public String getTypeName() {
+		return SchemaConstants.ARRAY_TYPE;
 	}
 
 }
