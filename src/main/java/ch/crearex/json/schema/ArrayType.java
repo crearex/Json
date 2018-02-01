@@ -72,30 +72,104 @@ public class ArrayType extends ContainerType {
 
 	/**
 	 * Returns the type of the array entry or null if not found!
+	 * @param nextArrayIndex 
 	 */
-	SchemaType getEntryType(JsonSchemaContext context, Class<?> entryType) {
+	SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
 		if((possibleItemTypes == null) || (possibleItemTypes.length == 0)) {
 			return null;
 		}
-		for(SchemaType type: possibleItemTypes) {
+		
+		if(possibleItemTypes.length == 1) {
+			SchemaType type = possibleItemTypes[0];
 			if(type.matchesDomType(entryType)) {
 				return type;
-			}	
-		}
-		
-		if(JsonNullValue.class.isAssignableFrom(entryType)) {
-			if(possibleItemTypes[0].isNullable()) {
-				return possibleItemTypes[0];
+			}
+		} else {
+			if(possibleItemTypes.length > nextArrayIndex) {
+				if(possibleItemTypes.length >= nextArrayIndex) {
+					SchemaType type = possibleItemTypes[nextArrayIndex];
+					if(type.matchesDomType(entryType)) {
+						return type;
+					}
+				}
 			}
 		}
 		
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type in '" + 
-				context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleItemTypes)));
+		
+		String expectedTypeName = possibleItemTypes[0].getName();
+		if(possibleItemTypes.length > 1) {
+			if(possibleItemTypes.length < nextArrayIndex) {
+				expectedTypeName = possibleItemTypes[nextArrayIndex].getName();
+			} else {
+				expectedTypeName = "No type for index " + nextArrayIndex + " defined";
+			}
+		}
+		
+		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Invalid type in '" + 
+				context.getPath() + "'! Expected: [" + expectedTypeName + "]."));
 		return null;
 	}
 
-	void validateEntryValue(JsonSchemaContext context, JsonSimpleValue value) {
-		// TODO Auto-generated method stub
+	void validateEntryValue(JsonSchemaContext context, int nextArrayIndex, JsonSimpleValue value) {
+		if(possibleItemTypes == null) {
+			return;
+		}
+		
+		int index = 0;
+		boolean typeFound = false;
+		
+		if(possibleItemTypes.length == 1) {
+			SchemaType type = possibleItemTypes[0];
+			if(type.isNullable() && value.isNull()) {
+				return;
+			}
+			if(type.matchesDomType(value.getClass())) {
+				typeFound = true;
+				if(type instanceof ValueType) {
+					((ValueType)type).validate(context, ""+index , value);
+					return;
+				}
+			}
+		} else if(possibleItemTypes.length > nextArrayIndex) {
+			SchemaType type = possibleItemTypes[nextArrayIndex];
+			if(type.isNullable() && value.isNull()) {
+				return;
+			}
+			if(type.matchesDomType(value.getClass())) {
+				typeFound = true;
+				if(type instanceof ValueType) {
+					((ValueType)type).validate(context, ""+index , value);
+					return;
+				}
+			}
+		}
+		
+// Type errors are reported by the type check in getEntryType()		
+//		if(!typeFound) {
+//			String expectedTypeName = possibleItemTypes[0].getName();
+//			if(possibleItemTypes.length > 1) {
+//				if(possibleItemTypes.length < nextArrayIndex) {
+//					expectedTypeName = possibleItemTypes[nextArrayIndex].getName();
+//				} else {
+//					expectedTypeName = "No type for index " + nextArrayIndex + " defined";
+//				}
+//			}
+//			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal array type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: [" + getPossibleTypeList() + "]."));
+//		}
 
+	}
+
+	private String getPossibleTypeList() {
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for(SchemaType type: possibleItemTypes) {
+			if(first) {
+				first = false;
+			} else {
+				builder.append(", ");
+			}
+			builder.append(type.getName());
+		}
+		return builder.toString();
 	}
 }

@@ -4,6 +4,7 @@ import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.schema.JsonSchemaContext;
 import ch.crearex.json.schema.JsonSchemaException;
 import ch.crearex.json.schema.JsonSchemaValidationException;
+import ch.crearex.json.schema.SchemaConstants;
 import ch.crearex.json.schema.SchemaStack;
 
 import java.util.List;
@@ -67,14 +68,14 @@ public class JsonDocument {
 		if(root instanceof JsonObject) {
 			return (JsonObject)root;
 		}
-		throw new JsonDomAccessException("Illegal Type: The JSON Root Object is a " + root.getClass().getSimpleName() + " (Expected: "+JsonObject.class.getSimpleName()+")");
+		throw new JsonDomAccessException("Illegal Type: The JSON Root Object is a " + root.getTypeName() + " (Expected: "+SchemaConstants.OBJECT_TYPE+")");
 	}
 
 	public JsonArray getRootArray() {
 		if(root instanceof JsonArray) {
 			return (JsonArray)root;
 		}
-		throw new JsonDomAccessException("Illegal Type: The JSON Root Object is a " + root.getClass().getSimpleName() + " (Expected: "+JsonArray.class.getSimpleName()+")");
+		throw new JsonDomAccessException("Illegal Type: The JSON Root Object is a " + root.getTypeName() + " (Expected: "+SchemaConstants.ARRAY_TYPE+")");
 	}
 	
 	public JsonDocument traverse(JsonCallback callback) {

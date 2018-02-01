@@ -12,6 +12,7 @@ class BuilderContext {
 	private final TypeFactory typeFactory;
 	private final TypeFactory enumFactory;
 	private final TypeFactory constFactory;
+	private final TypeFactory anyTypeFactory;
 	private final URL jsonSchemaOriginUrl;
 	private final SchemaTypeMap schemaTypeMap;
 	private String schemaVersion;
@@ -27,6 +28,7 @@ class BuilderContext {
 		this.typeFactory = new SchemaTypeFactory(this);
 		this.enumFactory = new EnumTypeFactory(this);
 		this.constFactory = new ConstTypeFactory(this);
+		this.anyTypeFactory = new AnyTypeFactory(this);
 	}
 	
 	SchemaTypeMap getSchemaTypeMap() {
@@ -45,8 +47,10 @@ class BuilderContext {
 			return enumFactory;
 		} else if(schemaDefinition.hasProperty(SchemaConstants.CONST_NAME)) {
 			return constFactory;
+		} else {
+			return anyTypeFactory;
 		}
-		throw new JsonSchemaException("Create type factory failed! Missing type definition: type, enum, const.");
+		// throw new JsonSchemaException("Create type factory failed! Missing type definition: type, enum, const.");
 	}
 
 	public void setSchemaVersion(String schemaVersion) {

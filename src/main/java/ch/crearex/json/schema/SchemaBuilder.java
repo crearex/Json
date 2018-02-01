@@ -13,9 +13,9 @@ class SchemaBuilder {
 
 	ContainerType build(JsonDocument schemaDoc) {
 		JsonObject root = schemaDoc.getRootObject();
-		context.setSchemaVersion(root.getString(SchemaConstants.SCHEMA_URI_NAME));
-		context.setRootId(root.getString(SchemaConstants.SCHEMA_ID));
-		String typeName = root.getString(SchemaConstants.TYPE_NAME);
+		context.setSchemaVersion(root.getString(SchemaConstants.SCHEMA_URI_NAME, ""));
+		context.setRootId(root.getString(SchemaConstants.SCHEMA_ID, ""));
+		String typeName = root.getString(SchemaConstants.TYPE_NAME, SchemaConstants.ANY_TYPE);
 		SchemaType[] type = context.getTypeFactory(root).createPossibleTypes(root);
 		switch(typeName) {
 			case SchemaConstants.OBJECT_TYPE: {
@@ -30,7 +30,7 @@ class SchemaBuilder {
 			return (ContainerType)type[0];
 		}
 		
-		throw new JsonSchemaException("Illegal JSON Schema root type '"+type[0].getName()+"'. Expected: " + SchemaConstants.OBJECT_TYPE);
+		throw new JsonSchemaException("Illegal JSON Schema root type '"+type[0].getName()+"'. Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 	}
 
 	private void checkSchemaRootId(ObjectType rootType) {

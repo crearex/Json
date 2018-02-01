@@ -118,7 +118,7 @@ public class ObjectType extends ContainerType {
 				return possibleTypes[0];
 			}
 		}
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type for '" + context.getPath() + "'! Expected: " + SchemaUtil.toStringSummary(possibleTypes) + "."));
+		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type for '" + context.getPath() + "'! Expected: [" + SchemaUtil.toStringSummary(possibleTypes) + "]."));
 		return null;
 	}
 
@@ -135,8 +135,7 @@ public class ObjectType extends ContainerType {
 			((ValueType)type).validate(context, propertyName, value);
 			return;
 		}
-		
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal property type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: " + type.getName()));
+		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal property type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: " + type.getName()+ "."));
 	}
 
 	private SchemaType resolveType(String propertyName, JsonSimpleValue value) {

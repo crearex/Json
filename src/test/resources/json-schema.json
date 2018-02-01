@@ -22,6 +22,14 @@
 				"code": { "type": "number" }
 			}
 		},
+		"phone": {
+			"type": "array",
+			"items": { "type": "number" }
+		},
+		"mountain": {
+			"type": "array",
+			"items": [{ "type": "string"},{"type": "number"}]
+		},
 		"hobby": {
 			"type": "object",
 			"properties": {

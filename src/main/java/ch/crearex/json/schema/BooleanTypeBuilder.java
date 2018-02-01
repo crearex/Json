@@ -11,7 +11,7 @@ public class BooleanTypeBuilder implements TypeBuilder {
 	}
 
 	@Override
-	public SchemaType build(JsonObject definition) {
+	public BooleanType build(JsonObject definition) {
 		BooleanType type = new BooleanType(
 				definition.getString(SchemaConstants.TITLE_NAME, ""),
 				definition.getString(SchemaConstants.DESCRIPTION_NAME, ""));

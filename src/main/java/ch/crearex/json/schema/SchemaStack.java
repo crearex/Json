@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.LinkedList;
 
 import ch.crearex.json.JsonContext;
+import ch.crearex.json.JsonContextBase;
 import ch.crearex.json.JsonSchemaCallback;
 import ch.crearex.json.JsonSimpleValue;
 
@@ -29,7 +30,7 @@ public class SchemaStack {
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
-			ObjectType nextType = validatonData.getNextObjectType(schemaContext);
+			ContainerType nextType = validatonData.getNextObjectType(schemaContext);
 			stack.addFirst(new ValidationData(nextType));
 		} catch(JsonSchemaException e) {
 			throw e;
@@ -47,6 +48,7 @@ public class SchemaStack {
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
+			validatonData.setNextArrayIndex(0);
 			ContainerType nextType = validatonData.getNextArrayType(schemaContext);
 			stack.addFirst(new ValidationData(nextType));
 		} catch(JsonSchemaException e) {
@@ -90,20 +92,22 @@ public class SchemaStack {
 		} catch(JsonSchemaException e) {
 			throw e;
 		} catch(Exception e) {
-			throw new JsonSchemaException("Add property '"+context.getPath().concat(propertyName)+"' to validation data failed: " + e.getMessage(), e);
+			throw new JsonSchemaException("Add property '"+context.getPath()+"' to validation data failed: " + e.getMessage(), e);
 		}
 	}
 
 	void validateSimpleValue(JsonContext context, JsonSimpleValue value) {
 		schemaContext.setAdaptedContext(context);
+		ValidationData validationData = stack.getFirst();
 		try {
-			ValidationData validationData = stack.getFirst();
 			validationData.validateSimpleType(schemaContext, value);
 			validationData.validateSimpleValue(schemaContext, value);
 		} catch(JsonSchemaException e) {
 			throw e;
 		} catch(Exception e) {
 			throw new JsonSchemaException("Validate '"+context.getPath()+"' failed: " + e.getMessage(), e);
+		} finally {
+			validationData.incArrayIndex();
 		}
 	}
 

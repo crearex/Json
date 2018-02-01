@@ -11,6 +11,11 @@ public class JsonContextAdapter implements JsonContext {
 	
 	private JsonContext adaptedContext;
 	
+	@Override
+	public String toString() {
+		return adaptedContext.toString();
+	}
+	
 	public JsonContextAdapter(JsonContext adaptedContext) {
 		this.adaptedContext = adaptedContext;
 	}

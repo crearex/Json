@@ -43,6 +43,14 @@ public class TestJsonSchema {
 	}
 	
 	@Test
+	public void testEmptySchema() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		JsonParser parser = parserFactory.createJsonParser(domBuilder, "{}", schemaCallback);
+		parser.parse(text);
+		assertThat(result.isEmpty(), is(true));
+	}
+	
+	@Test
 	public void testSimple() throws Exception {
 		String text = "{\"name\":\"Felix\",\"age\":25,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
 		JsonParser parser = parserFactory.createJsonParser(domBuilder, TestUtil.readResource("/json-schema.json"), schemaCallback);
@@ -219,6 +227,42 @@ public class TestJsonSchema {
 	@Test 
 	public void testJsonDocumentValidationInvalid() throws Exception {
 		String text = "{\"name\":\"Felix\",\"age\":\"25\",\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/json-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.INVALID));			
+	}
+	
+	@Test 
+	public void testJsonArraySingleTypeOk() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"phone\":[123, 456],\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/json-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));			
+	}
+	
+	@Test 
+	public void testJsonArraySingleTypeFailure() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"phone\":[123, \"456\"],\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/json-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.INVALID));
+	}
+	
+	@Test 
+	public void testJsonArrayMultiTypeOk() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"mountain\":[\"Glärnisch\", 456],\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/json-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));			
+	}
+	
+	@Test 
+	public void testJsonArrayMultiTypeFailure() throws Exception {
+		String text = "{\"name\":\"Felix\",\"age\":25,\"mountain\":[\"Glärnisch\", \"456\"],\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
 		Json json = new CrearexJson();
 		JsonDocument doc = json.parse(text);
 		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/json-schema.json"));

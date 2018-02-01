@@ -1,10 +1,11 @@
 package ch.crearex.json.schema;
 
-public class AnyType implements SchemaType {
+public class AnyType extends ContainerType implements SchemaType {
 	
 	private boolean nullable = SchemaType.DEFAULT_NULLABLE;
 	
-	protected AnyType() {	
+	protected AnyType() {
+		super("","");
 	}
 	
 	@Override
@@ -26,6 +27,10 @@ public class AnyType implements SchemaType {
 	@Override
 	public String getName() {
 		return SchemaConstants.ANY_TYPE;
+	}
+
+	@Override
+	public void visit(ContainerVisitor visitor) {
 	}
 	
 }

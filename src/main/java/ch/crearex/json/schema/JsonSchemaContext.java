@@ -10,9 +10,7 @@ public interface JsonSchemaContext extends JsonContext {
 	boolean hasSchemaOriginUrl();
 	URL getSchemaOriginUrl();
 	void setAdaptedContext(JsonContext context);
-	
-	// TODO Exception statt String
-	void notifySchemaViolation(JsonSchemaValidationException violation);
+		void notifySchemaViolation(JsonSchemaValidationException violation);
 	boolean hasValidationErrors();
 	List<JsonSchemaValidationException> getValidationExceptions();
 }

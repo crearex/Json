@@ -8,7 +8,7 @@ public class AnyBuilder implements TypeBuilder {
 	}
 
 	@Override
-	public SchemaType build(JsonObject objectDefinition) {
+	public AnyType build(JsonObject objectDefinition) {
 		return SchemaType.ANY_NULLABLE;
 	}
 
