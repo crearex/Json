@@ -369,12 +369,12 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 		return value.isNumber();
 	}
 	
-	public boolean isIntegral(String name) {
+	public boolean isFloatingpoint(String name) {
 		JsonSimpleValue value = getValue(name);
 		if(value == null) {
 			return false;
 		}
-		return value.isIntegral();
+		return value.isFloatingpoint();
 	}
 
 	public boolean isString(String name) {

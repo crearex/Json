@@ -13,7 +13,7 @@ public interface JsonSimpleValue {
 	boolean isBoolean();
 	boolean isNumber();
 	boolean isString();
-	boolean isIntegral();
+	boolean isFloatingpoint();
 	
 	/**
 	 * Returns the String representation of the JSON value

@@ -1,10 +1,16 @@
 package ch.crearex.json.schema;
 
+import java.util.LinkedList;
+
+import javax.swing.SpringLayout.Constraints;
+
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.impl.JsonNumberValue;
 
 public class NumberType extends ValueType {
 
+	private LinkedList<Constraint> constraints;
+	
 	protected NumberType(String title, String description) {
 		super(title, description);
 	}
@@ -38,7 +44,18 @@ public class NumberType extends ValueType {
 
 	@Override
 	public void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
-		// TODO Auto-generated method stub
-		
+		if(constraints == null) {
+			return;
+		}
+		for(Constraint constraint: constraints) {
+			constraint.validate(context, value);
+		}
+	}
+
+	void addConstraint(Constraint constraint) {
+		if(constraints == null) {
+			constraints = new LinkedList<Constraint>();
+		}
+		constraints.add(constraint);
 	}
 }

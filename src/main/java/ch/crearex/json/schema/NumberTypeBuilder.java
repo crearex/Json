@@ -11,10 +11,23 @@ public class NumberTypeBuilder implements TypeBuilder {
 	}
 
 	@Override
-	public NumberType build(JsonObject definition) {
+	public NumberType build(JsonObject typeDefinition) {
 		NumberType type = new NumberType(
-				definition.getString(SchemaConstants.TITLE_NAME, ""),
-				definition.getString(SchemaConstants.DESCRIPTION_NAME, ""));
+				typeDefinition.getString(SchemaConstants.TITLE_NAME, ""),
+				typeDefinition.getString(SchemaConstants.DESCRIPTION_NAME, ""));
+		
+		if(typeDefinition.isFloatingpoint(SchemaConstants.MAXIMUM_CONSTRAINT)) {
+			type.addConstraint(new DoubleMaximumConstraint(typeDefinition.getDouble(SchemaConstants.MAXIMUM_CONSTRAINT)));
+		} else if(typeDefinition.isNumber(SchemaConstants.MAXIMUM_CONSTRAINT)) {
+			type.addConstraint(new LongMaximumConstraint(typeDefinition.getLong(SchemaConstants.MAXIMUM_CONSTRAINT)));
+		}
+		
+		if(typeDefinition.isFloatingpoint(SchemaConstants.MINIMUM_CONSTRAINT)) {
+			type.addConstraint(new DoubleMinimumConstraint(typeDefinition.getDouble(SchemaConstants.MINIMUM_CONSTRAINT)));
+		} else if(typeDefinition.isNumber(SchemaConstants.MINIMUM_CONSTRAINT)) {
+			type.addConstraint(new LongMinimumConstraint(typeDefinition.getLong(SchemaConstants.MINIMUM_CONSTRAINT)));
+		}
+		
 		return type;
 	}
 

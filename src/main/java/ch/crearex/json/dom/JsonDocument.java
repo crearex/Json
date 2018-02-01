@@ -135,20 +135,20 @@ public class JsonDocument {
 			traverse(schema, context);
 			JsonSchemaContext schemaContext = context.getSchemaStack().getSchemaContext();
 			if(schemaContext.hasValidationErrors()) {
-				setValidationResult(SchemaValidationStatus.INVALID, schemaContext.getValidationExceptions());
+				setValidationResult(SchemaValidationStatus.FAILED, schemaContext.getValidationExceptions());
 			} else {
 				setValidationResult(SchemaValidationStatus.VALID, null);
 			}		
 			return validationStatus;
 		} catch(JsonSchemaValidationException e) {
 			JsonSchemaContext schemaContext = context.getSchemaStack().getSchemaContext();
-			setValidationResult(SchemaValidationStatus.INVALID, schemaContext.getValidationExceptions());
+			setValidationResult(SchemaValidationStatus.FAILED, schemaContext.getValidationExceptions());
 			throw e;
 		} catch(JsonSchemaException e) {
-			setValidationResult(SchemaValidationStatus.INVALID, null);
+			setValidationResult(SchemaValidationStatus.FAILED, null);
 			throw e;
 		} catch(Exception e) {
-			setValidationResult(SchemaValidationStatus.INVALID, null);
+			setValidationResult(SchemaValidationStatus.FAILED, null);
 			throw e;
 		}
 	}

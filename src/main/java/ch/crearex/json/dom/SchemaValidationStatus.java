@@ -3,7 +3,7 @@ package ch.crearex.json.dom;
 public enum SchemaValidationStatus {
 	NOT_VALIDATED("not validated", "There is no schema validation."),
 	VALID("valid", "The JSON Document is valid."),
-	INVALID("invalid", "Errors in JSON Document encountered!");
+	FAILED("invalid", "Errors in JSON Document encountered!");
 	private final String name;
 	private final String description;
 	SchemaValidationStatus(String name, String description) {

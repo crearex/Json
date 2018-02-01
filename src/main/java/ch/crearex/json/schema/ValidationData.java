@@ -127,15 +127,21 @@ public class ValidationData {
 		Class<?> domTypeClass = value.getClass();
 		
 		if(actualContainerType instanceof ObjectType) {
-			((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, domTypeClass);
-// The nullable check is already done in getEntryType()!	
+			SchemaType type = ((ObjectType)actualContainerType).getPropertyType(context, nextPropertyName, domTypeClass);
+			if(type instanceof ValueType) {
+				((ValueType)type).validate(context, nextPropertyName, value);
+			}
+			// The nullable check is already done in getEntryType()!	
 //			if(propertyType != null) {
 //				if(!propertyType.isNullable() && value.isNull()) {
 //					context.notifySchemaViolation("Property value '"+context.getPath()+"' must not be " + SchemaConstants.NULL_TYPE + "!");
 //				}
 //			}
 		} else if(actualContainerType instanceof ArrayType) {
-			((ArrayType)actualContainerType).getEntryType(context, nextArrayIndex, domTypeClass);
+			SchemaType type = ((ArrayType)actualContainerType).getEntryType(context, nextArrayIndex, domTypeClass);
+			if(type instanceof ValueType) {
+				((ValueType)type).validate(context, nextPropertyName, value);
+			}
 // The nullable check is already done in getEntryType()!			
 //			if(entryType != null) {
 //				if(!entryType.isNullable() && value.isNull()) {

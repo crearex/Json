@@ -301,7 +301,7 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 	}
 	
 	public boolean isIntegral(int index) {
-		return getValueEx(index).isIntegral();
+		return getValueEx(index).isFloatingpoint();
 	}
 
 	public boolean isString(int index) {

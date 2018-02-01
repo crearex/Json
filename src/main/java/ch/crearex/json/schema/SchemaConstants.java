@@ -27,7 +27,7 @@ public interface SchemaConstants {
 	char PATH_SEPARATOR = '/';
 	String INTERNAL_ID_PREFIX = "" + HASH + PATH_SEPARATOR;
 	
-	
-	
+	String MAXIMUM_CONSTRAINT = "maximum";
+	String MINIMUM_CONSTRAINT = "minimum";
 	
 }

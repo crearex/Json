@@ -15,6 +15,10 @@
 				"doors": { "const": 5}
 			}
 		},
+		"percent": {
+			"type": "number",
+			"maximum": 100
+		},
 		"address": {
 			"type": "object",
 			"properties": {

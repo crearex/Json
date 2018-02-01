@@ -75,7 +75,7 @@ public class TestJson {
 
        json.parse(text4);		       
 		assertThat(documents.size(), is(2));
-		assertThat(documents.get(0).getValidationStatus(), is(SchemaValidationStatus.INVALID));
+		assertThat(documents.get(0).getValidationStatus(), is(SchemaValidationStatus.FAILED));
 		assertThat(documents.get(0).getRootObject().getString("name"), is("Felix"));	 
 		assertThat(documents.get(1).getValidationStatus(), is(SchemaValidationStatus.VALID));
 		assertThat(documents.get(1).getRootObject().getString("name"), is("Hans"));	 

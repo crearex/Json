@@ -231,7 +231,7 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	}
 	
 	@Override
-	public boolean isIntegral() {
+	public boolean isFloatingpoint() {
 		return valueType == ValueType.INTEGRAL_NUMBER;
 	}
 

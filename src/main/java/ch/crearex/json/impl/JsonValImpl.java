@@ -144,7 +144,7 @@ public abstract class JsonValImpl implements JsonSimpleValue {
 	}
 	
 	@Override
-	public boolean isIntegral() {
+	public boolean isFloatingpoint() {
 		return value.indexOf(DOT) >= 0;
 	}	
 	
