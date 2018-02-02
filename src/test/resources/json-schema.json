@@ -17,7 +17,8 @@
 		},
 		"percent": {
 			"type": "number",
-			"maximum": 100
+			"maximum": 100,
+			"minimum": 0
 		},
 		"address": {
 			"type": "object",

@@ -1,5 +1,7 @@
 package ch.crearex.json.schema;
 
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+
 import ch.crearex.json.dom.JsonObject;
 
 public class NumberTypeBuilder implements TypeBuilder {
@@ -26,6 +28,28 @@ public class NumberTypeBuilder implements TypeBuilder {
 			type.addConstraint(new DoubleMinimumConstraint(typeDefinition.getDouble(SchemaConstants.MINIMUM_CONSTRAINT)));
 		} else if(typeDefinition.isNumber(SchemaConstants.MINIMUM_CONSTRAINT)) {
 			type.addConstraint(new LongMinimumConstraint(typeDefinition.getLong(SchemaConstants.MINIMUM_CONSTRAINT)));
+		}
+		
+		if(typeDefinition.isFloatingpoint(SchemaConstants.EXCLUSIVE_MAXIMUM_CONSTRAINT)) {
+			type.addConstraint(new DoubleExclusiveMaximumConstraint(typeDefinition.getDouble(SchemaConstants.EXCLUSIVE_MAXIMUM_CONSTRAINT)));
+		} else if(typeDefinition.isNumber(SchemaConstants.EXCLUSIVE_MAXIMUM_CONSTRAINT)) {
+			type.addConstraint(new LongExclusiveMaximumConstraint(typeDefinition.getLong(SchemaConstants.EXCLUSIVE_MAXIMUM_CONSTRAINT)));
+		}
+		
+		if(typeDefinition.isFloatingpoint(SchemaConstants.EXCLUSIVE_MINIMUM_CONSTRAINT)) {
+			type.addConstraint(new DoubleExclusiveMinimumConstraint(typeDefinition.getDouble(SchemaConstants.EXCLUSIVE_MINIMUM_CONSTRAINT)));
+		} else if(typeDefinition.isNumber(SchemaConstants.EXCLUSIVE_MINIMUM_CONSTRAINT)) {
+			type.addConstraint(new LongExclusiveMinimumConstraint(typeDefinition.getLong(SchemaConstants.EXCLUSIVE_MINIMUM_CONSTRAINT)));
+		}
+		
+		try {
+			if(typeDefinition.isFloatingpoint(SchemaConstants.MULTIPLE_OF_CONSTRAINT)) {
+				type.addConstraint(new DoubleMultipleOfConstraint(typeDefinition.getDouble(SchemaConstants.MULTIPLE_OF_CONSTRAINT)));
+			} else if(typeDefinition.isNumber(SchemaConstants.MULTIPLE_OF_CONSTRAINT)) {
+				type.addConstraint(new LongMultipleOfConstraint(typeDefinition.getLong(SchemaConstants.MULTIPLE_OF_CONSTRAINT)));
+			}
+		} catch(JsonSchemaException e) {
+			throw new JsonSchemaException("Illegal Constraint at '" + typeDefinition.getPath() + "': " + e.getMessage(), e);
 		}
 		
 		return type;

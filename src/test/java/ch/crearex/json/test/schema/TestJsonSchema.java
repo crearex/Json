@@ -269,22 +269,6 @@ public class TestJsonSchema {
 		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));			
 	}
 	
-	@Test 
-	public void testNumberIntegralMaximumOk() throws Exception {
-		String text = "{\"name\":\"Felix\",\"age\":25,\"percent\":100,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
-		Json json = new CrearexJson();
-		JsonDocument doc = json.parse(text);
-		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/json-schema.json"));
-		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));			
-	}
 	
-	@Test 
-	public void testNumberIntegralMaximumFailed() throws Exception {
-		String text = "{\"name\":\"Felix\",\"age\":25,\"percent\":101,\"address\":{\"city\":\"Gränchen\",\"code\":1234}}";
-		Json json = new CrearexJson();
-		JsonDocument doc = json.parse(text);
-		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/json-schema.json"));
-		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));			
-	}
 }
 

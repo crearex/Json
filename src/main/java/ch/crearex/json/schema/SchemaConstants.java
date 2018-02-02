@@ -29,5 +29,8 @@ public interface SchemaConstants {
 	
 	String MAXIMUM_CONSTRAINT = "maximum";
 	String MINIMUM_CONSTRAINT = "minimum";
+	String EXCLUSIVE_MAXIMUM_CONSTRAINT = "exclusiveMaximum";
+	String EXCLUSIVE_MINIMUM_CONSTRAINT = "exclusiveMinimum";
+	String MULTIPLE_OF_CONSTRAINT = "multipleOf";
 	
 }

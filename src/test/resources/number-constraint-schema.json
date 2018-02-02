@@ -1,0 +1,36 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://something.com/json-schema.json",
+	"title": "Number Constraints Test",
+    "type": "object",
+	"properties": {
+		"minMaxInteger": {
+			"type": "number",
+			"maximum": 100,
+			"minimum": 0
+		},
+		"minMaxDouble": {
+			"type": "number",
+			"maximum": 100.1,
+			"minimum": 0.1
+		},
+		"exclusiveMinMaxInteger": {
+			"type": "number",
+			"exclusiveMaximum": 100,
+			"exclusiveMinimum": 0
+		},
+		"exclusiveMinMaxDouble": {
+			"type": "number",
+			"exclusiveMaximum": 100.1,
+			"exclusiveMinimum": 0.1
+		},
+		"multipleOfInteger": {
+			"type": "number",
+			"multipleOf": 2
+		},
+		"multipleOfDouble": {
+			"type": "number",
+			"multipleOf": 2.5
+		}
+	},
+}
