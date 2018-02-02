@@ -1,0 +1,12 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://something.com/json-schema.json",
+	"title": "String Constraints Test",
+    "type": "object",
+	"properties": {
+		"text": {
+			"type": "string",
+			"regex": "[abc]+[123]+[efg]+"
+		}
+	}
+}

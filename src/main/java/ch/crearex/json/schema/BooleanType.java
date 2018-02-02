@@ -36,9 +36,4 @@ public class BooleanType extends ValueType {
 		return retVal;
 	}
 
-	@Override
-	public void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
-		// TODO Auto-generated method stub	
-	}
-
 }

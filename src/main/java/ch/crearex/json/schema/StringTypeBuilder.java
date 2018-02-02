@@ -11,10 +11,15 @@ public class StringTypeBuilder implements TypeBuilder {
 	}
 
 	@Override
-	public StringType build(JsonObject definition) {
+	public StringType build(JsonObject typeDefinition) {
 		StringType type = new StringType(
-				definition.getString(SchemaConstants.TITLE_NAME, ""),
-				definition.getString(SchemaConstants.DESCRIPTION_NAME, ""));
+				typeDefinition.getString(SchemaConstants.TITLE_NAME, ""),
+				typeDefinition.getString(SchemaConstants.DESCRIPTION_NAME, ""));
+		
+		if(typeDefinition.isString(SchemaConstants.REGEX_CONSTRAINT)) {
+			type.addConstraint(new RegexConstraint(typeDefinition.getString(SchemaConstants.REGEX_CONSTRAINT)));
+		}
+		
 		return type;
 	}
 
