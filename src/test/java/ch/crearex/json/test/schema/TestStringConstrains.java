@@ -31,4 +31,40 @@ public class TestStringConstrains {
 		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/string-constraint-schema.json"));
 		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));			
 	}
+	
+	@Test 
+	public void testMinLengthOk() throws Exception {
+		String text = "{\"minmax\":\"abc\"}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/string-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));			
+	}
+	
+	@Test 
+	public void testMinFailed() throws Exception {
+		String text = "{\"minmax\":\"ab\"}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/string-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));			
+	}
+	
+	@Test 
+	public void testMaxLengthOk() throws Exception {
+		String text = "{\"minmax\":\"abcdefg\"}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/string-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));			
+	}
+	
+	@Test 
+	public void testMaxFailed() throws Exception {
+		String text = "{\"minmax\":\"abcdefgh\"}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/string-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));			
+	}
 }

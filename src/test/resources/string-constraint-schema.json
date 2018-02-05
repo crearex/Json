@@ -7,6 +7,11 @@
 		"text": {
 			"type": "string",
 			"regex": "[abc]+[123]+[efg]+"
+		},
+		"minmax": {
+			"type": "string",
+			"minLength": 3,
+			"maxLength": 7
 		}
 	}
 }
