@@ -7,7 +7,7 @@ import ch.crearex.json.JsonSimpleValue;
 public abstract class ValueType implements SchemaType {
 	private final String title;
 	private final String description;
-	private LinkedList<Constraint> constraints;
+	private LinkedList<SimpleValueConstraint> constraints;
 	private boolean nullable = SchemaType.DEFAULT_NULLABLE;
 
 	protected ValueType(String title, String description) {
@@ -33,19 +33,19 @@ public abstract class ValueType implements SchemaType {
 		return this.nullable;
 	}
 	
-	
+	//TODO remove propertyName argument
 	public void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
 		if(constraints == null) {
 			return;
 		}
-		for(Constraint constraint: constraints) {
+		for(SimpleValueConstraint constraint: constraints) {
 			constraint.validate(context, value);
 		}
 	}
 
-	void addConstraint(Constraint constraint) {
+	void addConstraint(SimpleValueConstraint constraint) {
 		if(constraints == null) {
-			constraints = new LinkedList<Constraint>();
+			constraints = new LinkedList<SimpleValueConstraint>();
 		}
 		constraints.add(constraint);
 	}

@@ -10,7 +10,7 @@ public class ValidationData {
 
 	private final ContainerType actualContainerType;
 	
-	private int nextArrayIndex = 0;
+	
 	private String nextPropertyName = null;
 	private HashSet<String> readPropertyNames;
 	
@@ -19,6 +19,14 @@ public class ValidationData {
 		if((type instanceof ObjectType) || (type instanceof AnyType)) {
 			readPropertyNames = new HashSet<String>();
 		}
+	}
+	
+	public ContainerType getContainerType() {
+		return actualContainerType;
+	}
+	
+	public HashSet<String> getReadPropertyNames() {
+		return readPropertyNames;
 	}
 	
 	@Override
@@ -45,16 +53,8 @@ public class ValidationData {
 			return ObjectType.EMTPY_OBJECT;
 		}
 		
-		// actualContainerType is an ArrayType
-		SchemaType nextType = ((ArrayType)actualContainerType).getEntryType(context, nextArrayIndex, ArrayType.class);
-		if(nextType == null) {
-			return ObjectType.EMTPY_OBJECT;
-		}
-		if(nextType instanceof ObjectType) {
-			return (ObjectType)nextType;
-		}
 
-		throw new JsonSchemaException("Invalid "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
+		throw new JsonSchemaException("Invalid type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 	}
 
 	ContainerType getNextArrayType(JsonSchemaContext context) {
@@ -72,31 +72,22 @@ public class ValidationData {
 			throw new JsonSchemaException("Invalid "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 		} 
 		
-		// actualContainerType it an array
-		SchemaType nextType = ((ArrayType)actualContainerType).getEntryType(context, nextArrayIndex, ArrayType.class);
-		if(nextType == null) {
-			return ArrayType.EMTPTY_ARRAY;
-		}
-		if(nextType instanceof ArrayType) {
-			return (ArrayType)nextType;
-		}
-		
-		throw new JsonSchemaException("Invalid "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE + ".");
+		throw new JsonSchemaException("Invalid type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE + ".");
 	}
 
 	void validateObjectFinal(JsonSchemaContext context) {
 		if(actualContainerType instanceof AnyType) {
 			return;
 		}
-		ObjectType objectType = (ObjectType)actualContainerType;
-		for(String requiredProperty: objectType.getRequiredPropertyNames()) {
-			if(!readPropertyNames.contains(requiredProperty)) {
-				context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Required Property '" + context.getPath().concat(requiredProperty) + "' missing!"));
-			}
-		}
+		actualContainerType.validate(context, this);
 	}
 
 	void validateArrayFinal(JsonSchemaContext context) {
+		if(actualContainerType instanceof AnyType) {
+			return;
+		}
+		ArrayType arrayType = (ArrayType)actualContainerType;
+		arrayType.validate(context, this);
 	}
 
 	void addProperty(JsonSchemaContext context, String propertyName) {
@@ -114,8 +105,6 @@ public class ValidationData {
 	void validateSimpleValue(JsonSchemaContext context, JsonSimpleValue value) {
 		if(actualContainerType instanceof ObjectType) {
 			((ObjectType)actualContainerType).validatePropertyValue(context, nextPropertyName, value);
-		} else if(actualContainerType instanceof ArrayType) {
-			((ArrayType)actualContainerType).validateEntryValue(context, nextArrayIndex, value);
 		} else if(actualContainerType instanceof AnyType) {
 			// do nothing
 		} else {
@@ -137,35 +126,11 @@ public class ValidationData {
 //					context.notifySchemaViolation("Property value '"+context.getPath()+"' must not be " + SchemaConstants.NULL_TYPE + "!");
 //				}
 //			}
-		} else if(actualContainerType instanceof ArrayType) {
-			SchemaType type = ((ArrayType)actualContainerType).getEntryType(context, nextArrayIndex, domTypeClass);
-			if(type instanceof ValueType) {
-				((ValueType)type).validate(context, nextPropertyName, value);
-			}
-// The nullable check is already done in getEntryType()!			
-//			if(entryType != null) {
-//				if(!entryType.isNullable() && value.isNull()) {
-//					context.notifySchemaViolation("Array value of '"+context.getPath()+"' must not be " + SchemaConstants.NULL_TYPE + "!");
-//				}
-//			}
 		} else if(actualContainerType instanceof AnyType) {
 			// do nothing
 		} else {
 			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected schema type at '"+context.getPath()+"'!"));
 		}
-	}
-
-	void setNextArrayIndex(int nextArrayIndex) {
-		this.nextArrayIndex = nextArrayIndex;
-	}
-	
-	int getNextArrayIndex() {
-		return nextArrayIndex;
-	}
-
-	public void incArrayIndex() {
-		nextArrayIndex++;
-		
 	}
 
 }

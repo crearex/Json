@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://something.com/array-constraint-schema.json",
+	"title": "Array Constraints Test",
+    "type": "object",
+	"properties": {
+		"numbers": {
+			"type": "array",
+			"items": {
+				"type": "number"
+			},
+			"minItems": 2,
+			"maxItems": 5,
+		}
+	}
+}

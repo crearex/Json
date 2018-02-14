@@ -1,8 +1,13 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.constraints;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.JsonSchemaValidationException;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SimpleValueConstraint;
 
-public class LongMultipleOfConstraint implements Constraint {
+public class LongMultipleOfConstraint implements SimpleValueConstraint {
 	
 	private final long factor;
 	

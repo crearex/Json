@@ -1,8 +1,11 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.constraints;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.JsonSchemaValidationException;
+import ch.crearex.json.schema.SimpleValueConstraint;
 
-public class LongMaximumConstraint implements Constraint {
+public class LongMaximumConstraint implements SimpleValueConstraint {
 
 	private final long maximum;
 	

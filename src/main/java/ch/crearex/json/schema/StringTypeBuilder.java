@@ -1,6 +1,9 @@
 package ch.crearex.json.schema;
 
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.constraints.MaxLengthConstraint;
+import ch.crearex.json.schema.constraints.MinLengthConstraint;
+import ch.crearex.json.schema.constraints.RegexConstraint;
 
 public class StringTypeBuilder implements TypeBuilder {
 

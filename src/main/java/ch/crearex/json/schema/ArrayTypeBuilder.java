@@ -3,6 +3,8 @@ package ch.crearex.json.schema;
 import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.constraints.MaxItemsConstraint;
+import ch.crearex.json.schema.constraints.MinItemsConstraint;
 
 public class ArrayTypeBuilder implements TypeBuilder {
 	
@@ -40,6 +42,28 @@ public class ArrayTypeBuilder implements TypeBuilder {
 			type.addItemTypes(arrayTypes);
 		}
 		type.setNullable(SchemaUtil.isNullableType(definition));
+		
+		if(definition.hasProperty(SchemaConstants.MAX_ITEMS_CONSTRAINT)) {
+			int maxItems = definition.getInteger(SchemaConstants.MAX_ITEMS_CONSTRAINT, -1);
+			if(maxItems < 0) {
+				throw new JsonSchemaException("Illegal JSON Schema definition at '" + definition.getPath() + "'! "+SchemaConstants.MAX_ITEMS_CONSTRAINT+" must be >= 0.");
+			}
+			type.addConstraint(new MaxItemsConstraint(maxItems));
+		}
+		
+		if(definition.hasProperty(SchemaConstants.MIN_ITEMS_CONSTRAINT)) {
+			int minItems = definition.getInteger(SchemaConstants.MIN_ITEMS_CONSTRAINT, -1);
+			if(minItems < 0) {
+				throw new JsonSchemaException("Illegal JSON Schema definition at '" + definition.getPath() + "'! "+SchemaConstants.MIN_ITEMS_CONSTRAINT+" must be >= 0.");
+			}
+			type.addConstraint(new MinItemsConstraint(minItems));
+		}
+		
+		if(definition.hasProperty(SchemaConstants.UNIQUE_ITEMS_CONSTRAINT)) {
+			boolean uniqueItems = definition.getBoolean(SchemaConstants.UNIQUE_ITEMS_CONSTRAINT, false);
+			type.setUniqueItems(uniqueItems);
+		}
+		
 		return type;
 	}
 }

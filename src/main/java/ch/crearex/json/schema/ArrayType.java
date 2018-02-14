@@ -13,6 +13,7 @@ public class ArrayType extends ContainerType {
 	private static final SchemaType[] EMPTY_TYPE_LIST = new SchemaType[0];
 
 	private SchemaType[] possibleItemTypes = null;
+	private boolean uniqueItems = false;
 
 	public ArrayType(String title, String description) {
 		super(title, description);
@@ -158,6 +159,7 @@ public class ArrayType extends ContainerType {
 //		}
 
 	}
+	
 
 	private String getPossibleTypeList() {
 		StringBuilder builder = new StringBuilder();
@@ -171,5 +173,13 @@ public class ArrayType extends ContainerType {
 			builder.append(type.getName());
 		}
 		return builder.toString();
+	}
+
+	void setUniqueItems(boolean uniqueItems) {
+		this.uniqueItems = uniqueItems;
+	}
+	
+	public boolean isUniqueItems() {
+		return uniqueItems;
 	}
 }

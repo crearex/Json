@@ -16,7 +16,20 @@ public class SchemaStack {
 	
 	SchemaStack(ContainerType schemaRootType, JsonSchemaCallback schemaCallback, URL jsonSchemaOriginUrl) {
 		this.schemaContext = new JsonSchemaContextImpl(schemaCallback, jsonSchemaOriginUrl);
-		stack.addFirst(new ValidationData(schemaRootType));
+		stack.addFirst(createValidationData(schemaRootType));
+	}
+	
+	private ValidationData createValidationData(ContainerType container) {
+		if(container instanceof ObjectType) {
+			return new ObjectValidationData((ObjectType)container);
+		}
+		if(container instanceof ArrayType) {
+			return new ArrayValidationData((ArrayType)container);
+		}
+		if(container instanceof AnyType) {
+			return new AnyValidationData((AnyType)container);
+		}
+		throw new JsonSchemaException("Unsupported Container Type: " + container.getClass().getSimpleName());
 	}
 	
 	public JsonSchemaContext getSchemaContext() {
@@ -31,7 +44,7 @@ public class SchemaStack {
 			}
 			ValidationData validatonData = stack.getFirst();
 			ContainerType nextType = validatonData.getNextObjectType(schemaContext);
-			stack.addFirst(new ValidationData(nextType));
+			stack.addFirst(createValidationData(nextType));
 		} catch(JsonSchemaException e) {
 			throw e;
 		} catch(Exception e) {
@@ -48,9 +61,11 @@ public class SchemaStack {
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
-			validatonData.setNextArrayIndex(0);
+			// TODO mn: ist der reset des next array index nötig?
+			// validatonData.setNextArrayIndex(0);
 			ContainerType nextType = validatonData.getNextArrayType(schemaContext);
-			stack.addFirst(new ValidationData(nextType));
+			ValidationData validationData = createValidationData(nextType);
+			stack.addFirst(validationData);
 		} catch(JsonSchemaException e) {
 			throw e;
 		} catch(Exception e) {
@@ -107,7 +122,9 @@ public class SchemaStack {
 		} catch(Exception e) {
 			throw new JsonSchemaException("Validate '"+context.getPath()+"' failed: " + e.getMessage(), e);
 		} finally {
-			validationData.incArrayIndex();
+			if(validationData instanceof ArrayValidationData) {
+				((ArrayValidationData)validationData).incArrayIndex();
+			}
 		}
 	}
 

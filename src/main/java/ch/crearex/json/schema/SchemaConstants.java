@@ -22,7 +22,7 @@ public interface SchemaConstants {
 	String NULL_TYPE = "null";
 	String ANY_TYPE = "any";
 	
-	String REQUIRED_NAME = "required";
+	String REQUIRED_PROPERTIES_CONSTRAINT = "required";
 	char HASH = '#';
 	char PATH_SEPARATOR = '/';
 	String INTERNAL_ID_PREFIX = "" + HASH + PATH_SEPARATOR;
@@ -36,5 +36,8 @@ public interface SchemaConstants {
 	String PATTERN_CONSTRAINT = "pattern";
 	String MAX_LENGTH_CONSTRAINT = "maxLength";
 	String MIN_LENGTH_CONSTRAINT = "minLength";
+	String MAX_ITEMS_CONSTRAINT = "maxItems";
+	String MIN_ITEMS_CONSTRAINT = "minItems";
+	String UNIQUE_ITEMS_CONSTRAINT = "uniqueItems";
 	
 }

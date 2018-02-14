@@ -1,11 +1,13 @@
 package ch.crearex.json.schema;
 
+import java.util.LinkedList;
+
 public abstract class ContainerType implements SchemaType {
 
 	private final String title;
 	private final String description;
 	private boolean nullable = SchemaType.DEFAULT_NULLABLE;
-	// private HashMap<String, SchemaType> internalTypes = null;
+	private LinkedList<ContainerConstraint> constraints;
 
 	protected ContainerType(String title, String description) {
 		if (title == null) {
@@ -38,7 +40,20 @@ public abstract class ContainerType implements SchemaType {
 
 	public abstract void visit(ContainerVisitor visitor);
 
-	// void setInternalTypes(HashMap<String, SchemaType> internalTypes) {
-	// this.internalTypes = internalTypes;
-	// }
+	protected void validate(JsonSchemaContext context, ValidationData validationData) {
+		if(constraints == null) {
+			return;
+		}
+		for(ContainerConstraint constraint: constraints) {
+			constraint.validate(context, validationData);
+		}
+	}
+
+	void addConstraint(ContainerConstraint constraint) {
+		if(constraints == null) {
+			constraints = new LinkedList<ContainerConstraint>();
+		}
+		constraints.add(constraint);
+	}
+	
 }

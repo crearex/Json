@@ -3,6 +3,16 @@ package ch.crearex.json.schema;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
 
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.constraints.DoubleExclusiveMaximumConstraint;
+import ch.crearex.json.schema.constraints.DoubleExclusiveMinimumConstraint;
+import ch.crearex.json.schema.constraints.DoubleMaximumConstraint;
+import ch.crearex.json.schema.constraints.DoubleMinimumConstraint;
+import ch.crearex.json.schema.constraints.DoubleMultipleOfConstraint;
+import ch.crearex.json.schema.constraints.LongExclusiveMaximumConstraint;
+import ch.crearex.json.schema.constraints.LongExclusiveMinimumConstraint;
+import ch.crearex.json.schema.constraints.LongMaximumConstraint;
+import ch.crearex.json.schema.constraints.LongMinimumConstraint;
+import ch.crearex.json.schema.constraints.LongMultipleOfConstraint;
 
 public class NumberTypeBuilder implements TypeBuilder {
 

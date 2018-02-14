@@ -1,10 +1,7 @@
 package ch.crearex.json.schema;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonObject;
@@ -16,9 +13,7 @@ public class ObjectType extends ContainerType {
 		void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
 		}
 	};
-	private HashMap<String, SchemaType[]> properties = new HashMap<String, SchemaType[]>();
-	private HashSet<String> requiredPropertyNames = new HashSet<String>();
-	
+	private HashMap<String, SchemaType[]> properties = new HashMap<String, SchemaType[]>();	
 	private final String id;
 	
 	public ObjectType(String title, String description, String id) {
@@ -59,14 +54,6 @@ public class ObjectType extends ContainerType {
 	public SchemaType[] getPropertyTypes(String name) {
 		SchemaType[] type = properties.get(name);
 		return type;
-	}
-
-	public void addRequiredProperty(String propertyName) {
-		requiredPropertyNames.add(propertyName);
-	}
-
-	public Set<String> getRequiredPropertyNames() {
-		return Collections.unmodifiableSet(requiredPropertyNames);
 	}
 	
 	@Override
@@ -137,6 +124,7 @@ public class ObjectType extends ContainerType {
 		}
 		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal property type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: " + type.getName()+ "."));
 	}
+
 
 	private SchemaType resolveType(String propertyName, JsonSimpleValue value) {
 		SchemaType[] possibleTypes = properties.get(propertyName);

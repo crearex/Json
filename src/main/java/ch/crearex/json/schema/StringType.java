@@ -1,11 +1,10 @@
 package ch.crearex.json.schema;
 
-import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.impl.JsonStringValue;
 
 public class StringType extends ValueType {
 
-	protected StringType(String title, String description) {
+	public StringType(String title, String description) {
 		super(title, description);
 	}
 

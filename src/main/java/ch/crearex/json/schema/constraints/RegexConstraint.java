@@ -1,15 +1,18 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.constraints;
 
 import java.util.regex.Pattern;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.JsonSchemaValidationException;
+import ch.crearex.json.schema.SimpleValueConstraint;
 
-public class RegexConstraint implements Constraint {
+public class RegexConstraint implements SimpleValueConstraint {
 	
 	private final Pattern pattern;
 	private final String regex;
 	
-	RegexConstraint(String regex) {
+	public RegexConstraint(String regex) {
 		this.regex = regex;
 		this.pattern = Pattern.compile(regex);
 	}

@@ -1,11 +1,13 @@
 package ch.crearex.json.schema;
 
+import java.util.HashSet;
 import java.util.Map;
 
 import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.dom.JsonString;
+import ch.crearex.json.schema.constraints.RequiredPropertyConstraint;
 
 public class ObjectTypeBuilder implements TypeBuilder {
 	
@@ -36,15 +38,19 @@ public class ObjectTypeBuilder implements TypeBuilder {
 				}
 			}
 			
-			JsonArray requiredProperties = definition.getArray(SchemaConstants.REQUIRED_NAME);
+			
+			JsonArray requiredProperties = definition.getArray(SchemaConstants.REQUIRED_PROPERTIES_CONSTRAINT);
 			if(requiredProperties != null) {
+				HashSet<String> requiredPropertyNames = new HashSet<String>();
 				for(JsonElement entry: requiredProperties) {
 					if(entry instanceof JsonString) {
 						JsonString propName = (JsonString)entry;
-						type.addRequiredProperty(propName.asString());
+						requiredPropertyNames.add(propName.asString());
 					}
 				}
+				type.addConstraint(new RequiredPropertyConstraint(requiredPropertyNames));
 			}
+			
 			
 			type.setNullable(SchemaUtil.isNullableType(definition));
 		} finally {
