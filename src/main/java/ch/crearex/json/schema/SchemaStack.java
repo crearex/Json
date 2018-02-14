@@ -4,7 +4,6 @@ import java.net.URL;
 import java.util.LinkedList;
 
 import ch.crearex.json.JsonContext;
-import ch.crearex.json.JsonContextBase;
 import ch.crearex.json.JsonSchemaCallback;
 import ch.crearex.json.JsonSimpleValue;
 
@@ -27,7 +26,7 @@ public class SchemaStack {
 			return new ArrayValidationData((ArrayType)container);
 		}
 		if(container instanceof AnyType) {
-			return new AnyValidationData((AnyType)container);
+			return new AnyValidationData();
 		}
 		throw new JsonSchemaException("Unsupported Container Type: " + container.getClass().getSimpleName());
 	}
@@ -103,7 +102,9 @@ public class SchemaStack {
 		schemaContext.setAdaptedContext(context);
 		try {
 			ValidationData validationData = stack.getFirst();
-			validationData.addProperty(schemaContext, propertyName);
+			if(validationData instanceof ObjectValidationData) {
+				((ObjectValidationData)validationData).addProperty(schemaContext, propertyName);
+			}
 		} catch(JsonSchemaException e) {
 			throw e;
 		} catch(Exception e) {

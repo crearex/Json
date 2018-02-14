@@ -4,18 +4,17 @@ import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonObject;
 
-public class ArrayValidationData extends ValidationData {
+public class ArrayValidationData implements ValidationData {
 
 	private int nextArrayIndex = 0;
-	private final ArrayType actualContainerType;
+	private final ArrayType type;
 	
 	ArrayValidationData(ArrayType type) {
-		super(type);
-		this.actualContainerType = type;
+		this.type = type;
 	}
 	
-	ObjectType getNextObjectType(JsonSchemaContext context) {
-		SchemaType nextType = actualContainerType.getEntryType(context, nextArrayIndex, ArrayType.class);
+	public ObjectType getNextObjectType(JsonSchemaContext context) {
+		SchemaType nextType = type.getEntryType(context, nextArrayIndex, ArrayType.class);
 		
 		if(nextType == null) {
 			return ObjectType.EMTPY_OBJECT;
@@ -28,8 +27,8 @@ public class ArrayValidationData extends ValidationData {
 		throw new JsonSchemaException("Invalid "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 	}
 	
-	ContainerType getNextArrayType(JsonSchemaContext context) {
-		SchemaType nextType = actualContainerType.getEntryType(context, nextArrayIndex, ArrayType.class);
+	public ContainerType getNextArrayType(JsonSchemaContext context) {
+		SchemaType nextType = type.getEntryType(context, nextArrayIndex, ArrayType.class);
 		
 		if(nextType == null) {
 			return ArrayType.EMTPTY_ARRAY;
@@ -42,15 +41,15 @@ public class ArrayValidationData extends ValidationData {
 		throw new JsonSchemaException("Invalid "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE + ".");
 	}
 	
-	void validateSimpleValue(JsonSchemaContext context, JsonSimpleValue value) {
-		actualContainerType.validateEntryValue(context, nextArrayIndex, value);
+	public void validateSimpleValue(JsonSchemaContext context, JsonSimpleValue value) {
+		type.validateEntryValue(context, nextArrayIndex, value);
 	}
 	
-	void validateSimpleType(JsonSchemaContext context, JsonSimpleValue value) {
+	public void validateSimpleType(JsonSchemaContext context, JsonSimpleValue value) {
 		Class<?> domTypeClass = value.getClass();
-		SchemaType type = actualContainerType.getEntryType(context, nextArrayIndex, domTypeClass);
-		if(type instanceof ValueType) {
-			((ValueType)type).validate(context, "", value);
+		SchemaType entryType = type.getEntryType(context, nextArrayIndex, domTypeClass);
+		if(entryType instanceof ValueType) {
+			((ValueType)entryType).validate(context, "", value);
 		}
 	}
 	
@@ -64,6 +63,19 @@ public class ArrayValidationData extends ValidationData {
 
 	public void incArrayIndex() {
 		nextArrayIndex++;	
+	}
+	
+	public void validateObjectFinal(JsonSchemaContext context) {
+		type.validate(context, this);
+	}
+
+	public void validateArrayFinal(JsonSchemaContext context) {
+		type.validate(context, this);
+	}
+	
+	@Override
+	public String toString() {
+		return type.toString();
 	}
 
 }
