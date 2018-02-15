@@ -7,6 +7,8 @@ import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.dom.JsonString;
+import ch.crearex.json.schema.constraints.MaxPropertiesConstraint;
+import ch.crearex.json.schema.constraints.MinPropertiesConstraint;
 import ch.crearex.json.schema.constraints.RequiredPropertyConstraint;
 
 public class ObjectTypeBuilder implements TypeBuilder {
@@ -49,6 +51,14 @@ public class ObjectTypeBuilder implements TypeBuilder {
 					}
 				}
 				type.addConstraint(new RequiredPropertyConstraint(requiredPropertyNames));
+			}
+			
+			if(definition.hasProperty(SchemaConstants.MIN_PROPERTIES_CONSTRAINT)) {
+				type.addConstraint(new MinPropertiesConstraint(definition.getInteger(SchemaConstants.MIN_PROPERTIES_CONSTRAINT)));
+			}
+			
+			if(definition.hasProperty(SchemaConstants.MAX_PROPERTIES_CONSTRAINT)) {
+				type.addConstraint(new MaxPropertiesConstraint(definition.getInteger(SchemaConstants.MAX_PROPERTIES_CONSTRAINT)));
 			}
 			
 			

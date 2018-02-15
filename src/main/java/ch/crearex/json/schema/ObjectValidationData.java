@@ -11,6 +11,7 @@ public class ObjectValidationData implements ValidationData {
 	private String nextPropertyName = null;
 	private HashSet<String> readPropertyNames;
 	private final ObjectType type;
+	private int propertyCount = 0;
 
 	ObjectValidationData(ObjectType type) {
 		this.type = type;
@@ -19,6 +20,10 @@ public class ObjectValidationData implements ValidationData {
 
 	public HashSet<String> getReadPropertyNames() {
 		return readPropertyNames;
+	}
+	
+	public int getPropertyCount() {
+		return propertyCount;
 	}
 
 	@Override
@@ -57,6 +62,7 @@ public class ObjectValidationData implements ValidationData {
 	}
 
 	void addProperty(JsonSchemaContext context, String propertyName) {
+		propertyCount++;
 		nextPropertyName = propertyName;
 		if (readPropertyNames.contains(propertyName)) {
 			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(),

@@ -39,5 +39,7 @@ public interface SchemaConstants {
 	String MAX_ITEMS_CONSTRAINT = "maxItems";
 	String MIN_ITEMS_CONSTRAINT = "minItems";
 	String UNIQUE_ITEMS_CONSTRAINT = "uniqueItems";
+	String MIN_PROPERTIES_CONSTRAINT = "minProperties";
+	String MAX_PROPERTIES_CONSTRAINT = "maxProperties";
 	
 }

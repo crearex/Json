@@ -1,0 +1,13 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://something.com/object-constraint-schema.json",
+	"title": "Object Constraints Test",
+    "type": "object",
+	"properties": {
+		"a": { "type": "string"	},
+		"b": { "type": "string"	},
+		"c": { "type": "string"	}
+	},
+	"minProperties": 2,
+	"maxProperties": 5
+}
