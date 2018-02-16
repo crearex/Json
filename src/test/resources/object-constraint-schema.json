@@ -8,6 +8,9 @@
 		"b": { "type": "string"	},
 		"c": { "type": "string"	}
 	},
+	"patternProperties": {
+		"a[123]+b": { "type": "number"	}
+	},
 	"minProperties": 2,
 	"maxProperties": 5
 }

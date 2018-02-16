@@ -12,6 +12,7 @@ public interface SchemaConstants {
 	String TITLE_NAME = "title";
 	String DESCRIPTION_NAME = "description";
 	String PROPERTIES_NAME = "properties";
+	String PATTERN_PROPERTIES_NAME = "patternProperties";
 	String ITEMS_NAME = "items";
 	
 	String OBJECT_TYPE = "object";

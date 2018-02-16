@@ -68,4 +68,24 @@ public class TestObjectConstraints {
 		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/object-constraint-schema.json"));
 		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));
 	}
+	
+	@Test
+	public void patternPropertyOk() throws Exception {
+		String text = "{\"a1b\":1, \"a2b\":2}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/object-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));
+	}
+	
+	@Test
+	public void patternPropertyFailed() throws Exception {
+		// wrong type: string instead of number
+		String text = "{\"a1b\":1, \"a2b\":\"2\"}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/object-constraint-schema.json"));
+		doc.validate(schema);
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));
+	}
 }
