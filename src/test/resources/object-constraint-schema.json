@@ -11,6 +11,7 @@
 	"patternProperties": {
 		"a[123]+b": { "type": "number"	}
 	},
+	"additionalProperties": { "type": ["string", "object"] },
 	"minProperties": 2,
 	"maxProperties": 5
 }

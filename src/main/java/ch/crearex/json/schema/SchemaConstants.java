@@ -13,6 +13,7 @@ public interface SchemaConstants {
 	String DESCRIPTION_NAME = "description";
 	String PROPERTIES_NAME = "properties";
 	String PATTERN_PROPERTIES_NAME = "patternProperties";
+	String ADDITIONAL_PROPERTIES_NAME = "additionalProperties";
 	String ITEMS_NAME = "items";
 	
 	String OBJECT_TYPE = "object";
@@ -42,5 +43,6 @@ public interface SchemaConstants {
 	String UNIQUE_ITEMS_CONSTRAINT = "uniqueItems";
 	String MIN_PROPERTIES_CONSTRAINT = "minProperties";
 	String MAX_PROPERTIES_CONSTRAINT = "maxProperties";
+	
 	
 }

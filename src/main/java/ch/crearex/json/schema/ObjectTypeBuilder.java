@@ -49,6 +49,11 @@ public class ObjectTypeBuilder implements TypeBuilder {
 					definePatternProperty(type, propertyNameRegex, value);
 				}
 			}
+			
+			JsonObject additionalPropertiesSchema = definition.getObject(SchemaConstants.ADDITIONAL_PROPERTIES_NAME);
+			if (additionalPropertiesSchema != null) {
+				defineAdditionalPropertySchema(type, additionalPropertiesSchema);
+			}
 
 			JsonArray requiredProperties = definition.getArray(SchemaConstants.REQUIRED_PROPERTIES_CONSTRAINT);
 			if (requiredProperties != null) {
@@ -81,24 +86,30 @@ public class ObjectTypeBuilder implements TypeBuilder {
 	}
 
 	private void defineProperty(ObjectType type, String propertyName, JsonElement value) {
-		if (!(value instanceof JsonObject)) {
-			throw new JsonSchemaException("Illegal JSON Schema type definition at '" + value.getPath()
-					+ "'! Expected {\"type\": \"typename\"} or internal reference.");
-		}
+		checkObjectInstance(value);
 		JsonObject valueDefinition = (JsonObject) value;
-		SchemaType[] possibleValueTypes = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
-		type.addProperty(propertyName, possibleValueTypes);
+		SchemaType[] possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
+		type.addProperty(propertyName, possibleSchemata);
 
 	}
 
-	private void definePatternProperty(ObjectType type, String propertyNameRegex, JsonElement value) {
+	private void checkObjectInstance(JsonElement value) {
 		if (!(value instanceof JsonObject)) {
 			throw new JsonSchemaException("Illegal JSON Schema type definition at '" + value.getPath()
 					+ "'! Expected {\"type\": \"typename\"} or internal reference.");
 		}
+	}
+
+	private void definePatternProperty(ObjectType type, String propertyNameRegex, JsonElement value) {
+		checkObjectInstance(value);
 		JsonObject valueDefinition = (JsonObject) value;
-		SchemaType[] possibleValueTypes = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
-		type.addPatternProperty(propertyNameRegex, possibleValueTypes);
+		SchemaType[] possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
+		type.addPatternProperty(propertyNameRegex, possibleSchemata);
+	}
+	
+	private void defineAdditionalPropertySchema(ObjectType type, JsonObject valueDefinition) {
+		SchemaType[] possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
+		type.addAdditionalPropertiesSchema(possibleSchemata);
 	}
 
 }

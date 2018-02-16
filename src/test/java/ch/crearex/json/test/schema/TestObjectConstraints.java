@@ -88,4 +88,23 @@ public class TestObjectConstraints {
 		doc.validate(schema);
 		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));
 	}
+	
+	@Test
+	public void additionalPropertyOk() throws Exception {
+		String text = "{\"a\":\"a\", \"a2b\":2, \"x\":\"y\"}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/object-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));
+	}
+	
+	@Test
+	public void additionalPropertyFailed() throws Exception {
+		// wrong type: boolean instead of string || object
+		String text = "{\"a\":\"a\", \"a2b\":2, \"x\":true}";
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/object-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));
+	}
 }

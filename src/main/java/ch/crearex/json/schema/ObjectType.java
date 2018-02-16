@@ -17,6 +17,7 @@ public class ObjectType extends ContainerType {
 	};
 	private HashMap<String, SchemaType[]> properties = new HashMap<String, SchemaType[]>();
 	private HashMap<String, SchemaType[]> patternProperties = new HashMap<String, SchemaType[]>();
+	private SchemaType[] additionalPropertiesSchemata;
 	private final String id;
 
 	public ObjectType(String title, String description, String id) {
@@ -41,36 +42,20 @@ public class ObjectType extends ContainerType {
 		patternProperties.put(propertyNameRegex, possibleValueTypes);
 	}
 
-	@Override
-	public String toString() {
-		String retVal = SchemaConstants.OBJECT_TYPE;
-		String title = getTitle();
-		String description = getDescription();
-		if (!title.isEmpty() || !description.isEmpty()) {
-			retVal += ":";
-		}
-		if (!title.isEmpty()) {
-			retVal += " " + title + ".";
-		}
-		if (!description.isEmpty()) {
-			retVal += " " + description + ".";
-		}
-		return retVal;
-	}
-
-	public SchemaType[] getPropertyTypes(String name) {
+	public SchemaType[] getPropertyTypes(String propertyName) {
+		SchemaType[] possibleTypes = null;
 		if (patternProperties.isEmpty()) {
-			return properties.get(name);
+			possibleTypes = properties.get(propertyName);
 		} else {
 			HashSet<SchemaType> typeSet = new HashSet<SchemaType>();
-			SchemaType[] propTypes = properties.get(name);
+			SchemaType[] propTypes = properties.get(propertyName);
 			if (propTypes != null) {
 				for (SchemaType type : propTypes) {
 					typeSet.add(type);
 				}
 			}
 			for (String regex : patternProperties.keySet()) {
-				if (Pattern.matches(regex, name)) {
+				if (Pattern.matches(regex, propertyName)) {
 					SchemaType[] patternPropTypes = patternProperties.get(regex);
 					if (patternPropTypes != null) {
 						for (SchemaType type : patternPropTypes) {
@@ -79,8 +64,25 @@ public class ObjectType extends ContainerType {
 					}
 				}
 			}
-			return typeSet.toArray(new SchemaType[typeSet.size()]);
+			possibleTypes = typeSet.toArray(new SchemaType[typeSet.size()]);
 		}
+		if((possibleTypes == null) || (possibleTypes.length == 0)) {
+			return additionalPropertiesSchemata;
+		}
+		return possibleTypes;
+	}
+
+	private SchemaType resolveType(String propertyName, JsonSimpleValue value) {
+		SchemaType[] possibleTypes = getPropertyTypes(propertyName);
+		if (possibleTypes == null) {
+			return null;
+		}
+		for (SchemaType type : possibleTypes) {
+			if (type.matchesDomType(value.getClass())) {
+				return type;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -154,17 +156,25 @@ public class ObjectType extends ContainerType {
 				+ value.getTypeName() + "' for '" + context.getPath() + "'! Expected: " + type.getName() + "."));
 	}
 
-	private SchemaType resolveType(String propertyName, JsonSimpleValue value) {
-		SchemaType[] possibleTypes = properties.get(propertyName);
-		if (possibleTypes == null) {
-			return null;
+	void addAdditionalPropertiesSchema(SchemaType[] additionalPropertiesSchemata) {
+		this.additionalPropertiesSchemata = additionalPropertiesSchemata;
+	}
+
+	@Override
+	public String toString() {
+		String retVal = SchemaConstants.OBJECT_TYPE;
+		String title = getTitle();
+		String description = getDescription();
+		if (!title.isEmpty() || !description.isEmpty()) {
+			retVal += ":";
 		}
-		for (SchemaType type : possibleTypes) {
-			if (type.matchesDomType(value.getClass())) {
-				return type;
-			}
+		if (!title.isEmpty()) {
+			retVal += " " + title + ".";
 		}
-		return null;
+		if (!description.isEmpty()) {
+			retVal += " " + description + ".";
+		}
+		return retVal;
 	}
 
 }
