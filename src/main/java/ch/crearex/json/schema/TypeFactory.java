@@ -4,6 +4,6 @@ import ch.crearex.json.dom.JsonObject;
 
 public interface TypeFactory {
 
-	SchemaType[] createPossibleTypes(JsonObject typeDefinition);
+	SchemaList createPossibleTypes(JsonObject typeDefinition);
 
 }

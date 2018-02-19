@@ -88,7 +88,7 @@ public class ObjectTypeBuilder implements TypeBuilder {
 	private void defineProperty(ObjectType type, String propertyName, JsonElement value) {
 		checkObjectInstance(value);
 		JsonObject valueDefinition = (JsonObject) value;
-		SchemaType[] possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
+		SchemaList possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
 		type.addProperty(propertyName, possibleSchemata);
 
 	}
@@ -103,12 +103,12 @@ public class ObjectTypeBuilder implements TypeBuilder {
 	private void definePatternProperty(ObjectType type, String propertyNameRegex, JsonElement value) {
 		checkObjectInstance(value);
 		JsonObject valueDefinition = (JsonObject) value;
-		SchemaType[] possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
+		SchemaList possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
 		type.addPatternProperty(propertyNameRegex, possibleSchemata);
 	}
 	
 	private void defineAdditionalPropertySchema(ObjectType type, JsonObject valueDefinition) {
-		SchemaType[] possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
+		SchemaList possibleSchemata = context.getTypeFactory(valueDefinition).createPossibleTypes(valueDefinition);
 		type.addAdditionalPropertiesSchema(possibleSchemata);
 	}
 

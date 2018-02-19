@@ -16,21 +16,21 @@ class SchemaBuilder {
 		context.setSchemaVersion(root.getString(SchemaConstants.SCHEMA_URI_NAME, ""));
 		context.setRootId(root.getString(SchemaConstants.SCHEMA_ID, ""));
 		String typeName = root.getString(SchemaConstants.TYPE_NAME, SchemaConstants.ANY_TYPE);
-		SchemaType[] type = context.getTypeFactory(root).createPossibleTypes(root);
+		SchemaList schemaList = context.getTypeFactory(root).createPossibleTypes(root);
 		switch(typeName) {
 			case SchemaConstants.OBJECT_TYPE: {
-				ObjectType rootType = (ObjectType)type[0];
+				ObjectType rootType = (ObjectType)schemaList.getFirst();
 				checkSchemaRootId(rootType);
-				context.registerSchemaDefinition(rootType.getId(), type[0]);
+				context.registerSchemaDefinition(rootType.getId(), schemaList.getFirst());
 				break;
 			}
 		}
 		
-		if(type[0] instanceof ContainerType) {
-			return (ContainerType)type[0];
+		if(schemaList.getFirst() instanceof ContainerType) {
+			return (ContainerType)schemaList.getFirst();
 		}
 		
-		throw new JsonSchemaException("Illegal JSON Schema root type '"+type[0].getName()+"'. Expected: " + SchemaConstants.OBJECT_TYPE + ".");
+		throw new JsonSchemaException("Illegal JSON Schema root type '"+schemaList.getFirst().getName()+"'. Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 	}
 
 	private void checkSchemaRootId(ObjectType rootType) {

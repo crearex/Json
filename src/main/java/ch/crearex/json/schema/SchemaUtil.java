@@ -19,6 +19,17 @@ public class SchemaUtil {
 		return summary.toString();
 	}
 
+	public static String toStringSummary(SchemaList schemata) {
+		StringBuilder summary = new StringBuilder();
+		for(int index=0; index<schemata.size(); index++) {
+			if(index>0) {
+				summary.append(COMMA + " ");
+			}
+			summary.append(schemata.get(index).getName());
+		}
+		return summary.toString();
+	}
+	
 	public static boolean isNullableType(JsonObject definition) {
 		JsonElement type = definition.getProperty(SchemaConstants.TYPE_NAME);
 		if(type instanceof JsonString) {

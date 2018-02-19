@@ -11,12 +11,12 @@ class EnumTypeFactory implements TypeFactory {
 	}
 
 	@Override
-	public SchemaType[] createPossibleTypes(JsonObject typeDefinition) {
+	public SchemaList createPossibleTypes(JsonObject typeDefinition) {
 		JsonArray enumeration = typeDefinition.getArray(SchemaConstants.ENUM_NAME);
 		if(enumeration == null) {
 			throw new JsonSchemaException("Read enum declaration in '"+typeDefinition.getPath()+"' failed!");
 		}
-		return new SchemaType[] {createEnumType(enumeration)};
+		return new SchemaList(new SchemaType[] {createEnumType(enumeration)});
 	}
 
 	private SchemaType createEnumType(JsonArray enumeration) {

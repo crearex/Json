@@ -2,17 +2,17 @@ package ch.crearex.json.schema;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonArray;
-import ch.crearex.json.impl.JsonNullValue;
 
 public class ArrayType extends ContainerType {
 
 	static final ArrayType EMTPTY_ARRAY = new ArrayType("", "") {
+		@SuppressWarnings("unused")
 		void validateEntryValue(JsonSchemaContext context, JsonSimpleValue value) {
 		}
 	};
-	private static final SchemaType[] EMPTY_TYPE_LIST = new SchemaType[0];
+	private static final SchemaList EMPTY_TYPE_LIST = new SchemaList(new SchemaType[0]);
 
-	private SchemaType[] possibleItemTypes = null;
+	private SchemaList possibleItemTypes = null;
 	private boolean uniqueItems = false;
 
 	public ArrayType(String title, String description) {
@@ -24,11 +24,11 @@ public class ArrayType extends ContainerType {
 		return SchemaConstants.ARRAY_TYPE;
 	}
 
-	public void addItemTypes(SchemaType[] itemTypes) {
+	public void addItemTypes(SchemaList itemTypes) {
 		this.possibleItemTypes = itemTypes;
 	}
 
-	public SchemaType[] getItemTypes() {
+	public SchemaList getItemTypes() {
 		if (possibleItemTypes == null) {
 			return EMPTY_TYPE_LIST;
 		}
@@ -64,7 +64,7 @@ public class ArrayType extends ContainerType {
 		if (possibleItemTypes == null) {
 			return;
 		}
-		for (SchemaType itemType : possibleItemTypes) {
+		for (SchemaType itemType : possibleItemTypes.getSchemata()) {
 			if (itemType instanceof ContainerType) {
 				((ContainerType) itemType).visit(visitor);
 			}
@@ -73,112 +73,81 @@ public class ArrayType extends ContainerType {
 
 	/**
 	 * Returns the type of the array entry or null if not found!
-	 * @param nextArrayIndex 
+	 * 
+	 * @param nextArrayIndex
 	 */
 	SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
-		if((possibleItemTypes == null) || (possibleItemTypes.length == 0)) {
+		if ((possibleItemTypes == null) || (possibleItemTypes.size() == 0)) {
 			return null;
 		}
-		
-		if(possibleItemTypes.length == 1) {
-			SchemaType type = possibleItemTypes[0];
-			if(type.matchesDomType(entryType)) {
+
+		if (possibleItemTypes.size() == 1) {
+			SchemaType type = possibleItemTypes.getFirst();
+			if (type.matchesDomType(entryType)) {
 				return type;
 			}
 		} else {
-			if(possibleItemTypes.length > nextArrayIndex) {
-				if(possibleItemTypes.length >= nextArrayIndex) {
-					SchemaType type = possibleItemTypes[nextArrayIndex];
-					if(type.matchesDomType(entryType)) {
+			if (possibleItemTypes.size() > nextArrayIndex) {
+				if (possibleItemTypes.size() >= nextArrayIndex) {
+					SchemaType type = possibleItemTypes.get(nextArrayIndex);
+					if (type.matchesDomType(entryType)) {
 						return type;
 					}
 				}
 			}
 		}
-		
-		
-		String expectedTypeName = possibleItemTypes[0].getName();
-		if(possibleItemTypes.length > 1) {
-			if(possibleItemTypes.length < nextArrayIndex) {
-				expectedTypeName = possibleItemTypes[nextArrayIndex].getName();
+
+		String expectedTypeName = possibleItemTypes.getFirst().getName();
+		if (possibleItemTypes.size() > 1) {
+			if (possibleItemTypes.size() < nextArrayIndex) {
+				expectedTypeName = possibleItemTypes.get(nextArrayIndex).getName();
 			} else {
 				expectedTypeName = "No type for index " + nextArrayIndex + " defined";
 			}
 		}
-		
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Invalid type in '" + 
-				context.getPath() + "'! Expected: [" + expectedTypeName + "]."));
+
+		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(),
+				"Invalid type in '" + context.getPath() + "'! Expected: [" + expectedTypeName + "]."));
 		return null;
 	}
 
 	void validateEntryValue(JsonSchemaContext context, int nextArrayIndex, JsonSimpleValue value) {
-		if(possibleItemTypes == null) {
+		if (possibleItemTypes == null) {
 			return;
 		}
-		
+
 		int index = 0;
-		boolean typeFound = false;
-		
-		if(possibleItemTypes.length == 1) {
-			SchemaType type = possibleItemTypes[0];
-			if(type.isNullable() && value.isNull()) {
+		if (possibleItemTypes.size() == 1) {
+			SchemaType type = possibleItemTypes.getFirst();
+			if (type.isNullable() && value.isNull()) {
 				return;
 			}
-			if(type.matchesDomType(value.getClass())) {
-				typeFound = true;
-				if(type instanceof ValueType) {
-					((ValueType)type).validate(context, ""+index , value);
+			if (type.matchesDomType(value.getClass())) {
+				if (type instanceof ValueType) {
+					((ValueType) type).validate(context, "" + index, value);
 					return;
 				}
 			}
-		} else if(possibleItemTypes.length > nextArrayIndex) {
-			SchemaType type = possibleItemTypes[nextArrayIndex];
-			if(type.isNullable() && value.isNull()) {
+		} else if (possibleItemTypes.size() > nextArrayIndex) {
+			SchemaType type = possibleItemTypes.get(nextArrayIndex);
+			if (type.isNullable() && value.isNull()) {
 				return;
 			}
-			if(type.matchesDomType(value.getClass())) {
-				typeFound = true;
-				if(type instanceof ValueType) {
-					((ValueType)type).validate(context, ""+index , value);
+			if (type.matchesDomType(value.getClass())) {
+				if (type instanceof ValueType) {
+					((ValueType) type).validate(context, "" + index, value);
 					return;
 				}
 			}
 		}
-		
-// Type errors are reported by the type check in getEntryType()		
-//		if(!typeFound) {
-//			String expectedTypeName = possibleItemTypes[0].getName();
-//			if(possibleItemTypes.length > 1) {
-//				if(possibleItemTypes.length < nextArrayIndex) {
-//					expectedTypeName = possibleItemTypes[nextArrayIndex].getName();
-//				} else {
-//					expectedTypeName = "No type for index " + nextArrayIndex + " defined";
-//				}
-//			}
-//			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal array type '"+value.getTypeName()+"' for '"+context.getPath()+"'! Expected: [" + getPossibleTypeList() + "]."));
-//		}
 
-	}
-	
-
-	private String getPossibleTypeList() {
-		StringBuilder builder = new StringBuilder();
-		boolean first = true;
-		for(SchemaType type: possibleItemTypes) {
-			if(first) {
-				first = false;
-			} else {
-				builder.append(", ");
-			}
-			builder.append(type.getName());
-		}
-		return builder.toString();
+		// Type errors are reported by the type check in getEntryType()
 	}
 
 	void setUniqueItems(boolean uniqueItems) {
 		this.uniqueItems = uniqueItems;
 	}
-	
+
 	public boolean isUniqueItems() {
 		return uniqueItems;
 	}

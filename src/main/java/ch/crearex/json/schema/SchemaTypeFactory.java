@@ -18,70 +18,58 @@ public class SchemaTypeFactory implements TypeFactory {
 		this.context = context;
 	}
 
-	/* (non-Javadoc)
-	 * @see ch.crearex.json.schema.TypeFactory#createPossibleTypes(ch.crearex.json.dom.JsonObject)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * ch.crearex.json.schema.TypeFactory#createPossibleTypes(ch.crearex.json.dom.
+	 * JsonObject)
 	 */
 	@Override
-	public SchemaType[] createPossibleTypes(JsonObject typeDefinition) {
-
+	public SchemaList createPossibleTypes(JsonObject typeDefinition) {
 		if (typeDefinition.isObject(SchemaConstants.DEFINITIONS)) {
-			for (Map.Entry<String, JsonElement> entry : typeDefinition.getObject(SchemaConstants.DEFINITIONS)) {
-				String definitionName = entry.getKey();
-				if (!(entry.getValue() instanceof JsonObject)) {
-					throw new JsonSchemaException("Illegal type for inline schema '"
-							+ typeDefinition.getPath().concat(definitionName) + "'!");
-				}
-				JsonObject internalSchemaTypeDefinition = (JsonObject) entry.getValue();
-
-				final SchemaType internalType;
-				if (internalSchemaTypeDefinition.isString(SchemaConstants.INTERNAL_REFERENCE)) {
-					internalType = getReferencedType(internalSchemaTypeDefinition);
-				} else {
-					String internalContentType = internalSchemaTypeDefinition.getString(SchemaConstants.TYPE_NAME, "");
-					internalType = createType(internalContentType, internalSchemaTypeDefinition);
-				}
-				if (internalSchemaTypeDefinition.isString(SchemaConstants.SCHEMA_ID)) {
-					context.registerSchemaDefinition(
-							expandId(internalSchemaTypeDefinition.getString(SchemaConstants.SCHEMA_ID), typeDefinition),
-							internalType);
-				}
-
-				String internalId = "" + SchemaConstants.HASH + SchemaConstants.PATH_SEPARATOR + SchemaConstants.DEFINITIONS
-						+ SchemaConstants.PATH_SEPARATOR + definitionName;
-				context.registerSchemaDefinition(expandId(internalId, typeDefinition), internalType);
-			}
+			readDefinitions(typeDefinition);
 		}
 
 		if (typeDefinition.isString(SchemaConstants.INTERNAL_REFERENCE)) {
-			return new SchemaType[] { getReferencedType(typeDefinition) };
+			return new SchemaList(new SchemaType[] { getReferencedType(typeDefinition) });
 		}
 
 		if (typeDefinition.isString(SchemaConstants.TYPE_NAME)) {
-			SchemaType type = createType(typeDefinition.getString(SchemaConstants.TYPE_NAME), typeDefinition);
-			return new SchemaType[] { type };
+			return new SchemaList(new SchemaType[] { createType(typeDefinition.getString(SchemaConstants.TYPE_NAME), typeDefinition) });
 		} else if (typeDefinition.isArray(SchemaConstants.TYPE_NAME)) {
-			JsonArray array = typeDefinition.getArray(SchemaConstants.TYPE_NAME);
-			int retArrLength = array.size();
-			boolean nullable = SchemaType.DEFAULT_NULLABLE;
-			if(array.contains(SchemaConstants.NULL_TYPE)) {
-				nullable = true;
-				retArrLength--;
-			}
-			SchemaType[] retArr = new SchemaType[retArrLength];
-			int index = 0;
-			for (JsonElement elem : array) {
-				String typeName = elem.toString();
-				if(typeName.equals(SchemaConstants.NULL_TYPE)) {
-					continue;
-				}
-				SchemaType type = createType(typeName, typeDefinition);
-				type.setNullable(nullable);
-				retArr[index] = type;
-				index++;
-			}
-			return retArr;
+			return new SchemaList(createTypes(typeDefinition));
 		}
+
 		throw new JsonSchemaException("Illegal schema type declaration in " + typeDefinition.getPath() + "!");
+	}
+
+	private void readDefinitions(JsonObject typeDefinition) {
+		for (Map.Entry<String, JsonElement> entry : typeDefinition.getObject(SchemaConstants.DEFINITIONS)) {
+			String definitionName = entry.getKey();
+			if (!(entry.getValue() instanceof JsonObject)) {
+				throw new JsonSchemaException(
+						"Illegal type for inline schema '" + typeDefinition.getPath().concat(definitionName) + "'!");
+			}
+			JsonObject internalSchemaTypeDefinition = (JsonObject) entry.getValue();
+
+			final SchemaType internalType;
+			if (internalSchemaTypeDefinition.isString(SchemaConstants.INTERNAL_REFERENCE)) {
+				internalType = getReferencedType(internalSchemaTypeDefinition);
+			} else {
+				String internalContentType = internalSchemaTypeDefinition.getString(SchemaConstants.TYPE_NAME, "");
+				internalType = createType(internalContentType, internalSchemaTypeDefinition);
+			}
+			if (internalSchemaTypeDefinition.isString(SchemaConstants.SCHEMA_ID)) {
+				context.registerSchemaDefinition(
+						expandId(internalSchemaTypeDefinition.getString(SchemaConstants.SCHEMA_ID), typeDefinition),
+						internalType);
+			}
+
+			String internalId = "" + SchemaConstants.HASH + SchemaConstants.PATH_SEPARATOR + SchemaConstants.DEFINITIONS
+					+ SchemaConstants.PATH_SEPARATOR + definitionName;
+			context.registerSchemaDefinition(expandId(internalId, typeDefinition), internalType);
+		}
 	}
 
 	private SchemaType getReferencedType(JsonObject typeDefinition) {
@@ -90,13 +78,13 @@ public class SchemaTypeFactory implements TypeFactory {
 		}
 		try {
 			String reference = typeDefinition.getString(SchemaConstants.INTERNAL_REFERENCE);
-			if(reference.indexOf(SchemaConstants.HASH) == 0) {
+			if (reference.indexOf(SchemaConstants.HASH) == 0) {
 				String expandedReference = expandId(reference, typeDefinition);
 				SchemaType type = context.getSchemaDefinition(expandedReference);
 				return type;
 			} else {
 				SchemaType type = context.tryGetSchemaDefinition(reference);
-				if(type == null) {
+				if (type == null) {
 					type = readReferencedSchema(reference);
 				}
 				return type;
@@ -109,10 +97,10 @@ public class SchemaTypeFactory implements TypeFactory {
 
 	private SchemaType readReferencedSchema(String schemaId) {
 		File originPath = new File(context.getOriginUrl().getFile()).getParentFile();
-		
-	    final URL referencedSchemaOriginUrl;
+
+		final URL referencedSchemaOriginUrl;
 		int lastSlashIndex = schemaId.lastIndexOf(SchemaConstants.PATH_SEPARATOR);
-		if(lastSlashIndex == -1) {
+		if (lastSlashIndex == -1) {
 			referencedSchemaOriginUrl = convertToUrl(originPath, schemaId);
 		} else {
 			String partialSchemaId = removeCommonPath(schemaId, context.getRootId());
@@ -123,24 +111,24 @@ public class SchemaTypeFactory implements TypeFactory {
 		SchemaBuilder schemaBuilder = new SchemaBuilder(referencedContext);
 		return schemaBuilder.build(new CrearexJson().parse(referencedSchemaOriginUrl));
 	}
-	
+
 	private String removeCommonPath(String schemaId, String rootId) {
 		int start = 0;
 		int end = rootId.indexOf(SchemaConstants.PATH_SEPARATOR);
-		while(end != -1) {
-			if(schemaId.length() < end) {
+		while (end != -1) {
+			if (schemaId.length() < end) {
 				break;
 			}
 			String schemaPart = schemaId.substring(start, end);
 			String rootPart = rootId.substring(start, end);
-			if(schemaPart.equals(rootPart)) {
+			if (schemaPart.equals(rootPart)) {
 				start = end;
-				end = rootId.indexOf(SchemaConstants.PATH_SEPARATOR, start+1);
+				end = rootId.indexOf(SchemaConstants.PATH_SEPARATOR, start + 1);
 			} else {
 				break;
 			}
 		}
-		if(start>0) {
+		if (start > 0) {
 			String partialName = schemaId.substring(start + 1);
 			return partialName;
 		}
@@ -149,13 +137,14 @@ public class SchemaTypeFactory implements TypeFactory {
 
 	private URL convertToUrl(File originPath, String schemaId) {
 		File schemaFile = new File(originPath, schemaId);
-		if(!schemaFile.isFile()) {
-			throw new JsonSchemaException("Read referenced JSON Schema '"+schemaFile+"' failed! File does not exist.");
+		if (!schemaFile.isFile()) {
+			throw new JsonSchemaException(
+					"Read referenced JSON Schema '" + schemaFile + "' failed! File does not exist.");
 		}
 		try {
 			return schemaFile.toURI().toURL();
 		} catch (MalformedURLException e) {
-			throw new JsonSchemaException("Read referenced JSON Schema '"+schemaFile+"' failed! " + e, e);
+			throw new JsonSchemaException("Read referenced JSON Schema '" + schemaFile + "' failed! " + e, e);
 		}
 	}
 
@@ -181,6 +170,29 @@ public class SchemaTypeFactory implements TypeFactory {
 		} else {
 			return first + last;
 		}
+	}
+
+	private SchemaType[] createTypes(JsonObject typeDefinition) {
+		JsonArray array = typeDefinition.getArray(SchemaConstants.TYPE_NAME);
+		int retArrLength = array.size();
+		boolean nullable = SchemaType.DEFAULT_NULLABLE;
+		if (array.contains(SchemaConstants.NULL_TYPE)) {
+			nullable = true;
+			retArrLength--;
+		}
+		SchemaType[] retArr = new SchemaType[retArrLength];
+		int index = 0;
+		for (JsonElement elem : array) {
+			String typeName = elem.toString();
+			if (typeName.equals(SchemaConstants.NULL_TYPE)) {
+				continue;
+			}
+			SchemaType type = createType(typeName, typeDefinition);
+			type.setNullable(nullable);
+			retArr[index] = type;
+			index++;
+		}
+		return retArr;
 	}
 
 	private SchemaType createType(String typeName, JsonObject schemaTypeDefinition) {

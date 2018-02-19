@@ -15,9 +15,9 @@ public class ObjectType extends ContainerType {
 		void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
 		}
 	};
-	private HashMap<String, SchemaType[]> properties = new HashMap<String, SchemaType[]>();
-	private HashMap<String, SchemaType[]> patternProperties = new HashMap<String, SchemaType[]>();
-	private SchemaType[] additionalPropertiesSchemata;
+	private HashMap<String, SchemaList> properties = new HashMap<String, SchemaList>();
+	private HashMap<String, SchemaList> patternProperties = new HashMap<String, SchemaList>();
+	private SchemaList additionalPropertiesSchemata;
 	private final String id;
 
 	public ObjectType(String title, String description, String id) {
@@ -34,50 +34,50 @@ public class ObjectType extends ContainerType {
 		return SchemaConstants.OBJECT_TYPE;
 	}
 
-	public void addProperty(String propertyName, SchemaType[] types) {
+	public void addProperty(String propertyName, SchemaList types) {
 		properties.put(propertyName, types);
 	}
 
-	public void addPatternProperty(String propertyNameRegex, SchemaType[] possibleValueTypes) {
+	public void addPatternProperty(String propertyNameRegex, SchemaList possibleValueTypes) {
 		patternProperties.put(propertyNameRegex, possibleValueTypes);
 	}
 
-	public SchemaType[] getPropertyTypes(String propertyName) {
-		SchemaType[] possibleTypes = null;
+	public SchemaList getPropertyTypes(String propertyName) {
+		SchemaList possibleTypes = null;
 		if (patternProperties.isEmpty()) {
 			possibleTypes = properties.get(propertyName);
 		} else {
 			HashSet<SchemaType> typeSet = new HashSet<SchemaType>();
-			SchemaType[] propTypes = properties.get(propertyName);
+			SchemaList propTypes = properties.get(propertyName);
 			if (propTypes != null) {
-				for (SchemaType type : propTypes) {
+				for (SchemaType type : propTypes.getSchemata()) {
 					typeSet.add(type);
 				}
 			}
 			for (String regex : patternProperties.keySet()) {
 				if (Pattern.matches(regex, propertyName)) {
-					SchemaType[] patternPropTypes = patternProperties.get(regex);
+					SchemaList patternPropTypes = patternProperties.get(regex);
 					if (patternPropTypes != null) {
-						for (SchemaType type : patternPropTypes) {
+						for (SchemaType type : patternPropTypes.getSchemata()) {
 							typeSet.add(type);
 						}
 					}
 				}
 			}
-			possibleTypes = typeSet.toArray(new SchemaType[typeSet.size()]);
+			possibleTypes = new SchemaList(typeSet.toArray(new SchemaType[typeSet.size()]));
 		}
-		if((possibleTypes == null) || (possibleTypes.length == 0)) {
+		if((possibleTypes == null) || (possibleTypes.size() == 0)) {
 			return additionalPropertiesSchemata;
 		}
 		return possibleTypes;
 	}
 
 	private SchemaType resolveType(String propertyName, JsonSimpleValue value) {
-		SchemaType[] possibleTypes = getPropertyTypes(propertyName);
+		SchemaList possibleTypes = getPropertyTypes(propertyName);
 		if (possibleTypes == null) {
 			return null;
 		}
-		for (SchemaType type : possibleTypes) {
+		for (SchemaType type : possibleTypes.getSchemata()) {
 			if (type.matchesDomType(value.getClass())) {
 				return type;
 			}
@@ -105,8 +105,8 @@ public class ObjectType extends ContainerType {
 	@Override
 	public void visit(ContainerVisitor visitor) {
 		visitor.visit(this);
-		for (Map.Entry<String, SchemaType[]> entry : this.properties.entrySet()) {
-			for (SchemaType schemaType : entry.getValue()) {
+		for (Map.Entry<String, SchemaList> entry : this.properties.entrySet()) {
+			for (SchemaType schemaType : entry.getValue().getSchemata()) {
 				if (schemaType instanceof ContainerType) {
 					((ContainerType) schemaType).visit(visitor);
 				}
@@ -118,20 +118,20 @@ public class ObjectType extends ContainerType {
 	 * Returns the matching property type or null if the property was not found.
 	 */
 	SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
-		SchemaType[] possibleTypes = getPropertyTypes(propertyName);
-		if ((possibleTypes == null) || (possibleTypes.length == 0)) {
+		SchemaList possibleTypes = getPropertyTypes(propertyName);
+		if ((possibleTypes == null) || (possibleTypes.size() == 0)) {
 			// there is no schema definition for this property = unknown property
 			return null;
 		}
-		for (SchemaType type : possibleTypes) {
+		for (SchemaType type : possibleTypes.getSchemata()) {
 			if (type.matchesDomType(propertyType)) {
 				return type;
 			}
 		}
 
 		if (JsonNullValue.class.isAssignableFrom(propertyType)) {
-			if (possibleTypes[0].isNullable()) {
-				return possibleTypes[0];
+			if (possibleTypes.getFirst().isNullable()) {
+				return possibleTypes.getFirst();
 			}
 		}
 		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Unexpected type for '"
@@ -156,7 +156,7 @@ public class ObjectType extends ContainerType {
 				+ value.getTypeName() + "' for '" + context.getPath() + "'! Expected: " + type.getName() + "."));
 	}
 
-	void addAdditionalPropertiesSchema(SchemaType[] additionalPropertiesSchemata) {
+	void addAdditionalPropertiesSchema(SchemaList additionalPropertiesSchemata) {
 		this.additionalPropertiesSchemata = additionalPropertiesSchemata;
 	}
 
