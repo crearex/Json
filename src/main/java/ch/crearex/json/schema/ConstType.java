@@ -23,7 +23,7 @@ public class ConstType extends ValueType {
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+	public void validate(JsonSchemaContext context, JsonSimpleValue value) {
 
 		boolean match = constant.getTypeName().equals(value.getTypeName()) && constant.equals(value);
 		if(!match) {

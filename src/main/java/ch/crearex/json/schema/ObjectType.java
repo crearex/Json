@@ -149,7 +149,7 @@ public class ObjectType extends ContainerType {
 		}
 
 		if (type instanceof ValueType) {
-			((ValueType) type).validate(context, propertyName, value);
+			((ValueType) type).validate(context, value);
 			return;
 		}
 		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal property type '"

@@ -33,8 +33,7 @@ public abstract class ValueType implements SchemaType {
 		return this.nullable;
 	}
 	
-	//TODO remove propertyName argument
-	public void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+	public void validate(JsonSchemaContext context, JsonSimpleValue value) {
 		if(constraints == null) {
 			return;
 		}

@@ -124,7 +124,7 @@ public class ArrayType extends ContainerType {
 			}
 			if (type.matchesDomType(value.getClass())) {
 				if (type instanceof ValueType) {
-					((ValueType) type).validate(context, "" + index, value);
+					((ValueType) type).validate(context, value);
 					return;
 				}
 			}
@@ -135,7 +135,7 @@ public class ArrayType extends ContainerType {
 			}
 			if (type.matchesDomType(value.getClass())) {
 				if (type instanceof ValueType) {
-					((ValueType) type).validate(context, "" + index, value);
+					((ValueType) type).validate(context, value);
 					return;
 				}
 			}

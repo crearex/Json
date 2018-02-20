@@ -49,7 +49,7 @@ public class EnumType extends ValueType {
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+	public void validate(JsonSchemaContext context, JsonSimpleValue value) {
 		boolean match = false;
 		for(JsonSimpleValue enumValue: values) {
 			if(enumValue.getTypeName().equals(value.getTypeName()) && enumValue.equals(value)) {

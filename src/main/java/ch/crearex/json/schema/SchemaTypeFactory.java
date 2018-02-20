@@ -35,13 +35,18 @@ public class SchemaTypeFactory implements TypeFactory {
 			return new SchemaList(new SchemaType[] { getReferencedType(typeDefinition) });
 		}
 
+		SchemaList possibleTypes = null;
 		if (typeDefinition.isString(SchemaConstants.TYPE_NAME)) {
-			return new SchemaList(new SchemaType[] { createType(typeDefinition.getString(SchemaConstants.TYPE_NAME), typeDefinition) });
+			possibleTypes = new SchemaList(new SchemaType[] { createType(typeDefinition.getString(SchemaConstants.TYPE_NAME), typeDefinition) });
 		} else if (typeDefinition.isArray(SchemaConstants.TYPE_NAME)) {
-			return new SchemaList(createTypes(typeDefinition));
+			possibleTypes = new SchemaList(createTypes(typeDefinition));
 		}
 
-		throw new JsonSchemaException("Illegal schema type declaration in " + typeDefinition.getPath() + "!");
+		if(possibleTypes == null) {
+			throw new JsonSchemaException("Illegal schema type declaration in " + typeDefinition.getPath() + "!");
+		}
+		
+		return possibleTypes;
 	}
 
 	private void readDefinitions(JsonObject typeDefinition) {

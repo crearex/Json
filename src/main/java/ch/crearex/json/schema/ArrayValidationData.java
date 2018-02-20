@@ -49,7 +49,7 @@ public class ArrayValidationData implements ValidationData {
 		Class<?> domTypeClass = value.getClass();
 		SchemaType entryType = type.getEntryType(context, nextArrayIndex, domTypeClass);
 		if(entryType instanceof ValueType) {
-			((ValueType)entryType).validate(context, "", value);
+			((ValueType)entryType).validate(context, value);
 		}
 	}
 	

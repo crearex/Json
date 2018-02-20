@@ -83,7 +83,7 @@ public class ObjectValidationData implements ValidationData {
 		Class<?> domTypeClass = value.getClass();
 		SchemaType propertyType = type.getPropertyType(context, nextPropertyName, domTypeClass);
 		if (propertyType instanceof ValueType) {
-			((ValueType) propertyType).validate(context, nextPropertyName, value);
+			((ValueType) propertyType).validate(context, value);
 		}
 	}
 
