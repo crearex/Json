@@ -3,7 +3,6 @@ package ch.crearex.json.schema;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ch.crearex.json.JsonSchema;
 import ch.crearex.json.JsonSimpleValue;
 
 public class AndSchema extends ContainerType implements ObjectValidator, ValueValidator, LogicType, Iterable<SchemaType> {
@@ -88,10 +87,67 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
+		SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
+			for(SchemaType type: schemata) {
+				if(type instanceof ArrayType) {
+					ArrayType arrType = (ArrayType)type;
+					SchemaType arrayEntryType = arrType.getEntryType(context, nextArrayIndex, entryType);
+					if(arrayEntryType != null) {
+						return arrayEntryType;
+					}
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		public SchemaList getItemTypes() {
+			for(SchemaType type: schemata) {
+				if(type instanceof ArrayType) {
+					ArrayType arrType = (ArrayType)type;
+					SchemaList itemTypes = arrType.getItemTypes();
+					if(itemTypes != ArrayType.EMPTY_TYPE_LIST) {
+						return itemTypes;
+					}
+				}
+			}
+			return ArrayType.EMPTY_TYPE_LIST;
+		}
+		
+		@Override
+		public boolean isUniqueItems() {
+			for(SchemaType type: schemata) {
+				if(type instanceof ArrayType) {
+					ArrayType arrType = (ArrayType)type;
+					boolean unique = arrType.isUniqueItems();
+					if(unique) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		@Override
+		public boolean matchesDomType(Class<?> type) {
+			return AndSchema.this.matchesDomType(type);
+		}
+		
+		@Override
+		public void visit(ContainerVisitor visitor) {
+			AndSchema.this.visit(visitor);
+			
+		}
+		
+		@Override
 		public ValidationResult validate(JsonSchemaContext context, ValidationData validationData) {
 			return AndSchema.this.validate(context, validationData);
 		}
 		
+		@Override
+		void validateEntryValue(JsonSchemaContext context, int nextArrayIndex, JsonSimpleValue value) {
+			AndSchema.this.validate(context, value);
+		}
 	}
 	
 	private interface AndValidator extends ObjectValidator, ValueValidator {

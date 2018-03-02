@@ -10,7 +10,7 @@ public class ArrayType extends ContainerType {
 		void validateEntryValue(JsonSchemaContext context, JsonSimpleValue value) {
 		}
 	};
-	private static final SchemaList EMPTY_TYPE_LIST = new SchemaList(new SchemaType[0]);
+	static final SchemaList EMPTY_TYPE_LIST = new SchemaList(new SchemaType[0]);
 
 	private SchemaList possibleItemTypes = null;
 	private boolean uniqueItems = false;
@@ -116,7 +116,6 @@ public class ArrayType extends ContainerType {
 			return;
 		}
 
-		int index = 0;
 		if (possibleItemTypes.size() == 1) {
 			SchemaType type = possibleItemTypes.getFirst();
 			if (type.isNullable() && value.isNull()) {
