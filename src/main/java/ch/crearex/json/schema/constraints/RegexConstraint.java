@@ -4,8 +4,8 @@ import java.util.regex.Pattern;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.schema.JsonSchemaContext;
-import ch.crearex.json.schema.JsonSchemaValidationException;
 import ch.crearex.json.schema.SimpleValueConstraint;
+import ch.crearex.json.schema.ValidationResult;
 
 public class RegexConstraint implements SimpleValueConstraint {
 	
@@ -18,11 +18,11 @@ public class RegexConstraint implements SimpleValueConstraint {
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, JsonSimpleValue value) {
+	public ValidationResult validate(JsonSchemaContext context, JsonSimpleValue value) {
 		if(pattern.matcher(value.asString()).matches()) {
-			return;
+			return ValidationResult.OK;
 		}
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Validation failed! Value of " + context.getPath() + "='"+value.toString()+"' does not match the regular expression '" + regex + "'."));
+		return new ValidationResult(context.getPath(), "Validation failed! Value of " + context.getPath() + "='"+value.toString()+"' does not match the regular expression '" + regex + "'.");
 	}
 
 }

@@ -36,16 +36,31 @@ public class SchemaTypeFactory implements TypeFactory {
 		}
 
 		SchemaList possibleTypes = null;
-		if (typeDefinition.isString(SchemaConstants.TYPE_NAME)) {
-			possibleTypes = new SchemaList(new SchemaType[] { createType(typeDefinition.getString(SchemaConstants.TYPE_NAME), typeDefinition) });
-		} else if (typeDefinition.isArray(SchemaConstants.TYPE_NAME)) {
-			possibleTypes = new SchemaList(createTypes(typeDefinition));
+		if (typeDefinition.isArray(SchemaConstants.ALL_OF)) {
+			AndSchema and = new AndSchema(typeDefinition.getString(SchemaConstants.TITLE_NAME, ""),
+					typeDefinition.getString(SchemaConstants.DESCRIPTION_NAME, ""));
+			JsonArray mandatorySchemas = typeDefinition.getArray(SchemaConstants.ALL_OF);
+			for(JsonElement schema: mandatorySchemas) {
+				if(schema instanceof JsonObject) {
+					and.add(createType(SchemaConstants.OBJECT_TYPE, (JsonObject)schema));
+				} else {
+					throw new JsonSchemaException("Illegal element at " + schema.getPath() + "! Expected type: " + SchemaConstants.OBJECT_TYPE);
+				}
+			}
+			possibleTypes = new SchemaList(and);
+		} else {
+			if (typeDefinition.isString(SchemaConstants.TYPE_NAME)) {
+				possibleTypes = new SchemaList(new SchemaType[] {
+						createType(typeDefinition.getString(SchemaConstants.TYPE_NAME), typeDefinition) });
+			} else if (typeDefinition.isArray(SchemaConstants.TYPE_NAME)) {
+				possibleTypes = new SchemaList(createTypes(typeDefinition));
+			}
 		}
 
-		if(possibleTypes == null) {
+		if (possibleTypes == null) {
 			throw new JsonSchemaException("Illegal schema type declaration in " + typeDefinition.getPath() + "!");
 		}
-		
+
 		return possibleTypes;
 	}
 

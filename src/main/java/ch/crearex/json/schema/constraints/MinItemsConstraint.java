@@ -4,8 +4,8 @@ import ch.crearex.json.schema.ArrayValidationData;
 import ch.crearex.json.schema.ContainerConstraint;
 import ch.crearex.json.schema.JsonSchemaContext;
 import ch.crearex.json.schema.JsonSchemaException;
-import ch.crearex.json.schema.JsonSchemaValidationException;
 import ch.crearex.json.schema.ValidationData;
+import ch.crearex.json.schema.ValidationResult;
 
 public class MinItemsConstraint implements ContainerConstraint {
 	private final int minItems;
@@ -18,13 +18,13 @@ public class MinItemsConstraint implements ContainerConstraint {
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, ValidationData validationData) {
+	public ValidationResult validate(JsonSchemaContext context, ValidationData validationData) {
 		if(!(validationData instanceof ArrayValidationData)) {
-			return;
+			return ValidationResult.OK;
 		}
 		if(((ArrayValidationData)validationData).getNextArrayIndex() >= minItems) {
-			return;
+			return ValidationResult.OK;
 		}
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Validation failed! " + context.getPath() + " expected array size >= " + minItems + " items."));
+		return new ValidationResult(context.getPath(), "Validation failed! " + context.getPath() + " expected array size >= " + minItems + " items.");
 	}
 }

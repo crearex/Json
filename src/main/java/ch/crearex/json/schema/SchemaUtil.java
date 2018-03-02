@@ -14,7 +14,7 @@ public class SchemaUtil {
 			if(index>0) {
 				summary.append(COMMA + " ");
 			}
-			summary.append(schemata[index].getName());
+			summary.append(schemata[index].getTypeName());
 		}
 		return summary.toString();
 	}
@@ -25,7 +25,7 @@ public class SchemaUtil {
 			if(index>0) {
 				summary.append(COMMA + " ");
 			}
-			summary.append(schemata.get(index).getName());
+			summary.append(schemata.get(index).getTypeName());
 		}
 		return summary.toString();
 	}

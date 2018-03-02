@@ -20,7 +20,7 @@ public class ArrayType extends ContainerType {
 	}
 
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return SchemaConstants.ARRAY_TYPE;
 	}
 
@@ -97,10 +97,10 @@ public class ArrayType extends ContainerType {
 			}
 		}
 
-		String expectedTypeName = possibleItemTypes.getFirst().getName();
+		String expectedTypeName = possibleItemTypes.getFirst().getTypeName();
 		if (possibleItemTypes.size() > 1) {
 			if (possibleItemTypes.size() < nextArrayIndex) {
-				expectedTypeName = possibleItemTypes.get(nextArrayIndex).getName();
+				expectedTypeName = possibleItemTypes.get(nextArrayIndex).getTypeName();
 			} else {
 				expectedTypeName = "No type for index " + nextArrayIndex + " defined";
 			}
@@ -124,7 +124,7 @@ public class ArrayType extends ContainerType {
 			}
 			if (type.matchesDomType(value.getClass())) {
 				if (type instanceof ValueType) {
-					((ValueType) type).validate(context, value);
+					((ValueValidator) type).validate(context, value);
 					return;
 				}
 			}
@@ -135,7 +135,7 @@ public class ArrayType extends ContainerType {
 			}
 			if (type.matchesDomType(value.getClass())) {
 				if (type instanceof ValueType) {
-					((ValueType) type).validate(context, value);
+					((ValueValidator) type).validate(context, value);
 					return;
 				}
 			}

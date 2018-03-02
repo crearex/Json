@@ -40,13 +40,17 @@ public abstract class ContainerType implements SchemaType {
 
 	public abstract void visit(ContainerVisitor visitor);
 
-	protected void validate(JsonSchemaContext context, ValidationData validationData) {
+	public ValidationResult validate(JsonSchemaContext context, ValidationData validationData) {
 		if(constraints == null) {
-			return;
+			return ValidationResult.OK;
 		}
 		for(ContainerConstraint constraint: constraints) {
-			constraint.validate(context, validationData);
+			ValidationResult result = constraint.validate(context, validationData);
+			if(result != ValidationResult.OK) {
+				return result;
+			}
 		}
+		return ValidationResult.OK;
 	}
 
 	void addConstraint(ContainerConstraint constraint) {

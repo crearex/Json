@@ -1,8 +1,6 @@
 package ch.crearex.json.schema;
 
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.dom.JsonArray;
-import ch.crearex.json.dom.JsonObject;
 
 public class ArrayValidationData implements ValidationData {
 
@@ -24,7 +22,7 @@ public class ArrayValidationData implements ValidationData {
 			return (ObjectType)nextType;
 		}
 		
-		throw new JsonSchemaException("Invalid "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
+		throw new JsonSchemaException("Invalid "+nextType.getTypeName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 	}
 	
 	public ContainerType getNextArrayType(JsonSchemaContext context) {
@@ -38,7 +36,7 @@ public class ArrayValidationData implements ValidationData {
 			return (ArrayType)nextType;
 		}
 		
-		throw new JsonSchemaException("Invalid "+nextType.getName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE + ".");
+		throw new JsonSchemaException("Invalid "+nextType.getTypeName()+" type for '"+context.getPath()+"'! Expected: " + SchemaConstants.ARRAY_TYPE + ".");
 	}
 	
 	public void validateSimpleValue(JsonSchemaContext context, JsonSimpleValue value) {
@@ -49,7 +47,7 @@ public class ArrayValidationData implements ValidationData {
 		Class<?> domTypeClass = value.getClass();
 		SchemaType entryType = type.getEntryType(context, nextArrayIndex, domTypeClass);
 		if(entryType instanceof ValueType) {
-			((ValueType)entryType).validate(context, value);
+			((ValueValidator)entryType).validate(context, value);
 		}
 	}
 	
@@ -66,11 +64,17 @@ public class ArrayValidationData implements ValidationData {
 	}
 	
 	public void validateObjectFinal(JsonSchemaContext context) {
-		type.validate(context, this);
+		ValidationResult result = type.validate(context, this);
+		if(result != ValidationResult.OK) {
+			context.notifySchemaViolation(new JsonSchemaValidationException(result));
+		}
 	}
 
 	public void validateArrayFinal(JsonSchemaContext context) {
-		type.validate(context, this);
+		ValidationResult result = type.validate(context, this);
+		if(result != ValidationResult.OK) {
+			context.notifySchemaViolation(new JsonSchemaValidationException(result));
+		}
 	}
 	
 	@Override

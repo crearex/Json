@@ -16,4 +16,9 @@ public class JsonSchemaValidationException extends JsonSchemaException {
 		setPath(path);
 	}
 
+	public JsonSchemaValidationException(ValidationResult result) {
+		super(result.getMessage());
+		setPath(result.getPath());
+	}
+
 }

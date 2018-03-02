@@ -1,0 +1,23 @@
+{
+	"$schema": "http://json-schema.org/draft-06/schema#",
+	"$id": "http://something.com/allof-constraint-schema.json",
+	"title": "Object Constraints Test",
+    "definitions": {
+		"address": {
+			"type": "object",
+			"properties": {
+				"street_address": { "type": "string" },
+				"city": { "type": "string" },
+				"state": { "type": "string" }
+			},
+			"required": ["street_address", "city", "state"]
+		}
+	},
+	"allOf": [
+		{ "$ref": "#/definitions/address" },
+		{ "properties": {
+				"type": { "enum": [ "residential", "business" ] }
+			}
+		}
+	]
+}

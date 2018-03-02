@@ -1,5 +1,7 @@
 package ch.crearex.json.schema;
 
-public interface ContainerConstraint {
+public interface ObjectValidator {
+
 	ValidationResult validate(JsonSchemaContext context, ValidationData validationData);
+
 }

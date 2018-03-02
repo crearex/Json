@@ -14,7 +14,7 @@ public class NumberType extends ValueType {
 	}
 	
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return SchemaConstants.NUMBER_TYPE;
 	}
 

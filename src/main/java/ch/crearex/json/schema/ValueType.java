@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import ch.crearex.json.JsonSimpleValue;
 
-public abstract class ValueType implements SchemaType {
+public abstract class ValueType implements SchemaType, ValueValidator {
 	private final String title;
 	private final String description;
 	private LinkedList<SimpleValueConstraint> constraints;
@@ -29,17 +29,29 @@ public abstract class ValueType implements SchemaType {
 		return this;
 	}
 
+	/* (non-Javadoc)
+	 * @see ch.crearex.json.schema.ValueValidator#isNullable()
+	 */
+	@Override
 	public boolean isNullable() {
 		return this.nullable;
 	}
 	
-	public void validate(JsonSchemaContext context, JsonSimpleValue value) {
+	/* (non-Javadoc)
+	 * @see ch.crearex.json.schema.ValueValidator#validate(ch.crearex.json.schema.JsonSchemaContext, ch.crearex.json.JsonSimpleValue)
+	 */
+	@Override
+	public ValidationResult validate(JsonSchemaContext context, JsonSimpleValue value) {
 		if(constraints == null) {
-			return;
+			return ValidationResult.OK;
 		}
 		for(SimpleValueConstraint constraint: constraints) {
-			constraint.validate(context, value);
+			ValidationResult result = constraint.validate(context, value);
+			if(result != ValidationResult.OK) {
+				return result;
+			}
 		}
+		return ValidationResult.OK;
 	}
 
 	void addConstraint(SimpleValueConstraint constraint) {

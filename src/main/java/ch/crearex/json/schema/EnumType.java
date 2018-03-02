@@ -44,12 +44,12 @@ public class EnumType extends ValueType {
 	}
 
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return SchemaConstants.ENUM_NAME;
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, JsonSimpleValue value) {
+	public ValidationResult validate(JsonSchemaContext context, JsonSimpleValue value) {
 		boolean match = false;
 		for(JsonSimpleValue enumValue: values) {
 			if(enumValue.getTypeName().equals(value.getTypeName()) && enumValue.equals(value)) {
@@ -58,8 +58,9 @@ public class EnumType extends ValueType {
 			}
 		}
 		if(!match) {
-			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Value at '"+context.getPath()+"' = '"+value+"' does not match enum ["+getEnumValuesAsList()+"]"));
+			return new ValidationResult(context.getPath(), "Value at '"+context.getPath()+"' = '"+value+"' does not match enum ["+getEnumValuesAsList()+"]");
 		}
+		return ValidationResult.OK;
 	}
 
 	private String getEnumValuesAsList() {

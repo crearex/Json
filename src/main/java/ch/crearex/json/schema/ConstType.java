@@ -18,17 +18,19 @@ public class ConstType extends ValueType {
 	}
 
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return constant.getTypeName();
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, JsonSimpleValue value) {
+	public ValidationResult validate(JsonSchemaContext context, JsonSimpleValue value) {
 
 		boolean match = constant.getTypeName().equals(value.getTypeName()) && constant.equals(value);
 		if(!match) {
-			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Value at '"+context.getPath()+"' = '"+value+"' does not match expected constant '"+constant+"'."));
+			return new ValidationResult(context.getPath(), "Value at '"+context.getPath()+"' = '"+value+"' does not match expected constant '"+constant+"'.");
 		}
+		
+		return ValidationResult.OK;
 		
 	}
 

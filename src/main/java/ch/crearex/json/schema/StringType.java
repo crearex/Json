@@ -9,7 +9,7 @@ public class StringType extends ValueType {
 	}
 
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return SchemaConstants.STRING_TYPE;
 	}
 	

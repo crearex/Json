@@ -25,12 +25,12 @@ public class AnyType extends ContainerType implements SchemaType {
 	}
 
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return SchemaConstants.ANY_TYPE;
 	}
 
 	@Override
 	public void visit(ContainerVisitor visitor) {
 	}
-	
+
 }

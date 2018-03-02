@@ -95,7 +95,7 @@ public class CrearexJsonParserFactory implements JsonParserFactory {
 		JsonDomBuilder builder = new JsonDomBuilder();
 		JsonParser parser = createJsonParser(builder);
 		parser.parse(jsonSchemaContent);
-		builder.getContext().validateStructure();
+ 		builder.getContext().validateStructure();
 		return builder.getDocument();
 	}
 	

@@ -41,7 +41,8 @@ class BuilderContext {
 	
 	public TypeFactory getTypeFactory(JsonObject schemaDefinition) {
 		if(schemaDefinition.hasProperty(SchemaConstants.TYPE_NAME) ||
-		   schemaDefinition.hasProperty(SchemaConstants.INTERNAL_REFERENCE)) {
+		   schemaDefinition.hasProperty(SchemaConstants.INTERNAL_REFERENCE) ||
+		   schemaDefinition.hasProperty(SchemaConstants.ALL_OF)) {
 			return typeFactory;
 		} else if(schemaDefinition.hasProperty(SchemaConstants.ENUM_NAME)) {
 			return enumFactory;
@@ -65,7 +66,7 @@ class BuilderContext {
 		builderStack.addFirst(type);
 	}
 	
-	public ObjectType popSchemaDefinition() {
+	public ObjectValidator popSchemaDefinition() {
 		return builderStack.removeFirst();
 	}
 

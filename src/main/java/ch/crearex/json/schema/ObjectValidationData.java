@@ -42,7 +42,7 @@ public class ObjectValidationData implements ValidationData {
 		if (nextType instanceof AnyType) {
 			return (AnyType) nextType;
 		}
-		throw new JsonSchemaException("Invalid " + nextType.getName() + " type for '" + context.getPath()
+		throw new JsonSchemaException("Invalid " + nextType.getTypeName() + " type for '" + context.getPath()
 				+ "'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 	}
 
@@ -57,7 +57,7 @@ public class ObjectValidationData implements ValidationData {
 		if (nextType instanceof AnyType) {
 			return (AnyType) nextType;
 		}
-		throw new JsonSchemaException("Invalid " + nextType.getName() + " type for '" + context.getPath()
+		throw new JsonSchemaException("Invalid " + nextType.getTypeName() + " type for '" + context.getPath()
 				+ "'! Expected: " + SchemaConstants.OBJECT_TYPE + ".");
 	}
 
@@ -83,16 +83,25 @@ public class ObjectValidationData implements ValidationData {
 		Class<?> domTypeClass = value.getClass();
 		SchemaType propertyType = type.getPropertyType(context, nextPropertyName, domTypeClass);
 		if (propertyType instanceof ValueType) {
-			((ValueType) propertyType).validate(context, value);
+			ValidationResult result = ((ValueValidator) propertyType).validate(context, value);
+			if(result != ValidationResult.OK) {
+				context.notifySchemaViolation(new JsonSchemaValidationException(result));
+			}
 		}
 	}
 
 	public void validateObjectFinal(JsonSchemaContext context) {
-		type.validate(context, this);
+		ValidationResult result = type.validate(context, this);
+		if(result != ValidationResult.OK) {
+			context.notifySchemaViolation(new JsonSchemaValidationException(result));
+		}
 	}
 
 	public void validateArrayFinal(JsonSchemaContext context) {
-		type.validate(context, this);
+		ValidationResult result = type.validate(context, this);
+		if(result != ValidationResult.OK) {
+			context.notifySchemaViolation(new JsonSchemaValidationException(result));
+		}
 	}
 
 }

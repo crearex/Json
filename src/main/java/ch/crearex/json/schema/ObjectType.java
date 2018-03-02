@@ -9,7 +9,7 @@ import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.impl.JsonNullValue;
 
-public class ObjectType extends ContainerType {
+public class ObjectType extends ContainerType implements ObjectValidator {
 
 	static final ObjectType EMTPY_OBJECT = new ObjectType("", "", null) {
 		void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
@@ -18,19 +18,19 @@ public class ObjectType extends ContainerType {
 	private HashMap<String, SchemaList> properties = new HashMap<String, SchemaList>();
 	private HashMap<String, SchemaList> patternProperties = new HashMap<String, SchemaList>();
 	private SchemaList additionalPropertiesSchemata;
-	private final String id;
+	private final String schemaId;
 
-	public ObjectType(String title, String description, String id) {
+	public ObjectType(String title, String description, String schemaId) {
 		super(title, description);
 
-		if ((id != null) && id.trim().isEmpty()) {
+		if ((schemaId != null) && schemaId.trim().isEmpty()) {
 			throw new JsonSchemaException("The ID of a Object must not be an empty string!");
 		}
-		this.id = id;
+		this.schemaId = schemaId;
 	}
 
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return SchemaConstants.OBJECT_TYPE;
 	}
 
@@ -90,18 +90,21 @@ public class ObjectType extends ContainerType {
 		return type == JsonObject.class;
 	}
 
-	public String getId() {
-		return this.id;
+	public String getSchemaId() {
+		return this.schemaId;
 	}
 
-	public boolean hasId() {
-		return id != null;
+	public boolean hasSchemaId() {
+		return schemaId != null;
 	}
 
-	public boolean hasReferenceId() {
-		return id != null && id.indexOf(SchemaConstants.HASH) == 0;
+	public boolean hasReferenceSchemaId() {
+		return schemaId != null && schemaId.indexOf(SchemaConstants.HASH) == 0;
 	}
 
+	/* (non-Javadoc)
+	 * @see ch.crearex.json.schema.ObjectValidator#visit(ch.crearex.json.schema.ContainerVisitor)
+	 */
 	@Override
 	public void visit(ContainerVisitor visitor) {
 		visitor.visit(this);
@@ -149,11 +152,11 @@ public class ObjectType extends ContainerType {
 		}
 
 		if (type instanceof ValueType) {
-			((ValueType) type).validate(context, value);
+			((ValueValidator) type).validate(context, value);
 			return;
 		}
 		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Illegal property type '"
-				+ value.getTypeName() + "' for '" + context.getPath() + "'! Expected: " + type.getName() + "."));
+				+ value.getTypeName() + "' for '" + context.getPath() + "'! Expected: " + type.getTypeName() + "."));
 	}
 
 	void addAdditionalPropertiesSchema(SchemaList additionalPropertiesSchemata) {

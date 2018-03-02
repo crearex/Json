@@ -25,6 +25,17 @@ public class SchemaStack {
 		if(container instanceof ArrayType) {
 			return new ArrayValidationData((ArrayType)container);
 		}
+		if(container instanceof AndSchema) {
+			AndSchema and = (AndSchema)container;
+			switch(and.getFirstChildTypeName()) {
+			case SchemaConstants.OBJECT_TYPE: {
+				return new ObjectValidationData(and.getObjectAccess());
+			}
+			case SchemaConstants.ARRAY_TYPE: {
+				return new ArrayValidationData(and.getArrayAccess());
+			}
+			}
+		}
 		if(container instanceof AnyType) {
 			return new AnyValidationData();
 		}

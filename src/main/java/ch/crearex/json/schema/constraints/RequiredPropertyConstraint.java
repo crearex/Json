@@ -5,10 +5,9 @@ import java.util.Set;
 
 import ch.crearex.json.schema.ContainerConstraint;
 import ch.crearex.json.schema.JsonSchemaContext;
-import ch.crearex.json.schema.JsonSchemaValidationException;
-import ch.crearex.json.schema.ObjectType;
 import ch.crearex.json.schema.ObjectValidationData;
 import ch.crearex.json.schema.ValidationData;
+import ch.crearex.json.schema.ValidationResult;
 
 public class RequiredPropertyConstraint implements ContainerConstraint {
 
@@ -19,17 +18,18 @@ public class RequiredPropertyConstraint implements ContainerConstraint {
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, ValidationData validationData) {
+	public ValidationResult validate(JsonSchemaContext context, ValidationData validationData) {
 		if(!(validationData instanceof ObjectValidationData)) {
-			return;
+			return ValidationResult.OK;
 		}
 		ObjectValidationData objectValidationData = (ObjectValidationData)validationData;
 		HashSet<String> readPropertyNames = objectValidationData.getReadPropertyNames();
 		for(String requiredProperty: requiredPropertyNames) {
 			if(!readPropertyNames.contains(requiredProperty)) {
-				context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Required Property '" + context.getPath().concat(requiredProperty) + "' missing!"));
+				return new ValidationResult(context.getPath(), "Required Property '" + context.getPath().concat(requiredProperty) + "' missing!");
 			}
 		}
+		return ValidationResult.OK;
 	}
 
 }

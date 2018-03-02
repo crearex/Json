@@ -10,7 +10,7 @@ public class BooleanType extends ValueType {
 	}
 	
 	@Override
-	public String getName() {
+	public String getTypeName() {
 		return SchemaConstants.BOOLEAN_TYPE;
 	}
 	

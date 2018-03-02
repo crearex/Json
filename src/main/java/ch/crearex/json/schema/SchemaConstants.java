@@ -8,6 +8,7 @@ public interface SchemaConstants {
 	String ENUM_NAME = "enum";
 	String CONST_NAME = "const";
 	String DEFINITIONS = "definitions";
+	String ALL_OF = "allOf";
 	
 	String TITLE_NAME = "title";
 	String DESCRIPTION_NAME = "description";

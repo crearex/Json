@@ -4,8 +4,8 @@ import ch.crearex.json.schema.ArrayValidationData;
 import ch.crearex.json.schema.ContainerConstraint;
 import ch.crearex.json.schema.JsonSchemaContext;
 import ch.crearex.json.schema.JsonSchemaException;
-import ch.crearex.json.schema.JsonSchemaValidationException;
 import ch.crearex.json.schema.ValidationData;
+import ch.crearex.json.schema.ValidationResult;
 
 public class MaxItemsConstraint implements ContainerConstraint {
 	private final int maxItems;
@@ -18,13 +18,13 @@ public class MaxItemsConstraint implements ContainerConstraint {
 	}
 
 	@Override
-	public void validate(JsonSchemaContext context, ValidationData validationData) {
+	public ValidationResult validate(JsonSchemaContext context, ValidationData validationData) {
 		if(!(validationData instanceof ArrayValidationData)) {
-			return;
+			return ValidationResult.OK;
 		}
 		if(((ArrayValidationData)validationData).getNextArrayIndex() <= maxItems) {
-			return;
+			return ValidationResult.OK;
 		}
-		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(), "Validation failed! " + context.getPath() + " expected array size <= " + maxItems + " items."));
+		return new ValidationResult(context.getPath(), "Validation failed! " + context.getPath() + " expected array size <= " + maxItems + " items.");
 	}
 }
