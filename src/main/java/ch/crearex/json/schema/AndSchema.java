@@ -264,7 +264,8 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		if (schemata.size() == 1) {
 			switch (name) {
 			case SchemaConstants.OBJECT_TYPE: 
-			case SchemaConstants.ARRAY_TYPE: {
+			case SchemaConstants.ARRAY_TYPE:
+			case SchemaConstants.ALL_OF: {
 				validatorStrategy = CONTAINER_VALIDATOR;
 				break;
 			}

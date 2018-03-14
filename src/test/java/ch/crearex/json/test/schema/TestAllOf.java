@@ -36,7 +36,45 @@ public class TestAllOf {
 				"\"street_address\": \"1600 Pennsylvania Avenue NW\","+
 				"\"city\": \"Washington\","+
 				"\"state\": \"DC\","+
-				"\"type\": \"ILEGAL ENUM VALUE\""+
+				"\"type\": \"ILLEGAL ENUM VALUE\""+
+				"}";
+		
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/allof-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.FAILED));
+	}
+	
+	@Test
+	public void testPersonOk() throws Exception {
+		String text = "{"+
+				"\"pers\": {"+
+					"\"name\": \"Max\","+
+					"\"surename\": \"Muster\","+
+					"\"age\": 77" +
+				"}," +
+				"\"street_address\": \"1600 Pennsylvania Avenue NW\","+
+				"\"city\": \"Washington\","+
+				"\"state\": \"DC\","+
+				"\"type\": \"business\""+
+				"}";
+		
+		Json json = new CrearexJson();
+		JsonDocument doc = json.parse(text);
+		JsonSchema schema = new CrearexJsonParserFactory().createJsonSchema(TestUtil.readResource("/allof-constraint-schema.json"));
+		assertThat(doc.validate(schema), is(SchemaValidationStatus.VALID));
+	}
+	
+	@Test
+	public void testPersonFailed() throws Exception {
+		String text = "{"+
+				"\"pers\": {"+
+					"\"surename\": \"Muster\""+
+				"}," +
+				"\"street_address\": \"1600 Pennsylvania Avenue NW\","+
+				"\"city\": \"Washington\","+
+				"\"state\": \"DC\","+
+				"\"type\": \"business\""+
 				"}";
 		
 		Json json = new CrearexJson();

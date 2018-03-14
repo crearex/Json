@@ -50,7 +50,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 			HashSet<SchemaType> typeSet = new HashSet<SchemaType>();
 			SchemaList propTypes = properties.get(propertyName);
 			if (propTypes != null) {
-				for (SchemaType type : propTypes.getSchemata()) {
+				for (SchemaType type : propTypes.getSchemaTypes()) {
 					typeSet.add(type);
 				}
 			}
@@ -58,7 +58,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 				if (Pattern.matches(regex, propertyName)) {
 					SchemaList patternPropTypes = patternProperties.get(regex);
 					if (patternPropTypes != null) {
-						for (SchemaType type : patternPropTypes.getSchemata()) {
+						for (SchemaType type : patternPropTypes.getSchemaTypes()) {
 							typeSet.add(type);
 						}
 					}
@@ -77,7 +77,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 		if (possibleTypes == null) {
 			return null;
 		}
-		for (SchemaType type : possibleTypes.getSchemata()) {
+		for (SchemaType type : possibleTypes.getSchemaTypes()) {
 			if (type.matchesDomType(value.getClass())) {
 				return type;
 			}
@@ -109,7 +109,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 	public void visit(ContainerVisitor visitor) {
 		visitor.visit(this);
 		for (Map.Entry<String, SchemaList> entry : this.properties.entrySet()) {
-			for (SchemaType schemaType : entry.getValue().getSchemata()) {
+			for (SchemaType schemaType : entry.getValue().getSchemaTypes()) {
 				if (schemaType instanceof ContainerType) {
 					((ContainerType) schemaType).visit(visitor);
 				}
@@ -126,7 +126,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 			// there is no schema definition for this property = unknown property
 			return null;
 		}
-		for (SchemaType type : possibleTypes.getSchemata()) {
+		for (SchemaType type : possibleTypes.getSchemaTypes()) {
 			if (type.matchesDomType(propertyType)) {
 				return type;
 			}

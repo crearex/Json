@@ -19,12 +19,8 @@ public class SchemaStack {
 	}
 	
 	private ValidationData createValidationData(ContainerType container) {
-		if(container instanceof ObjectType) {
-			return new ObjectValidationData((ObjectType)container);
-		}
-		if(container instanceof ArrayType) {
-			return new ArrayValidationData((ArrayType)container);
-		}
+		// Specialized types comes first!!!
+		// An AndSchema is also an ObjectSchema...
 		if(container instanceof AndSchema) {
 			AndSchema and = (AndSchema)container;
 			switch(and.getFirstChildTypeName()) {
@@ -35,6 +31,12 @@ public class SchemaStack {
 				return new ArrayValidationData(and.getArrayAccess());
 			}
 			}
+		}
+		if(container instanceof ObjectType) {
+			return new ObjectValidationData((ObjectType)container);
+		}
+		if(container instanceof ArrayType) {
+			return new ArrayValidationData((ArrayType)container);
 		}
 		if(container instanceof AnyType) {
 			return new AnyValidationData();

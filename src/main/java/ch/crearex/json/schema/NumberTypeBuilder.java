@@ -1,7 +1,5 @@
 package ch.crearex.json.schema;
 
-import org.hamcrest.TypeSafeDiagnosingMatcher;
-
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.schema.constraints.DoubleExclusiveMaximumConstraint;
 import ch.crearex.json.schema.constraints.DoubleExclusiveMinimumConstraint;

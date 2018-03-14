@@ -10,7 +10,7 @@ class SchemaList {
 		this.schemata = new SchemaType[] { schema };
 	}
 	
-	SchemaType[] getSchemata() {
+	SchemaType[] getSchemaTypes() {
 		return schemata;
 	}
 

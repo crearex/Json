@@ -37,17 +37,8 @@ public class SchemaTypeFactory implements TypeFactory {
 
 		SchemaList possibleTypes = null;
 		if (typeDefinition.isArray(SchemaConstants.ALL_OF)) {
-			AndSchema and = new AndSchema(typeDefinition.getString(SchemaConstants.TITLE_NAME, ""),
-					typeDefinition.getString(SchemaConstants.DESCRIPTION_NAME, ""));
 			JsonArray mandatorySchemas = typeDefinition.getArray(SchemaConstants.ALL_OF);
-			for(JsonElement schema: mandatorySchemas) {
-				if(schema instanceof JsonObject) {
-					and.add(createType(SchemaConstants.OBJECT_TYPE, (JsonObject)schema));
-				} else {
-					throw new JsonSchemaException("Illegal element at " + schema.getPath() + "! Expected type: " + SchemaConstants.OBJECT_TYPE);
-				}
-			}
-			possibleTypes = new SchemaList(and);
+			possibleTypes = new SchemaList(createAndSchema(mandatorySchemas));
 		} else {
 			if (typeDefinition.isString(SchemaConstants.TYPE_NAME)) {
 				possibleTypes = new SchemaList(new SchemaType[] {
@@ -64,6 +55,23 @@ public class SchemaTypeFactory implements TypeFactory {
 		return possibleTypes;
 	}
 
+	private AndSchema createAndSchema(JsonArray mandatorySchemas) {
+		AndSchema and = new AndSchema("", "");
+		for(JsonElement elem: mandatorySchemas) {
+			if(elem instanceof JsonObject) {
+				JsonObject schema = (JsonObject)elem;
+				if(schema.isString(SchemaConstants.INTERNAL_REFERENCE)) {
+					and.add(getReferencedType(schema));
+				} else {
+					and.add(createType(SchemaConstants.OBJECT_TYPE, (JsonObject)elem));
+				}
+			} else {
+				throw new JsonSchemaException("Illegal element at " + elem.getPath() + "! Expected type: " + SchemaConstants.OBJECT_TYPE);
+			}
+		}
+		return and;
+	}
+
 	private void readDefinitions(JsonObject typeDefinition) {
 		for (Map.Entry<String, JsonElement> entry : typeDefinition.getObject(SchemaConstants.DEFINITIONS)) {
 			String definitionName = entry.getKey();
@@ -77,8 +85,13 @@ public class SchemaTypeFactory implements TypeFactory {
 			if (internalSchemaTypeDefinition.isString(SchemaConstants.INTERNAL_REFERENCE)) {
 				internalType = getReferencedType(internalSchemaTypeDefinition);
 			} else {
-				String internalContentType = internalSchemaTypeDefinition.getString(SchemaConstants.TYPE_NAME, "");
-				internalType = createType(internalContentType, internalSchemaTypeDefinition);
+				if (internalSchemaTypeDefinition.isArray(SchemaConstants.ALL_OF)) {
+					JsonArray mandatorySchemas = internalSchemaTypeDefinition.getArray(SchemaConstants.ALL_OF);
+					internalType = createAndSchema(mandatorySchemas);
+				} else {
+					String internalContentType = resolveContentType(internalSchemaTypeDefinition);
+					internalType = createType(internalContentType, internalSchemaTypeDefinition);
+				}
 			}
 			if (internalSchemaTypeDefinition.isString(SchemaConstants.SCHEMA_ID)) {
 				context.registerSchemaDefinition(
@@ -90,6 +103,38 @@ public class SchemaTypeFactory implements TypeFactory {
 					+ SchemaConstants.PATH_SEPARATOR + definitionName;
 			context.registerSchemaDefinition(expandId(internalId, typeDefinition), internalType);
 		}
+	}
+
+	private String resolveContentType(JsonObject schemaTypeDefinition) {
+		String internalContentType = schemaTypeDefinition.getString(SchemaConstants.TYPE_NAME, null);
+		if(internalContentType!=null) {
+			return internalContentType;
+		}
+		if(schemaTypeDefinition.hasOnePropertyOf(SchemaConstants.PROPERTIES_NAME,
+				SchemaConstants.PATTERN_PROPERTIES_NAME,
+				SchemaConstants.REQUIRED_PROPERTIES_CONSTRAINT,
+				SchemaConstants.ADDITIONAL_PROPERTIES_NAME,
+				SchemaConstants.MAX_PROPERTIES_CONSTRAINT,
+				SchemaConstants.MIN_PROPERTIES_CONSTRAINT)) {
+			return SchemaConstants.OBJECT_TYPE;
+		}
+		if(schemaTypeDefinition.hasOnePropertyOf(SchemaConstants.ITEMS_NAME,
+				SchemaConstants.MAX_ITEMS_CONSTRAINT,
+				SchemaConstants.MIN_ITEMS_CONSTRAINT,
+				SchemaConstants.UNIQUE_ITEMS_CONSTRAINT)) {
+			return SchemaConstants.ARRAY_TYPE;
+		}
+		if(schemaTypeDefinition.hasOnePropertyOf(SchemaConstants.MAXIMUM_CONSTRAINT,
+				SchemaConstants.MINIMUM_CONSTRAINT,
+				SchemaConstants.MULTIPLE_OF_CONSTRAINT)) {
+			return SchemaConstants.NUMBER_TYPE;
+		}
+		if(schemaTypeDefinition.hasOnePropertyOf(SchemaConstants.MAX_LENGTH_CONSTRAINT,
+				SchemaConstants.MIN_LENGTH_CONSTRAINT,
+				SchemaConstants.REGEX_CONSTRAINT)) {
+			return SchemaConstants.STRING_TYPE;
+		}
+		throw new JsonSchemaException("Resolve schema type for "+schemaTypeDefinition.getPath()+" failed!");
 	}
 
 	private SchemaType getReferencedType(JsonObject typeDefinition) {

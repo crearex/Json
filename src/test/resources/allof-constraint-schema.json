@@ -3,9 +3,33 @@
 	"$id": "http://something.com/allof-constraint-schema.json",
 	"title": "Object Constraints Test",
     "definitions": {
+		"name": {
+			"type": "object",
+			"properties": {
+				"name": { "type": "string" },
+				"surename": { "type": "string" }
+			}
+		},
+		"mustAge": {
+			"type": "object",
+			"properties": {
+				"age": { "type": "number" }
+			}
+		},
+		"mustName": {
+			"required": ["name"]
+		},
+		"person": {
+			"allOf": [
+				{ "$ref": "#/definitions/name" },
+				{ "$ref": "#/definitions/mustName" },
+				{ "$ref": "#/definitions/mustAge" }
+			]
+		},
 		"address": {
 			"type": "object",
 			"properties": {
+				"pers": { "$ref": "#/definitions/person" },
 				"street_address": { "type": "string" },
 				"city": { "type": "string" },
 				"state": { "type": "string" }

@@ -40,15 +40,15 @@ public class TestProgrammaticallyCreatedDom {
 		assertThat(result, is("{\"name\":\"Markus\",\"x\":{\"a\":true},\"y\":\"test\",\"z\":[true,false,null]}"));
 		
 		JsonObject x = obj.getObject("x");
-		assertThat(x.getParent(), is(obj));
+		assertThat((JsonObject)x.getParent(), is(obj));
 		
 		x = (JsonObject)obj.remove("x");
-		assertThat(x.getParent(), is((JsonObject)null));
+		assertThat((Object)x.getParent(), is((Object)null));
 		
 		JsonArray z = obj.getArray("z");
-		assertThat(z.getParent(), is(obj));
+		assertThat((JsonObject)z.getParent(), is(obj));
 		
 		z = (JsonArray)obj.remove("z");
-		assertThat(z.getParent(), is((JsonArray)null));
+		assertThat((Object)z.getParent(), is((Object)null));
 	}
 }

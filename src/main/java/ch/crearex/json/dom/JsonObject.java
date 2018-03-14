@@ -83,6 +83,24 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 		return properties.containsKey(name);
 	}
 	
+	public boolean hasOnePropertyOf(String... propertyNames) {
+		for(String name: propertyNames) {
+			if(hasProperty(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasAllPropertyOf(String... propertyNames) {
+		for(String name: propertyNames) {
+			if(!hasProperty(name)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	private JsonSimpleValue getValueEx(String name) {
 		Object obj = properties.get(name);
 		if(obj instanceof JsonSimpleValue) {
@@ -430,8 +448,5 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 	public String getTypeName() {
 		return SchemaConstants.OBJECT_TYPE;
 	}
-
-	
-
 	
 }

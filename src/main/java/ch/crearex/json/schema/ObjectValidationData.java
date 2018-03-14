@@ -32,12 +32,16 @@ public class ObjectValidationData implements ValidationData {
 	}
 
 	public ContainerType getNextObjectType(JsonSchemaContext context) {
+		
 		SchemaType nextType = type.getPropertyType(context, nextPropertyName, JsonObject.class);
 		if (nextType == null) {
 			return ObjectType.EMTPY_OBJECT;
 		}
 		if (nextType instanceof ObjectType) {
-			return (ObjectType) nextType;
+			return (ObjectType)nextType;
+		}
+		if (nextType instanceof AndSchema) {
+			return (AndSchema)nextType;
 		}
 		if (nextType instanceof AnyType) {
 			return (AnyType) nextType;

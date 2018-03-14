@@ -64,7 +64,7 @@ public class ArrayType extends ContainerType {
 		if (possibleItemTypes == null) {
 			return;
 		}
-		for (SchemaType itemType : possibleItemTypes.getSchemata()) {
+		for (SchemaType itemType : possibleItemTypes.getSchemaTypes()) {
 			if (itemType instanceof ContainerType) {
 				((ContainerType) itemType).visit(visitor);
 			}
