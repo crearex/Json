@@ -1,9 +1,14 @@
 package ch.crearex.json.schema;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.builder.ArrayType;
+import ch.crearex.json.schema.builder.ContainerType;
+import ch.crearex.json.schema.builder.ObjectType;
 
 public class AnyValidationData implements ValidationData {
 
+	AnyValidationData() {	
+	}
 
 	public ContainerType getNextObjectType(JsonSchemaContext context) {
 		return ObjectType.EMTPY_OBJECT;

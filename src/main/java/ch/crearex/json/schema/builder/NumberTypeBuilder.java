@@ -1,6 +1,8 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.SchemaConstants;
 import ch.crearex.json.schema.constraints.DoubleExclusiveMaximumConstraint;
 import ch.crearex.json.schema.constraints.DoubleExclusiveMinimumConstraint;
 import ch.crearex.json.schema.constraints.DoubleMaximumConstraint;
@@ -14,10 +16,7 @@ import ch.crearex.json.schema.constraints.LongMultipleOfConstraint;
 
 public class NumberTypeBuilder implements TypeBuilder {
 
-	private final BuilderContext context;
-	
-	public NumberTypeBuilder(BuilderContext context) {
-		this.context = context;
+	public NumberTypeBuilder() {
 	}
 
 	@Override

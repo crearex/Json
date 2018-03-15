@@ -1,17 +1,20 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.dom.JsonDocument;
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaList;
 
-class SchemaBuilder {
+public class SchemaBuilder {
 
 	private final BuilderContext context;
 
-	SchemaBuilder(BuilderContext context) {
+	public SchemaBuilder(BuilderContext context) {
 		this.context = context;
 	}
 
-	ContainerType build(JsonDocument schemaDoc) {
+	public ContainerType build(JsonDocument schemaDoc) {
 		JsonObject root = schemaDoc.getRootObject();
 		context.setSchemaVersion(root.getString(SchemaConstants.SCHEMA_URI_NAME, ""));
 		context.setRootId(root.getString(SchemaConstants.SCHEMA_ID, ""));

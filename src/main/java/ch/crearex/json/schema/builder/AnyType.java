@@ -1,10 +1,16 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
+
+import ch.crearex.json.schema.ContainerVisitor;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaType;
 
 public class AnyType extends ContainerType implements SchemaType {
 	
-	private boolean nullable = SchemaType.DEFAULT_NULLABLE;
+	public static final AnyType ANY = new AnyType();
 	
-	protected AnyType() {
+	private boolean nullable = true;
+	
+	public AnyType() {
 		super("","");
 	}
 	

@@ -1,4 +1,4 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,11 +8,20 @@ import java.util.regex.Pattern;
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.impl.JsonNullValue;
+import ch.crearex.json.schema.ContainerVisitor;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.JsonSchemaValidationException;
+import ch.crearex.json.schema.ObjectValidator;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaList;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.ValueValidator;
 
 public class ObjectType extends ContainerType implements ObjectValidator {
 
-	static final ObjectType EMTPY_OBJECT = new ObjectType("", "", null) {
-		void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+	public static final ObjectType EMTPY_OBJECT = new ObjectType("", "", null) {
+		public void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
 		}
 	};
 	private HashMap<String, SchemaList> properties = new HashMap<String, SchemaList>();
@@ -120,7 +129,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 	/**
 	 * Returns the matching property type or null if the property was not found.
 	 */
-	SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
+	public SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
 		SchemaList possibleTypes = getPropertyTypes(propertyName);
 		if ((possibleTypes == null) || (possibleTypes.size() == 0)) {
 			// there is no schema definition for this property = unknown property
@@ -142,7 +151,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 		return null;
 	}
 
-	void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+	public void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
 		SchemaType type = resolveType(propertyName, value);
 		if (type == null) {
 			return;
@@ -159,7 +168,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 				+ value.getTypeName() + "' for '" + context.getPath() + "'! Expected: " + type.getTypeName() + "."));
 	}
 
-	void addAdditionalPropertiesSchema(SchemaList additionalPropertiesSchemata) {
+	public void addAdditionalPropertiesSchema(SchemaList additionalPropertiesSchemata) {
 		this.additionalPropertiesSchemata = additionalPropertiesSchemata;
 	}
 

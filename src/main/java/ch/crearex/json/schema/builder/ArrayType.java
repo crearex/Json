@@ -1,11 +1,18 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonArray;
+import ch.crearex.json.schema.ContainerVisitor;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.JsonSchemaValidationException;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaList;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.ValueValidator;
 
 public class ArrayType extends ContainerType {
 
-	static final ArrayType EMTPTY_ARRAY = new ArrayType("", "") {
+	public static final ArrayType EMTPTY_ARRAY = new ArrayType("", "") {
 		@SuppressWarnings("unused")
 		void validateEntryValue(JsonSchemaContext context, JsonSimpleValue value) {
 		}
@@ -76,7 +83,7 @@ public class ArrayType extends ContainerType {
 	 * 
 	 * @param nextArrayIndex
 	 */
-	SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
+	public SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
 		if ((possibleItemTypes == null) || (possibleItemTypes.size() == 0)) {
 			return null;
 		}
@@ -88,15 +95,14 @@ public class ArrayType extends ContainerType {
 			}
 		} else {
 			if (possibleItemTypes.size() > nextArrayIndex) {
-				if (possibleItemTypes.size() >= nextArrayIndex) {
-					SchemaType type = possibleItemTypes.get(nextArrayIndex);
-					if (type.matchesDomType(entryType)) {
-						return type;
-					}
+				SchemaType type = possibleItemTypes.get(nextArrayIndex);
+				if (type.matchesDomType(entryType)) {
+					return type;
 				}
 			}
 		}
 
+		// create error message
 		String expectedTypeName = possibleItemTypes.getFirst().getTypeName();
 		if (possibleItemTypes.size() > 1) {
 			if (possibleItemTypes.size() < nextArrayIndex) {
@@ -105,13 +111,13 @@ public class ArrayType extends ContainerType {
 				expectedTypeName = "No type for index " + nextArrayIndex + " defined";
 			}
 		}
-
 		context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(),
 				"Invalid type in '" + context.getPath() + "'! Expected: [" + expectedTypeName + "]."));
+		
 		return null;
 	}
 
-	void validateEntryValue(JsonSchemaContext context, int nextArrayIndex, JsonSimpleValue value) {
+	public void validateEntryValue(JsonSchemaContext context, int nextArrayIndex, JsonSimpleValue value) {
 		if (possibleItemTypes == null) {
 			return;
 		}
@@ -143,7 +149,7 @@ public class ArrayType extends ContainerType {
 		// Type errors are reported by the type check in getEntryType()
 	}
 
-	void setUniqueItems(boolean uniqueItems) {
+	public void setUniqueItems(boolean uniqueItems) {
 		this.uniqueItems = uniqueItems;
 	}
 

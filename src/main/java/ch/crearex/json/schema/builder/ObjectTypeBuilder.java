@@ -1,4 +1,4 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -7,6 +7,9 @@ import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.dom.JsonString;
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaList;
 import ch.crearex.json.schema.constraints.MaxPropertiesConstraint;
 import ch.crearex.json.schema.constraints.MinPropertiesConstraint;
 import ch.crearex.json.schema.constraints.RequiredPropertyConstraint;

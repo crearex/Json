@@ -1,13 +1,12 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.SchemaConstants;
 
 public class BooleanTypeBuilder implements TypeBuilder {
 
-	private final BuilderContext context;
 	
-	public BooleanTypeBuilder(BuilderContext context) {
-		this.context = context;
+	public BooleanTypeBuilder() {
 	}
 
 	@Override

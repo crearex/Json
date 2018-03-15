@@ -1,9 +1,19 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.ContainerVisitor;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.LogicType;
+import ch.crearex.json.schema.ObjectValidator;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaList;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.ValidationData;
+import ch.crearex.json.schema.ValidationResult;
+import ch.crearex.json.schema.ValueValidator;
 
 public class AndSchema extends ContainerType implements ObjectValidator, ValueValidator, LogicType, Iterable<SchemaType> {
 
@@ -14,7 +24,7 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
+		public SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
 			for(SchemaType type: schemata) {
 				if(type instanceof ObjectType) {
 					ObjectType objType = (ObjectType)type;
@@ -69,7 +79,7 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
+		public void validatePropertyValue(JsonSchemaContext context, String propertyName, JsonSimpleValue value) {
 			AndSchema.this.validate(context, value);
 		}
 		
@@ -87,7 +97,7 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
+		public SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
 			for(SchemaType type: schemata) {
 				if(type instanceof ArrayType) {
 					ArrayType arrType = (ArrayType)type;
@@ -145,7 +155,7 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		void validateEntryValue(JsonSchemaContext context, int nextArrayIndex, JsonSimpleValue value) {
+		public void validateEntryValue(JsonSchemaContext context, int nextArrayIndex, JsonSimpleValue value) {
 			AndSchema.this.validate(context, value);
 		}
 	}
@@ -331,7 +341,7 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 	@Override
 	public SchemaType getFirstSchema() {
 		if(schemata.size() == 0) {
-			return AnyType.ANY_NULLABLE;
+			return AnyType.ANY;
 		}
 		return schemata.get(0);
 	}
@@ -341,11 +351,11 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		return schemata.iterator();
 	}
 
-	ObjectType getObjectAccess() {
+	public ObjectType getObjectAccess() {
 		return new ObjectTypeAdapter();
 	}
 
-	ArrayType getArrayAccess() {
+	public ArrayType getArrayAccess() {
 		return new ArrayTypeAdapter();
 	}
 

@@ -1,4 +1,4 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -9,6 +9,11 @@ import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.impl.CrearexJson;
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaList;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.TypeFactory;
 
 public class SchemaTypeFactory implements TypeFactory {
 
@@ -277,16 +282,16 @@ public class SchemaTypeFactory implements TypeFactory {
 			return new ArrayTypeBuilder(context);
 		}
 		case SchemaConstants.STRING_TYPE: {
-			return new StringTypeBuilder(context);
+			return new StringTypeBuilder();
 		}
 		case SchemaConstants.NUMBER_TYPE: {
-			return new NumberTypeBuilder(context);
+			return new NumberTypeBuilder();
 		}
 		case SchemaConstants.BOOLEAN_TYPE: {
-			return new BooleanTypeBuilder(context);
+			return new BooleanTypeBuilder();
 		}
 		case "": {
-			return new AnyBuilder(context);
+			return new AnyBuilder();
 		}
 		}
 		throw new JsonSchemaException("Type '" + typeName + "' unknown!");

@@ -17,9 +17,9 @@ import ch.crearex.json.JsonValueFactoryProviderCallback;
 import ch.crearex.json.dom.JsonDocument;
 import ch.crearex.json.dom.JsonDomBuilder;
 import ch.crearex.json.schema.JsonSchemaException;
-import ch.crearex.json.schema.JsonSchemaImpl;
+import ch.crearex.json.schema.JsonSchemaHandler;
 import ch.crearex.json.schema.SchemaConstants;
-import ch.crearex.json.schema.SchemaTypeMap;
+import ch.crearex.json.schema.builder.SchemaTypeMap;
 
 /**
  * Crearex default factory for creating JSON Parsers.
@@ -64,7 +64,7 @@ public class CrearexJsonParserFactory implements JsonParserFactory {
 	public JsonSchema createJsonSchema(String jsonSchemaContent) {	
 		JsonDocument schemaDoc = doParseSchema(jsonSchemaContent);
 		JsonSchema schema = null;
-		schema = new JsonSchemaImpl(schemaDoc, null, new SchemaTypeMap());
+		schema = new JsonSchemaHandler(schemaDoc, null, new SchemaTypeMap());
 		return schema;
 	}
 	
@@ -85,7 +85,7 @@ public class CrearexJsonParserFactory implements JsonParserFactory {
 	@Override
 	public JsonSchema createJsonSchema(URL jsonSchemaOriginUrl) {
 		JsonDocument schemaDoc = doParseSchema(jsonSchemaOriginUrl);		
-		return new JsonSchemaImpl(schemaDoc, jsonSchemaOriginUrl, new SchemaTypeMap());
+		return new JsonSchemaHandler(schemaDoc, jsonSchemaOriginUrl, new SchemaTypeMap());
 	}
 	
 	/**

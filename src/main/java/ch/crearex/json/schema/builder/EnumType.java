@@ -1,8 +1,12 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.util.HashSet;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.ValidationResult;
 
 public class EnumType extends ValueType {
 

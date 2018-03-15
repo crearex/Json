@@ -1,15 +1,15 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.dom.JsonObject;
 
 public class AnyBuilder implements TypeBuilder {
 
-	public AnyBuilder(BuilderContext context) {
+	public AnyBuilder() {
 	}
 
 	@Override
 	public AnyType build(JsonObject objectDefinition) {
-		return SchemaType.ANY_NULLABLE;
+		return AnyType.ANY;
 	}
 
 }

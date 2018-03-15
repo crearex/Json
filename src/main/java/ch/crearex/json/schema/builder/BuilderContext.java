@@ -1,13 +1,15 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.ObjectValidator;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.TypeFactory;
 
-class BuilderContext {
+public class BuilderContext {
 
 	private final TypeFactory typeFactory;
 	private final TypeFactory enumFactory;
@@ -18,11 +20,10 @@ class BuilderContext {
 	private String schemaVersion;
 	private String rootId;
 	// private ObjectType rootSchema;
-	private String rootSchemaId;
 	
 	private LinkedList<ObjectType> builderStack = new LinkedList<ObjectType>();
 	
-	BuilderContext(URL jsonSchemaOriginUrl, SchemaTypeMap schemaTypeMap) {
+	public BuilderContext(URL jsonSchemaOriginUrl, SchemaTypeMap schemaTypeMap) {
 		this.jsonSchemaOriginUrl = jsonSchemaOriginUrl;
 		this.schemaTypeMap = schemaTypeMap;
 		this.typeFactory = new SchemaTypeFactory(this);
@@ -31,11 +32,11 @@ class BuilderContext {
 		this.anyTypeFactory = new AnyTypeFactory(this);
 	}
 	
-	SchemaTypeMap getSchemaTypeMap() {
+	public SchemaTypeMap getSchemaTypeMap() {
 		return schemaTypeMap;
 	}
 	
-	URL getOriginUrl() {
+	public URL getOriginUrl() {
 		return jsonSchemaOriginUrl;
 	}
 	
@@ -54,6 +55,10 @@ class BuilderContext {
 		// throw new JsonSchemaException("Create type factory failed! Missing type definition: type, enum, const.");
 	}
 
+	public String getSchemaVersion() {
+		return schemaVersion;
+	}
+	
 	public void setSchemaVersion(String schemaVersion) {
 		this.schemaVersion = schemaVersion;
 	}
@@ -79,7 +84,7 @@ class BuilderContext {
 	}
 	
 
-	void setRootId(String rootId) {
+	public void setRootId(String rootId) {
 		this.rootId = rootId;
 	}
 	

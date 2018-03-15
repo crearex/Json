@@ -1,7 +1,9 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonElement;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.ValidationResult;
 
 public class ConstType extends ValueType {
 

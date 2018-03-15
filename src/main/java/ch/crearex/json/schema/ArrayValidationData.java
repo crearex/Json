@@ -1,6 +1,11 @@
 package ch.crearex.json.schema;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.builder.AndSchema;
+import ch.crearex.json.schema.builder.ArrayType;
+import ch.crearex.json.schema.builder.ContainerType;
+import ch.crearex.json.schema.builder.ObjectType;
+import ch.crearex.json.schema.builder.ValueType;
 
 public class ArrayValidationData implements ValidationData {
 
@@ -11,13 +16,15 @@ public class ArrayValidationData implements ValidationData {
 		this.type = type;
 	}
 	
-	public ObjectType getNextObjectType(JsonSchemaContext context) {
+	public ContainerType getNextObjectType(JsonSchemaContext context) {
 		SchemaType nextType = type.getEntryType(context, nextArrayIndex, ArrayType.class);
 		
 		if(nextType == null) {
 			return ObjectType.EMTPY_OBJECT;
 		}
-		
+		if (nextType instanceof AndSchema) {
+			return (AndSchema)nextType;
+		}
 		if(nextType instanceof ObjectType) {
 			return (ObjectType)nextType;
 		}
@@ -31,7 +38,9 @@ public class ArrayValidationData implements ValidationData {
 		if(nextType == null) {
 			return ArrayType.EMTPTY_ARRAY;
 		}
-		
+		if (nextType instanceof AndSchema) {
+			return (AndSchema)nextType;
+		}
 		if(nextType instanceof ArrayType) {
 			return (ArrayType)nextType;
 		}

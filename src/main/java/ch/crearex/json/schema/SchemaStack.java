@@ -6,7 +6,17 @@ import java.util.LinkedList;
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonSchemaCallback;
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.builder.AndSchema;
+import ch.crearex.json.schema.builder.AnyType;
+import ch.crearex.json.schema.builder.ArrayType;
+import ch.crearex.json.schema.builder.ContainerType;
+import ch.crearex.json.schema.builder.ObjectType;
 
+/**
+ * Stack maintained during traversing the JSON-Tree.
+ * @author Markus Niedermann
+ *
+ */
 public class SchemaStack {
 
 	private final LinkedList<ValidationData> stack = new LinkedList<ValidationData>();
@@ -20,7 +30,7 @@ public class SchemaStack {
 	
 	private ValidationData createValidationData(ContainerType container) {
 		// Specialized types comes first!!!
-		// An AndSchema is also an ObjectSchema...
+		// A AndSchema is also an ObjectSchema...
 		if(container instanceof AndSchema) {
 			AndSchema and = (AndSchema)container;
 			switch(and.getFirstChildTypeName()) {
@@ -52,6 +62,7 @@ public class SchemaStack {
 		schemaContext.setAdaptedContext(context);
 		try {
 			if(beginRootContainer) {
+				// the first validation data is added in the constructor
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
@@ -70,11 +81,10 @@ public class SchemaStack {
 		schemaContext.setAdaptedContext(context);
 		try {
 			if(beginRootContainer) {
+				// the first validation data is added in the constructor
 				return;
 			}
 			ValidationData validatonData = stack.getFirst();
-			// TODO mn: ist der reset des next array index nötig?
-			// validatonData.setNextArrayIndex(0);
 			ContainerType nextType = validatonData.getNextArrayType(schemaContext);
 			ValidationData validationData = createValidationData(nextType);
 			stack.addFirst(validationData);

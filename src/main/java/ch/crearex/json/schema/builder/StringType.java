@@ -1,31 +1,27 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
-import java.util.LinkedList;
+import ch.crearex.json.impl.JsonStringValue;
+import ch.crearex.json.schema.SchemaConstants;
 
-import javax.swing.SpringLayout.Constraints;
+public class StringType extends ValueType {
 
-import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.impl.JsonNumberValue;
-
-public class NumberType extends ValueType {
-	
-	protected NumberType(String title, String description) {
+	public StringType(String title, String description) {
 		super(title, description);
 	}
-	
-	@Override
-	public String getTypeName() {
-		return SchemaConstants.NUMBER_TYPE;
-	}
 
 	@Override
+	public String getTypeName() {
+		return SchemaConstants.STRING_TYPE;
+	}
+	
+	@Override
 	public boolean matchesDomType(Class<?> type)  {
-		return JsonNumberValue.class.isAssignableFrom(type);
+		return JsonStringValue.class.isAssignableFrom(type);
 	}
 	
 	@Override
 	public String toString() {
-		String retVal = SchemaConstants.NUMBER_TYPE;
+		String retVal = SchemaConstants.STRING_TYPE;
 		String title = getTitle();
 		String description = getDescription();
 		if(!title.isEmpty() || !description.isEmpty()) {

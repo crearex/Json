@@ -1,6 +1,7 @@
 package ch.crearex.json.schema;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.builder.ContainerType;
 
 public interface ValidationData {
 	ContainerType getNextObjectType(JsonSchemaContext context);

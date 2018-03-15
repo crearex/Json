@@ -7,13 +7,17 @@ import ch.crearex.json.JsonContextBase;
 import ch.crearex.json.JsonSchema;
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonDocument;
+import ch.crearex.json.schema.builder.BuilderContext;
+import ch.crearex.json.schema.builder.ContainerType;
+import ch.crearex.json.schema.builder.SchemaBuilder;
+import ch.crearex.json.schema.builder.SchemaTypeMap;
 
-public class JsonSchemaImpl implements JsonSchema {
+public class JsonSchemaHandler implements JsonSchema {
 
 	private final ContainerType schemaRootType;
 	private final URL jsonSchemaOriginUrl;
 	
-	public JsonSchemaImpl(JsonDocument schemaDoc, URL jsonSchemaOriginUrl, SchemaTypeMap schemaTypeMap) {
+	public JsonSchemaHandler(JsonDocument schemaDoc, URL jsonSchemaOriginUrl, SchemaTypeMap schemaTypeMap) {
 		this.jsonSchemaOriginUrl = jsonSchemaOriginUrl;
 		BuilderContext context = new BuilderContext(jsonSchemaOriginUrl, schemaTypeMap);
 		SchemaBuilder schemaBuilder = new SchemaBuilder(context);
@@ -29,8 +33,6 @@ public class JsonSchemaImpl implements JsonSchema {
 
 	@Override
 	public void endDocument(JsonContext context) {
-		//JsonContextBase baseContext = (JsonContextBase)context;
-		//SchemaStack stack = baseContext.getSchemaStack();
 	}
 
 	@Override

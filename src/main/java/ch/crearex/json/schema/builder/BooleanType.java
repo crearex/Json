@@ -1,7 +1,7 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
-import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.impl.JsonBooleanValue;
+import ch.crearex.json.schema.SchemaConstants;
 
 public class BooleanType extends ValueType {
 

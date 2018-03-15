@@ -1,16 +1,15 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.SchemaConstants;
 import ch.crearex.json.schema.constraints.MaxLengthConstraint;
 import ch.crearex.json.schema.constraints.MinLengthConstraint;
 import ch.crearex.json.schema.constraints.RegexConstraint;
 
 public class StringTypeBuilder implements TypeBuilder {
 
-	private final BuilderContext context;
 	
-	public StringTypeBuilder(BuilderContext context) {
-		this.context = context;
+	public StringTypeBuilder() {
 	}
 
 	@Override

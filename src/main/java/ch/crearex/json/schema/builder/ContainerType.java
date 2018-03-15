@@ -1,6 +1,13 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.util.LinkedList;
+
+import ch.crearex.json.schema.ContainerConstraint;
+import ch.crearex.json.schema.ContainerVisitor;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.ValidationData;
+import ch.crearex.json.schema.ValidationResult;
 
 public abstract class ContainerType implements SchemaType {
 
@@ -53,7 +60,7 @@ public abstract class ContainerType implements SchemaType {
 		return ValidationResult.OK;
 	}
 
-	void addConstraint(ContainerConstraint constraint) {
+	public void addConstraint(ContainerConstraint constraint) {
 		if(constraints == null) {
 			constraints = new LinkedList<ContainerConstraint>();
 		}

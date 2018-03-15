@@ -1,6 +1,9 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.util.HashMap;
+
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.SchemaType;
 
 public class SchemaTypeMap {
 	private final HashMap<String, SchemaType> schemaTypes = new HashMap<String, SchemaType>();

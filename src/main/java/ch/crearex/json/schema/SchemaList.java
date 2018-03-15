@@ -1,34 +1,39 @@
 package ch.crearex.json.schema;
 
-class SchemaList {
+/**
+ * A list of {@link SchemaType} objects.
+ * @author Markus Niedermann
+ *
+ */
+public class SchemaList {
 	private final SchemaType[] schemata;
-	SchemaList(SchemaType[] schemata) {
+	public SchemaList(SchemaType[] schemata) {
 		this.schemata = schemata;
 	}
 
-	SchemaList(SchemaType schema) {
+	public SchemaList(SchemaType schema) {
 		this.schemata = new SchemaType[] { schema };
 	}
 	
-	SchemaType[] getSchemaTypes() {
+	public SchemaType[] getSchemaTypes() {
 		return schemata;
 	}
 
-	SchemaType getFirst() {
+	public SchemaType getFirst() {
 		if(schemata == null || schemata.length==0) {
 			return null;
 		}
 		return schemata[0];
 	}
 
-	int size() {
+	public int size() {
 		if(schemata == null) {
 			return 0;
 		}
 		return schemata.length;
 	}
 
-	SchemaType get(int index) {
+	public SchemaType get(int index) {
 		return schemata[index];
 	}
 

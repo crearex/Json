@@ -5,6 +5,12 @@ import java.util.HashSet;
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonObject;
+import ch.crearex.json.schema.builder.AndSchema;
+import ch.crearex.json.schema.builder.AnyType;
+import ch.crearex.json.schema.builder.ArrayType;
+import ch.crearex.json.schema.builder.ContainerType;
+import ch.crearex.json.schema.builder.ObjectType;
+import ch.crearex.json.schema.builder.ValueType;
 
 public class ObjectValidationData implements ValidationData {
 
@@ -37,11 +43,11 @@ public class ObjectValidationData implements ValidationData {
 		if (nextType == null) {
 			return ObjectType.EMTPY_OBJECT;
 		}
-		if (nextType instanceof ObjectType) {
-			return (ObjectType)nextType;
-		}
 		if (nextType instanceof AndSchema) {
 			return (AndSchema)nextType;
+		}
+		if (nextType instanceof ObjectType) {
+			return (ObjectType)nextType;
 		}
 		if (nextType instanceof AnyType) {
 			return (AnyType) nextType;
@@ -54,6 +60,9 @@ public class ObjectValidationData implements ValidationData {
 		SchemaType nextType = type.getPropertyType(context, nextPropertyName, JsonArray.class);
 		if (nextType == null) {
 			return ArrayType.EMTPTY_ARRAY;
+		}
+		if (nextType instanceof AndSchema) {
+			return (AndSchema)nextType;
 		}
 		if (nextType instanceof ArrayType) {
 			return (ArrayType) nextType;

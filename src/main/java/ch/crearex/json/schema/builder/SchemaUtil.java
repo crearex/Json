@@ -1,9 +1,12 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.dom.JsonElement;
 import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.dom.JsonString;
+import ch.crearex.json.schema.SchemaConstants;
+import ch.crearex.json.schema.SchemaList;
+import ch.crearex.json.schema.SchemaType;
 
 public class SchemaUtil {
 	private static final char COMMA = ',';

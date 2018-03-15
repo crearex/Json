@@ -1,8 +1,13 @@
-package ch.crearex.json.schema;
+package ch.crearex.json.schema.builder;
 
 import java.util.LinkedList;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.SchemaType;
+import ch.crearex.json.schema.SimpleValueConstraint;
+import ch.crearex.json.schema.ValidationResult;
+import ch.crearex.json.schema.ValueValidator;
 
 public abstract class ValueType implements SchemaType, ValueValidator {
 	private final String title;
