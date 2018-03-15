@@ -1,15 +1,24 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
 
 buildDir = 'build'
+
+group = 'ch.crearex'
 version = '1.0'
+
 ext {
-	groupId = 'ch.crearex'
+	groupId = group
 	artifactId = 'ch.crearex.json'
+}
+
+signing {
+    sign configurations.archives
 }
 
 dependencies {	
@@ -21,8 +30,9 @@ repositories {
 	mavenCentral()
 }
 
+
 jar {
-	baseName = project.groupId + '.' + project.artifactId
+	baseName = project.artifactId
 	version = project.version
     manifest {
         attributes("Implementation-Title": "ch.crearex.json",
@@ -43,14 +53,14 @@ task sourceJar(type: Jar) {
    baseName = project.artifactId
    version = project.version
    from sourceSets.main.allJava
-   classifier "sources"
+   classifier 'sources'
 }
 
 task javadocJar(type: Jar) {
    baseName = project.artifactId
    version = project.version
    from javadoc
-   classifier "javadoc"
+   classifier 'javadoc'
 }
  
 publishing {
@@ -71,6 +81,51 @@ publishing {
 			artifact javadocJar
         }
     }
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+        authentication(userName: ossrhUsername, password: ossrhPassword)
+      }
+
+      pom.project {
+        name "Crearex JSON Parser"
+        packaging 'jar'
+        artifactId 'ch.crearex.json' 
+        description 'A JSON Parser including a partial JSON-Schema Implementation'
+        // url 'http://www.crearex.ch/json'
+
+        scm {
+          connection 'scm:git:git@github.com/crearex/Json.git'
+          developerConnection 'scm:git:git@github.com/crearex/Json.git'
+          url 'https://github.com/crearex/Json'
+        }
+
+        licenses {
+          license {
+            name 'The Apache License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+          }
+        }
+
+        developers {
+          developer {
+            id 'mniedermann'
+            name 'Markus Niedermann'
+            email 'markus.niedermann@crearex.ch'
+          }
+        }
+      }
+    }
+  }
 }
 
 task wrapper(type: Wrapper) {
