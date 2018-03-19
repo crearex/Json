@@ -7,7 +7,7 @@ import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.impl.JsonBooleanValue;
 
 public class JsonBoolean extends JsonBooleanValue implements JsonSimpleValue, JsonElement {
-	protected JsonBoolean(JsonContext context, boolean value) {
+	public JsonBoolean(JsonContext context, boolean value) {
 		super(context, value);
 	}
 

@@ -159,7 +159,7 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 	
 	@Override
 	public void traverse(JsonDomContext context, JsonCallback callback) {
-		context.push(this);
+		context.pushJsonElement(this);
 		context.notifyBeginObject();
 		int lastIndex = properties.size()-1;
 		int index = 0;
@@ -172,7 +172,7 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 			index++;
 		}
 		context.notifyEndObject();
-		context.pop();
+		context.popJsonElement();
 	}
 	
 	public JsonObject addNull(String name) {

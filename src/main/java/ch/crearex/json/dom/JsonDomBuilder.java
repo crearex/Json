@@ -2,13 +2,12 @@ package ch.crearex.json.dom;
 
 import java.util.Stack;
 
-import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonContextBase;
 import ch.crearex.json.JsonDomCallback;
 import ch.crearex.json.JsonException;
-import ch.crearex.json.JsonIllegalSyntaxException;
+import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonValueFactory;
 import ch.crearex.json.JsonValueFactoryProviderCallback;
 

@@ -9,7 +9,7 @@ import ch.crearex.json.impl.JsonNullValue;
 
 public class JsonNull extends JsonNullValue implements JsonSimpleValue, JsonElement {
 
-	protected JsonNull(JsonContext context) {
+	public JsonNull(JsonContext context) {
 		super(context);
 	}
 

@@ -8,7 +8,7 @@ import ch.crearex.json.impl.JsonStringValue;
 
 public class JsonString extends JsonStringValue implements JsonSimpleValue, JsonElement {
 
-	protected JsonString(JsonContext context, String value) {
+	public JsonString(JsonContext context, String value) {
 		super(context, value);
 	}
 

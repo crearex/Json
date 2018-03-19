@@ -28,26 +28,26 @@ public class JsonDomContext extends JsonContextImpl {
 		elementStack.clear();
 	}
 
-	void push(JsonElement item) {
+	protected void pushJsonElement(JsonElement item) {
 		elementStack.add(item);
 	}
 	
-	void pop() {
-		elementStack.pop();
+	protected JsonElement popJsonElement() {
+		return elementStack.pop();
 	}
 	
-	public JsonElement getElement() {
+	public JsonElement peekJsonElement() {
 		if(elementStack.isEmpty()) {
 			return null;
 		}
 		return elementStack.peek();
 	}
 
-	void notifyBeginDocument(JsonCallback callback) {
+	protected void notifyBeginDocument(JsonCallback callback) {
 		callback.beginDocument(this);
 	}
 
-	void notifyEndDocument(JsonCallback callback) {
+	protected void notifyEndDocument(JsonCallback callback) {
 		callback.endDocument(this);
 	}
 	

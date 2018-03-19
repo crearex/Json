@@ -17,8 +17,12 @@ public class JsonDomValueFactory implements JsonValueFactory {
 
 	private final JsonDomContext context;
 	
-	protected JsonDomValueFactory(JsonDomContext context) {
+	public JsonDomValueFactory(JsonDomContext context) {
 		this.context = context;
+	}
+	
+	protected JsonDomContext getContext() {
+		return context;
 	}
 	
 	@Override

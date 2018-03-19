@@ -37,13 +37,13 @@ public class JsonDocument {
 	/**
 	 * Use the static factory methods to create a JSON Document.
 	 */
-	protected JsonDocument() {
+	public JsonDocument() {
 	}
 	
 	/**
 	 * Use the static factory methods to create a JSON Document.
 	 */
-	protected JsonDocument(JsonContainer root) {	
+	public JsonDocument(JsonContainer root) {	
 		this.root = root;
 	}
 		

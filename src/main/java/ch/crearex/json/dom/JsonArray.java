@@ -164,7 +164,7 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 	
 	@Override
 	public void traverse(JsonDomContext context, JsonCallback visitor) {
-		context.push(this);		
+		context.pushJsonElement(this);		
 		context.notifyBeginArray();
 		int lastIndex = children.size()-1;
 		int index = 0;
@@ -176,7 +176,7 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 			index++;
 		}
 		context.notifyEndArray();
-		context.pop();
+		context.popJsonElement();
 	}
 	
 	public JsonElement addNull() {
