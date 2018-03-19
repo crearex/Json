@@ -10,7 +10,7 @@ targetCompatibility = '1.7'
 buildDir = 'build'
 
 group = 'ch.crearex'
-version = '1.0'
+version = '2.0'
 
 ext {
 	groupId = group
@@ -99,7 +99,7 @@ uploadArchives {
       pom.project {
         name "Crearex JSON Parser"
         packaging 'jar'
-        artifactId 'ch.crearex.json' 
+        artifactId project.artifactId 
         description 'A JSON Parser including a partial JSON-Schema Implementation'
         // url 'http://www.crearex.ch/json'
 

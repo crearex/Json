@@ -5,5 +5,7 @@ Bundle-SymbolicName: ch.crearex.json
 Export-Package: ch.crearex.json,
  ch.crearex.json.impl,
  ch.crearex.json.dom,
- ch.crearex.json.schema
+ ch.crearex.json.schema,
+ ch.crearex.json.schema.builder,
+ ch.crearex.json.schema.constraints
 Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
