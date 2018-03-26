@@ -1,7 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'maven'
 apply plugin: 'signing'
 
 sourceCompatibility = '1.7'
@@ -14,11 +13,10 @@ version = '2.0'
 
 ext {
 	groupId = group
+	artifactName = 'Crearex JSON API'
 	artifactId = 'ch.crearex.json'
-}
-
-signing {
-    sign configurations.archives
+	title = artifactName + ' ' + project.version
+	description = "JSON Parser including a partial JSON-Schema Implementation"
 }
 
 dependencies {	
@@ -45,10 +43,6 @@ jar {
     }
 }
 
-javadoc {
-	title = 'Crearex JSON API ' + project.version
-}
-
 task sourceJar(type: Jar) {
    baseName = project.artifactId
    version = project.version
@@ -62,70 +56,134 @@ task javadocJar(type: Jar) {
    from javadoc
    classifier 'javadoc'
 }
+
+artifacts {
+	archives jar
+	archives sourceJar
+	archives javadocJar
+}
  
+signing {
+    sign configurations.archives
+}
+
+javadoc {
+	title = 'Crearex JSON API ' + project.version
+}
+
 publishing {
-	repositories {
-        maven {
+    publications {
+        mavenJava(MavenPublication) {
+            customizePom(pom)
+            groupId project.groupId
+            artifactId project.artifactId 
+            version project.version
+
+            from components.java
+
+            // create the sign pom artifact
+            pom.withXml {
+                def pomFile = file("${project.buildDir}/generated-pom.xml")
+                writeTo(pomFile)
+                def pomAscFile = signing.sign(pomFile).signatureFiles[0]
+                artifact(pomAscFile) {
+                    classifier = null
+                    extension = 'pom.asc'
+                }
+            }
+
+//            artifact(sourceJar) {
+//                classifier = 'sources'
+//            }
+//            artifact(javadocJar) {
+//                classifier = 'javadoc'
+//            }
+
+            // create the signed artifacts
+            project.tasks.signArchives.signatureFiles.each {
+                artifact(it) {
+                    def matcher = it.file =~ /-(sources|javadoc)\.jar\.asc$/
+                    if (matcher.find()) {
+                        classifier = matcher.group(1)
+                    } else {
+                        classifier = null
+                    }
+                    extension = 'jar.asc'
+                }
+            }
+        }
+    }
+    repositories {
+		maven {
             url "D:/ws/repository"
         }
-		mavenCentral()
-    }
-    publications {
-		maven(MavenPublication) {
-        	groupId project.groupId
-            artifactId project.artifactId
-            version project.version
-            from components.java
-			
-			artifact sourceJar
-			artifact javadocJar
+        maven {
+            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
         }
     }
 }
 
-uploadArchives {
-  repositories {
-    mavenDeployer {
-      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+def customizePom(pom) {
+    pom.withXml {
+        def root = asNode()
 
-      repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-        authentication(userName: ossrhUsername, password: ossrhPassword)
-      }
-
-      pom.project {
-        name "Crearex JSON Parser"
-        packaging 'jar'
-        artifactId project.artifactId 
-        description 'A JSON Parser including a partial JSON-Schema Implementation'
-        // url 'http://www.crearex.ch/json'
-
-        scm {
-          connection 'scm:git:git@github.com/crearex/Json.git'
-          developerConnection 'scm:git:git@github.com/crearex/Json.git'
-          url 'https://github.com/crearex/Json'
+        // eliminate test-scoped dependencies (no need in maven central POMs)
+        root.dependencies.removeAll { dep ->
+            dep.scope == "test"
         }
 
-        licenses {
-          license {
-            name 'The Apache License, Version 2.0'
-            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-          }
-        }
+        // add all items necessary for maven central publication
+        root.children().last() + {
+            resolveStrategy = Closure.DELEGATE_FIRST
 
-        developers {
-          developer {
-            id 'mniedermann'
-            name 'Markus Niedermann'
-            email 'markus.niedermann@crearex.ch'
-          }
+            description project.description
+            name project.artifactName
+            url 'https://github.com/crearex/Json'
+            organization {
+                name 'ch.crearex'
+                url 'http://www.crearex.ch/'
+            }
+            issueManagement {
+                system 'GitHub'
+                url 'https://github.com/crearex/Json/issues'
+            }
+            licenses {
+                license {
+					name 'Apache License, Version 2.0'
+                    url 'https://github.com/crearex/APACHE-LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+			
+			scm {
+			  url 'https://github.com/crearex/Json'
+			  connection 'scm:git:git@github.com/crearex/Json.git'
+			  developerConnection 'scm:git:git@github.com/crearex/Json.git'  
+			}
+			
+            developers {
+                developer {
+                    name 'Markus Niedermann'
+                }
+            }
         }
-      }
     }
-  }
+}
+
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
+    tasks.publishMavenJavaPublicationToMavenLocal {
+        dependsOn project.tasks.signArchives
+    }
+    tasks.publishMavenJavaPublicationToMavenRepository {
+        dependsOn project.tasks.signArchives
+    }
 }
 
 task wrapper(type: Wrapper) {
