@@ -92,12 +92,12 @@ publishing {
                 }
             }
 
-//            artifact(sourceJar) {
-//                classifier = 'sources'
-//            }
-//            artifact(javadocJar) {
-//                classifier = 'javadoc'
-//            }
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
 
             // create the signed artifacts
             project.tasks.signArchives.signatureFiles.each {
