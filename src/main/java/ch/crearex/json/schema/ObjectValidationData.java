@@ -3,8 +3,6 @@ package ch.crearex.json.schema;
 import java.util.HashSet;
 
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.dom.JsonArray;
-import ch.crearex.json.dom.JsonObject;
 import ch.crearex.json.schema.builder.AndSchema;
 import ch.crearex.json.schema.builder.AnyType;
 import ch.crearex.json.schema.builder.ArrayType;
@@ -39,7 +37,7 @@ public class ObjectValidationData implements ValidationData {
 
 	public ContainerType getNextObjectType(JsonSchemaContext context) {
 		
-		SchemaType nextType = type.getPropertyType(context, nextPropertyName, JsonObject.class);
+		SchemaType nextType = type.getPropertyType(context, nextPropertyName, SchemaConstants.OBJECT_TYPE);
 		if (nextType == null) {
 			return ObjectType.EMTPY_OBJECT;
 		}
@@ -57,7 +55,7 @@ public class ObjectValidationData implements ValidationData {
 	}
 
 	public ContainerType getNextArrayType(JsonSchemaContext context) {
-		SchemaType nextType = type.getPropertyType(context, nextPropertyName, JsonArray.class);
+		SchemaType nextType = type.getPropertyType(context, nextPropertyName, SchemaConstants.ARRAY_TYPE);
 		if (nextType == null) {
 			return ArrayType.EMTPTY_ARRAY;
 		}
@@ -93,8 +91,8 @@ public class ObjectValidationData implements ValidationData {
 	}
 
 	public void validateSimpleType(JsonSchemaContext context, JsonSimpleValue value) {
-		Class<?> domTypeClass = value.getClass();
-		SchemaType propertyType = type.getPropertyType(context, nextPropertyName, domTypeClass);
+		String domTypeName = value.getTypeName();
+		SchemaType propertyType = type.getPropertyType(context, nextPropertyName, domTypeName);
 		if (propertyType instanceof ValueType) {
 			ValidationResult result = ((ValueValidator) propertyType).validate(context, value);
 			if(result != ValidationResult.OK) {

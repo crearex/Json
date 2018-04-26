@@ -123,14 +123,21 @@ public class JsonDocument {
 	 * @see JsonParserFactory#createJsonSchema(java.net.URL)
 	 */
 	public SchemaValidationStatus validate(JsonSchema schema) {
-		setValidationResult(SchemaValidationStatus.NOT_VALIDATED, null);
-		
-		JsonDomContext context = new JsonDomContext(schema).setSchemaCallback(new JsonSchemaCallback() {
+		return validate(schema, new JsonSchemaCallback() {
 			@Override
 			public void schemaViolation(JsonSchemaValidationException violation) {
 				// do supress the default exception
 			}
 		});
+	}
+	
+	/**
+	 * Validate the JSON Document against the JSON Schema.
+	 * @see JsonParserFactory#createJsonSchema(java.net.URL)
+	 */
+	public SchemaValidationStatus validate(JsonSchema schema, JsonSchemaCallback schemaCallback) {
+		setValidationResult(SchemaValidationStatus.NOT_VALIDATED, null);
+		JsonDomContext context = new JsonDomContext(schema).setSchemaCallback(schemaCallback);
 		try {
 			traverse(schema, context);
 			JsonSchemaContext schemaContext = context.getSchemaStack().getSchemaContext();
@@ -168,5 +175,21 @@ public class JsonDocument {
 	
 	public boolean hasValidationErrorMessages() {
 		return validationErrors != null;
+	}
+
+	public String getValidationErrorsSummary() {
+		StringBuilder summary = new StringBuilder();
+		if(validationErrors != null) {
+			boolean first = true;
+			for(JsonSchemaValidationException ex: validationErrors) {
+				if(first) {
+					first = false;
+				} else {
+					summary.append('\n');
+				}
+				summary.append(ex.getMessage());
+			}
+		}
+		return summary.toString();
 	}
 }

@@ -1,7 +1,6 @@
 package ch.crearex.json.schema.builder;
 
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.schema.ContainerVisitor;
 import ch.crearex.json.schema.JsonSchemaContext;
 import ch.crearex.json.schema.JsonSchemaValidationException;
@@ -43,8 +42,8 @@ public class ArrayType extends ContainerType {
 	}
 
 	@Override
-	public boolean matchesDomType(Class<?> type) {
-		return type == JsonArray.class;
+	public boolean matchesDomType(String typeName) {
+		return SchemaConstants.ARRAY_TYPE.equals(typeName);
 	}
 
 	@Override
@@ -83,20 +82,20 @@ public class ArrayType extends ContainerType {
 	 * 
 	 * @param nextArrayIndex
 	 */
-	public SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
+	public SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, String entryTypeName) {
 		if ((possibleItemTypes == null) || (possibleItemTypes.size() == 0)) {
 			return null;
 		}
 
 		if (possibleItemTypes.size() == 1) {
 			SchemaType type = possibleItemTypes.getFirst();
-			if (type.matchesDomType(entryType)) {
+			if (type.matchesDomType(entryTypeName)) {
 				return type;
 			}
 		} else {
 			if (possibleItemTypes.size() > nextArrayIndex) {
 				SchemaType type = possibleItemTypes.get(nextArrayIndex);
-				if (type.matchesDomType(entryType)) {
+				if (type.matchesDomType(entryTypeName)) {
 					return type;
 				}
 			}
@@ -127,7 +126,7 @@ public class ArrayType extends ContainerType {
 			if (type.isNullable() && value.isNull()) {
 				return;
 			}
-			if (type.matchesDomType(value.getClass())) {
+			if (type.matchesDomType(value.getTypeName())) {
 				if (type instanceof ValueType) {
 					((ValueValidator) type).validate(context, value);
 					return;
@@ -138,7 +137,7 @@ public class ArrayType extends ContainerType {
 			if (type.isNullable() && value.isNull()) {
 				return;
 			}
-			if (type.matchesDomType(value.getClass())) {
+			if (type.matchesDomType(value.getTypeName())) {
 				if (type instanceof ValueType) {
 					((ValueValidator) type).validate(context, value);
 					return;

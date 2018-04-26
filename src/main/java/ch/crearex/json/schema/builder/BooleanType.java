@@ -1,6 +1,5 @@
 package ch.crearex.json.schema.builder;
 
-import ch.crearex.json.impl.JsonBooleanValue;
 import ch.crearex.json.schema.SchemaConstants;
 
 public class BooleanType extends ValueType {
@@ -15,8 +14,8 @@ public class BooleanType extends ValueType {
 	}
 	
 	@Override
-	public boolean matchesDomType(Class<?> type)  {
-		return JsonBooleanValue.class.isAssignableFrom(type);
+	public boolean matchesDomType(String typeName)  {
+		return SchemaConstants.BOOLEAN_TYPE.equals(typeName);
 	}
 	
 	@Override

@@ -1,6 +1,5 @@
 package ch.crearex.json.schema.builder;
 
-import ch.crearex.json.impl.JsonNumberValue;
 import ch.crearex.json.schema.SchemaConstants;
 
 public class NumberType extends ValueType {
@@ -15,8 +14,8 @@ public class NumberType extends ValueType {
 	}
 
 	@Override
-	public boolean matchesDomType(Class<?> type)  {
-		return JsonNumberValue.class.isAssignableFrom(type);
+	public boolean matchesDomType(String typeName)  {
+		return SchemaConstants.NUMBER_TYPE.equals(typeName);
 	}
 	
 	@Override

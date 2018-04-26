@@ -18,9 +18,9 @@ public class EnumType extends ValueType {
 	private HashSet<JsonSimpleValue> values = new HashSet<JsonSimpleValue>();
 	
 	@Override
-	public boolean matchesDomType(Class<?> type) {
+	public boolean matchesDomType(String typeName) {
 		for(JsonSimpleValue value: values) {
-			if(value.getClass().isAssignableFrom(type)) {
+			if(value.getTypeName().equals(typeName)) {
 				return true;
 			}
 		}

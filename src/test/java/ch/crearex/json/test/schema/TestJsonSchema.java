@@ -4,16 +4,12 @@ package ch.crearex.json.test.schema;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.crearex.json.Json;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonParserFactory;
-import ch.crearex.json.JsonPath;
 import ch.crearex.json.JsonSchema;
 import ch.crearex.json.JsonSchemaCallback;
 import ch.crearex.json.TestUtil;

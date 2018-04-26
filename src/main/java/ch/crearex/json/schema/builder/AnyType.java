@@ -15,7 +15,7 @@ public class AnyType extends ContainerType implements SchemaType {
 	}
 	
 	@Override
-	public boolean matchesDomType(Class<?> type)  {
+	public boolean matchesDomType(String typeName)  {
 		return true;
 	}
 

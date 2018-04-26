@@ -17,7 +17,7 @@ public class ArrayValidationData implements ValidationData {
 	}
 	
 	public ContainerType getNextObjectType(JsonSchemaContext context) {
-		SchemaType nextType = type.getEntryType(context, nextArrayIndex, ArrayType.class);
+		SchemaType nextType = type.getEntryType(context, nextArrayIndex, SchemaConstants.ARRAY_TYPE);
 		
 		if(nextType == null) {
 			return ObjectType.EMTPY_OBJECT;
@@ -33,7 +33,7 @@ public class ArrayValidationData implements ValidationData {
 	}
 	
 	public ContainerType getNextArrayType(JsonSchemaContext context) {
-		SchemaType nextType = type.getEntryType(context, nextArrayIndex, ArrayType.class);
+		SchemaType nextType = type.getEntryType(context, nextArrayIndex, SchemaConstants.ARRAY_TYPE);
 		
 		if(nextType == null) {
 			return ArrayType.EMTPTY_ARRAY;
@@ -53,8 +53,7 @@ public class ArrayValidationData implements ValidationData {
 	}
 	
 	public void validateSimpleType(JsonSchemaContext context, JsonSimpleValue value) {
-		Class<?> domTypeClass = value.getClass();
-		SchemaType entryType = type.getEntryType(context, nextArrayIndex, domTypeClass);
+		SchemaType entryType = type.getEntryType(context, nextArrayIndex, value.getTypeName());
 		if(entryType instanceof ValueType) {
 			((ValueValidator)entryType).validate(context, value);
 		}

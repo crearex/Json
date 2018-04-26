@@ -15,8 +15,8 @@ public class ConstType extends ValueType {
 	}
 
 	@Override
-	public boolean matchesDomType(Class<?> type) {
-		return constant.getClass().isAssignableFrom(type);
+	public boolean matchesDomType(String typeName) {
+		return constant.getTypeName().equals(typeName);
 	}
 
 	@Override

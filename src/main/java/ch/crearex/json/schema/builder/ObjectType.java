@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.dom.JsonObject;
-import ch.crearex.json.impl.JsonNullValue;
 import ch.crearex.json.schema.ContainerVisitor;
 import ch.crearex.json.schema.JsonSchemaContext;
 import ch.crearex.json.schema.JsonSchemaException;
@@ -87,7 +85,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 			return null;
 		}
 		for (SchemaType type : possibleTypes.getSchemaTypes()) {
-			if (type.matchesDomType(value.getClass())) {
+			if (type.matchesDomType(value.getTypeName())) {
 				return type;
 			}
 		}
@@ -95,8 +93,8 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 	}
 
 	@Override
-	public boolean matchesDomType(Class<?> type) {
-		return type == JsonObject.class;
+	public boolean matchesDomType(String typeName) {
+		return typeName == SchemaConstants.OBJECT_TYPE;
 	}
 
 	public String getSchemaId() {
@@ -129,7 +127,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 	/**
 	 * Returns the matching property type or null if the property was not found.
 	 */
-	public SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
+	public SchemaType getPropertyType(JsonSchemaContext context, String propertyName, String propertyType) {
 		SchemaList possibleTypes = getPropertyTypes(propertyName);
 		if ((possibleTypes == null) || (possibleTypes.size() == 0)) {
 			// there is no schema definition for this property = unknown property
@@ -141,7 +139,7 @@ public class ObjectType extends ContainerType implements ObjectValidator {
 			}
 		}
 
-		if (JsonNullValue.class.isAssignableFrom(propertyType)) {
+		if (SchemaConstants.NULL_TYPE.equals(propertyType)) {
 			if (possibleTypes.getFirst().isNullable()) {
 				return possibleTypes.getFirst();
 			}

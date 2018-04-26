@@ -24,7 +24,7 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		public SchemaType getPropertyType(JsonSchemaContext context, String propertyName, Class<?> propertyType) {
+		public SchemaType getPropertyType(JsonSchemaContext context, String propertyName, String propertyType) {
 			for(SchemaType type: schemata) {
 				if(type instanceof ObjectType) {
 					ObjectType objType = (ObjectType)type;
@@ -68,8 +68,8 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		public boolean matchesDomType(Class<?> type) {
-			return AndSchema.this.matchesDomType(type);
+		public boolean matchesDomType(String typeName) {
+			return AndSchema.this.matchesDomType(typeName);
 		}
 		
 		@Override
@@ -97,11 +97,11 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		public SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, Class<?> entryType) {
+		public SchemaType getEntryType(JsonSchemaContext context, int nextArrayIndex, String entryTypeName) {
 			for(SchemaType type: schemata) {
 				if(type instanceof ArrayType) {
 					ArrayType arrType = (ArrayType)type;
-					SchemaType arrayEntryType = arrType.getEntryType(context, nextArrayIndex, entryType);
+					SchemaType arrayEntryType = arrType.getEntryType(context, nextArrayIndex, entryTypeName);
 					if(arrayEntryType != null) {
 						return arrayEntryType;
 					}
@@ -139,8 +139,8 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 		}
 		
 		@Override
-		public boolean matchesDomType(Class<?> type) {
-			return AndSchema.this.matchesDomType(type);
+		public boolean matchesDomType(String typeName) {
+			return AndSchema.this.matchesDomType(typeName);
 		}
 		
 		@Override
@@ -231,9 +231,9 @@ public class AndSchema extends ContainerType implements ObjectValidator, ValueVa
 	}
 
 	@Override
-	public boolean matchesDomType(Class<?> type) {
+	public boolean matchesDomType(String typeName) {
 		for (SchemaType schema : schemata) {
-			if (schema.matchesDomType(type)) {
+			if (schema.matchesDomType(typeName)) {
 				return true;
 			}
 		}

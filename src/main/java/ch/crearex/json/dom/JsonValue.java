@@ -3,6 +3,7 @@ package ch.crearex.json.dom;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.util.regex.Pattern;
 
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonCallback;
@@ -20,6 +21,9 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0.0#######################");
 	private static final char DECIMAL_SEPARATOR = FORMATTER.getDecimalFormatSymbols().getDecimalSeparator();
 	
+	public static final Pattern INTEGER_PATTERN = Pattern.compile("\\d+");
+	public static final Pattern DOUBLE_PATTERN = Pattern.compile("-{0,1}(0|[1-9]\\d*)([.]{0,1}\\d+){0,1}([eE][+-]{0,1}\\d+)*");
+	   
 	public static final JsonValue NULL = new JsonValue();
 	public static final JsonValue TRUE = new JsonValue(true);
 	public static final JsonValue FALSE = new JsonValue(false);
@@ -27,7 +31,7 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	private final String value;
 	
 	private enum ValueType {
-		STRING(SchemaConstants.OBJECT_TYPE),
+		STRING(SchemaConstants.STRING_TYPE),
 		NUMBER(SchemaConstants.NUMBER_TYPE),
 		INTEGRAL_NUMBER(SchemaConstants.NUMBER_TYPE),
 		BOOLEAN(SchemaConstants.BOOLEAN_TYPE),
@@ -280,6 +284,25 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	@Override
 	public String getTypeName() {
 		return valueType.getSchemaTypeName();
+	}
+	
+	public static JsonValue parse(String value) {
+		if(value==null || JsonParser.JSON_NULL.equals(value)) {
+			return NULL;
+		}
+		if(JsonParser.JSON_TRUE.equals(value)) {
+			return TRUE;
+		}
+		if(JsonParser.JSON_FALSE.equals(value)) {
+			return FALSE;
+		}
+		if(INTEGER_PATTERN.matcher(value).matches()) {
+			return new JsonValue(Long.parseLong(value));
+		}
+		if(DOUBLE_PATTERN.matcher(value).matches()) {
+			return new JsonValue(Double.parseDouble(value));
+		}
+		return new JsonValue(value);
 	}
 
 }
