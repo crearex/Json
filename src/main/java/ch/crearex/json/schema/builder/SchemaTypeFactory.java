@@ -220,7 +220,11 @@ public class SchemaTypeFactory implements TypeFactory {
 
 	private String expandId(String internalId, JsonObject schemaTypeDefinition) {
 		if (internalId.indexOf(SchemaConstants.HASH) == 0) {
-			return concat(context.getRootId(), SchemaConstants.HASH, internalId);
+			String rootId = context.getRootId();
+			if(rootId == null || rootId.isEmpty()) {
+				throw new JsonSchemaException("JSON Schema Root ID missing! Is there a declaration of '$id' in the schema root object?");
+			}
+			return concat(rootId, SchemaConstants.HASH, internalId);
 		} else {
 			return internalId;
 		}
