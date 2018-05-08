@@ -1,18 +1,19 @@
 package ch.crearex.json.test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import java.util.ArrayList;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
+import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.impl.CrearexJsonParserFactory;
 
 public class TestJsonPath {

@@ -1,6 +1,5 @@
 package ch.crearex.json;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -33,106 +32,16 @@ import java.util.List;
  *
  */
 public class JsonPath implements Iterable<JsonPathEntry> {
-	/**
-	 * The escape character is a tilde (~)
-	 */
-	public static final char ESCAPE_CHAR = '~';
-	
+		
 	/**
 	 * The path separator is a slash (/)
 	 */
-	public static final char PATH_SEPARATOR = '/';
+	public static final char PATH_SEPARATOR = JsonPathParser.PATH_SEPARATOR;
+	public static final char ESCAPE_CHAR = JsonPathParser.ESCAPE_CHAR;
 	private final LinkedList<JsonPathEntry> path;
-	private static final StringPathParser pathParser = new StringPathParser();
+	private static final JsonPathParser pathParser = new JsonPathParser();
 	
-	private static class StringPathParser {
-		private ArrayList<String> entries;
-		private CharParser parser;
-		private String entry;
-		private int index;
-		private char[] path;
-		
-		private interface CharParser {
-			void parse();
-		}
-		
-		private class ParseChar implements CharParser {
-			@Override
-			public void parse() {
-				char ch = path[index];
-				if(ch == PATH_SEPARATOR) {
-					if(entry.length() > 0) {
-						entries.add(entry);
-						entry = "";
-						index++;
-						return;
-					} else {
-						index++;
-						return;
-					}
-				}
-				if(ch == ESCAPE_CHAR) {
-					parser = ESCAPE;
-					index++;
-					return;
-				}
-				
-				entry += ch;
-				index++;
-				
-			}
-		}
-		
-		private class ParseEscape implements CharParser {
-			@Override
-			public void parse() {
-				char ch = path[index];
-				if(ch == ESCAPE_CHAR) {
-					entry += ESCAPE_CHAR;
-					parser = CHAR;
-					index++;
-					return;
-				}
-				if(ch == PATH_SEPARATOR) {
-					entry += PATH_SEPARATOR;
-					parser = CHAR;
-					index++;
-					return;
-				}
-				index++;
-				return;
-				
-			}
-		}
-		
-		private CharParser CHAR = new ParseChar();
-		private CharParser ESCAPE = new ParseEscape();
-		
-		List<String> parser(String path) {
-			entries = new ArrayList<String>();
-			if(path.length() == 0) {
-				return entries;
-			}
-			
-			this.path = path.toCharArray();
-			entry = "";
-			this.index = 0;
-			
-			parser = CHAR;
-			if(this.path[this.index] == ESCAPE_CHAR) {
-				this.index++;
-				parser = ESCAPE;
-			}
-			while(index<this.path.length) {
-				parser.parse();
-			}
-			if(entry.length() > 0) {
-				entries.add(entry);
-				entry = "";
-			}
-			return entries;
-		}
-	}
+	
 	
 	public JsonPath(JsonPathEntry[] path) {
 		this.path = new LinkedList<JsonPathEntry>(Arrays.asList(path));
@@ -152,7 +61,7 @@ public class JsonPath implements Iterable<JsonPathEntry> {
 			add(JsonPathEntry.createEmptyEntry(isRoot));
 			return;
 		}
-		List<String> entries = pathParser.parser(path);
+		List<String> entries = pathParser.parse(path);
 		int index = -1;
 		for(String entry: entries) {
 			index++;
@@ -216,7 +125,6 @@ public class JsonPath implements Iterable<JsonPathEntry> {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		boolean x = true;
 		int first = 1;
 		// a path always begins with a PATH_SEPARATOR
 		//builder.append(PATH_SEPARATOR);
@@ -239,12 +147,12 @@ public class JsonPath implements Iterable<JsonPathEntry> {
 	}
 	
 	private Object escapeChars(String entry) {
-		if(entry.indexOf(ESCAPE_CHAR)<0 && entry.indexOf(PATH_SEPARATOR)<0) {
+		if(entry.indexOf(JsonPathParser.ESCAPE_CHAR)<0 && entry.indexOf(PATH_SEPARATOR)<0) {
 			return entry;
 		}
 		
-		entry = entry.replace(""+ESCAPE_CHAR, ""+ESCAPE_CHAR + ESCAPE_CHAR);
-		entry = entry.replace("" + PATH_SEPARATOR, ""+ESCAPE_CHAR + PATH_SEPARATOR);
+		entry = entry.replace(""+JsonPathParser.ESCAPE_CHAR, ""+JsonPathParser.ESCAPE_CHAR + JsonPathParser.ESCAPE_CHAR);
+		entry = entry.replace("" + PATH_SEPARATOR, ""+JsonPathParser.ESCAPE_CHAR + PATH_SEPARATOR);
 		return entry;
 	}
 
