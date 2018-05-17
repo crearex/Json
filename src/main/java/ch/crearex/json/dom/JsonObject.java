@@ -7,13 +7,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonCallback;
+import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
-import ch.crearex.json.JsonPathEntry;
-import ch.crearex.json.JsonUtil;
-import ch.crearex.json.schema.SchemaConstants;
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.JsonUtil;
+import ch.crearex.json.PropertyToken;
+import ch.crearex.json.Token;
+import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonObject extends JsonContainer implements Iterable<Map.Entry<String, JsonElement>>{
 
@@ -106,7 +107,7 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 		if(obj instanceof JsonSimpleValue) {
 			return (JsonSimpleValue)obj;
 		}
-		throw new JsonAccessException("Property " + getPath().concat(name) + " does not exist!");
+		throw new JsonAccessException("Property " + getPath().concatPropertyName(name) + " does not exist!");
 	}
 
 	public JsonElement remove(String name) {
@@ -412,10 +413,10 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 	}
 
 	@Override
-	protected JsonPathEntry getPathEntryForChild(JsonContainer child) {
+	protected Token getPathEntryForChild(JsonElement child) {
 		for(Map.Entry<String, JsonElement> entry: properties.entrySet()) {
 			if(entry.getValue() == child) {
-				return JsonPathEntry.createObjectEntry(entry.getKey());
+				return new PropertyToken(entry.getKey());
 			}
 		}
 		throw new JsonAccessException("Pathname unkonwn!");

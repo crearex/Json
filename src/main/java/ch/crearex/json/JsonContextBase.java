@@ -55,7 +55,7 @@ public abstract class JsonContextBase implements JsonContext {
 		}
 		void incIndex() {	
 		}
-		public abstract void addToPath(JsonPath path, boolean isRoot);
+		public abstract void addToPath(JsonPath path);
 		public void flagAsDone() {
 			done = true;
 		}
@@ -97,11 +97,9 @@ public abstract class JsonContextBase implements JsonContext {
 			index++;
 		}
 		@Override
-		public void addToPath(JsonPath path, boolean isRoot) {
-			if(index<0 || done) {
-				path.add(JsonPathEntry.createEmptyEntry(isRoot));
-			} else {
-				path.add(JsonPathEntry.createArrayEntry(index, isRoot));
+		public void addToPath(JsonPath path) {
+			if(index>=0 && !done) {
+				path.add(new IndexToken(index));
 			}
 		}
 		
@@ -123,11 +121,9 @@ public abstract class JsonContextBase implements JsonContext {
 			this.propertyName = propertyName;
 		}
 		@Override
-		public void addToPath(JsonPath path, boolean isRoot) {
-			if(propertyName == null || done) {
-				path.add(JsonPathEntry.createEmptyEntry(isRoot));
-			} else {
-				path.add(JsonPathEntry.createObjectEntry(propertyName, isRoot));
+		public void addToPath(JsonPath path) {
+			if(propertyName != null && !done) {
+				path.add(new PropertyToken(propertyName));
 			}
 		}
 		
@@ -237,14 +233,16 @@ public abstract class JsonContextBase implements JsonContext {
 	@Override
 	public JsonPath getPath() {
 		JsonPath path = new JsonPath();
+		path.add(new RootToken());
 		Container item = rootContainer;
 		if(item == null) {
 			return path;
 		}
-		item.addToPath(path, true);
+		
+		item.addToPath(path);
 		while(item.hasNext()) {
 			item = item.getNext();
-			item.addToPath(path, false);
+			item.addToPath(path);
 		}
 		return path;
 	}

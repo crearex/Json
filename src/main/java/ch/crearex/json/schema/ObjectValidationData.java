@@ -77,7 +77,7 @@ public class ObjectValidationData implements ValidationData {
 		nextPropertyName = propertyName;
 		if (readPropertyNames.contains(propertyName)) {
 			context.notifySchemaViolation(new JsonSchemaValidationException(context.getPath(),
-					"Property '" + context.getPath().concat(propertyName) + "' already defined!"));
+					"Property '" + context.getPath().concatPropertyName(propertyName) + "' already defined!"));
 		}
 		readPropertyNames.add(propertyName);
 	}

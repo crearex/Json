@@ -3,7 +3,6 @@ package ch.crearex.json;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Path to a JSON-Element e.g.
@@ -31,84 +30,54 @@ import java.util.List;
  * @author Markus Niedermann
  *
  */
-public class JsonPath implements Iterable<JsonPathEntry> {
+public class JsonPath implements Iterable<Token> {
 		
-	/**
-	 * The path separator is a slash (/)
-	 */
-	public static final char PATH_SEPARATOR = JsonPathParser.PATH_SEPARATOR;
 	public static final char ESCAPE_CHAR = JsonPathParser.ESCAPE_CHAR;
-	private final LinkedList<JsonPathEntry> path;
+	public static final char SEPARATOR = JsonPathParser.DOT;
+	
+	private final LinkedList<Token> path;
 	private static final JsonPathParser pathParser = new JsonPathParser();
 	
-	
-	
-	public JsonPath(JsonPathEntry[] path) {
-		this.path = new LinkedList<JsonPathEntry>(Arrays.asList(path));
+	public JsonPath(Token[] path) {
+		this.path = new LinkedList<Token>(Arrays.asList(path));
 	}
 	
 	public JsonPath(String path) {
-		this.path = new LinkedList<JsonPathEntry>();
+		
 		if(path == null) {
-			return;
+			throw new JsonPathIllegalSyntaxException("Illegal path argument! path must not be null!");
 		}
+		
 		path = path.trim();
 		if(path.isEmpty()) {
-			return;
+			throw new JsonPathIllegalSyntaxException("Illegal path argument! path must not be empty!");
 		}
-		boolean isRoot = path.charAt(0)==PATH_SEPARATOR;
-		if((path.length() == 1) && isRoot) {
-			add(JsonPathEntry.createEmptyEntry(isRoot));
-			return;
-		}
-		List<String> entries = pathParser.parse(path);
-		int index = -1;
-		for(String entry: entries) {
-			index++;
-			if(entry == null) {
-				throw new IllegalArgumentException("Create JSON Path for '"+path+"' failed! Illegal null entry.");
-			}
-			entry = entry.trim();
-			if(entry.isEmpty()) {
-				if(index == 0) {
-					continue;
-				}
-				throw new IllegalArgumentException("Create JSON Path for '"+path+"' failed! Illegal empty entry.");
-			}
-			try {
-				int arrayIndex = Integer.parseInt(entry);
-				add(JsonPathEntry.createArrayEntry(arrayIndex, isRoot));
-			} catch(NumberFormatException e) {
-				add(JsonPathEntry.createObjectEntry(entry, isRoot));
-			} catch(Exception e) {
-				throw new IllegalArgumentException("Create JSON Path for '"+path+"' failed! " + e.getMessage(), e);
-			}
-			isRoot = false;
-		}
+		
+		this.path = pathParser.parseTokens(path);
 	}
 
 	public JsonPath() {
-		this.path = new LinkedList<JsonPathEntry>();
+		this.path = new LinkedList<Token>();
 	}
 
-	public JsonPath add(JsonPathEntry entry) {
+	public JsonPath add(Token entry) {
 		this.path.add(entry);
 		return this;
 	}
 	
-	public JsonPathEntry removeLast() {
+	public Token removeLast() {
 		return this.path.removeLast();
 	}
 	
-	public JsonPathEntry getLast() {
+	public Token getLast() {
 		return this.path.getLast();
 	}
 	
-	public JsonPathEntry getFirst() {
+	public Token getFirst() {
 		return this.path.getFirst();
 	}
 	
-	public JsonPath addFirst(JsonPathEntry entry) {
+	public JsonPath addFirst(Token entry) {
 		this.path.addFirst(entry);
 		return this;
 	}
@@ -124,37 +93,35 @@ public class JsonPath implements Iterable<JsonPathEntry> {
 	
 	@Override
 	public String toString() {
+		return toJsonPath();
+		//return toSlashPath();
+	}
+	
+	private String toJsonPath() {
 		StringBuilder builder = new StringBuilder();
-		int first = 1;
-		// a path always begins with a PATH_SEPARATOR
-		//builder.append(PATH_SEPARATOR);
-		for(JsonPathEntry entry: path) {
-			if(entry.isRoot()) {
-				builder.append(PATH_SEPARATOR);
-				if(!entry.hasData()) {
-					first++;
+		boolean first = true;
+		for(Token entry: path) {
+			if(first) {
+				builder.append(entry.toString());
+				first = false;
+			} else {
+				if(entry instanceof IndexToken) {
+					builder.append(JsonPathParser.BRACKET_BEGIN);
+				} else {
+					builder.append(SEPARATOR);
+				}
+				
+				builder.append(entry.toString());
+				
+				if(entry instanceof IndexToken) {
+					builder.append(JsonPathParser.BRACKET_END);
 				}
 			}
-			if(first>0) {
-				first--;
-			} else if(entry.hasData()){
-				builder.append(PATH_SEPARATOR);
-			}
-			builder.append(escapeChars(entry.toString()));
-			
 		}
 		return builder.toString();
 	}
 	
-	private Object escapeChars(String entry) {
-		if(entry.indexOf(JsonPathParser.ESCAPE_CHAR)<0 && entry.indexOf(PATH_SEPARATOR)<0) {
-			return entry;
-		}
-		
-		entry = entry.replace(""+JsonPathParser.ESCAPE_CHAR, ""+JsonPathParser.ESCAPE_CHAR + JsonPathParser.ESCAPE_CHAR);
-		entry = entry.replace("" + PATH_SEPARATOR, ""+JsonPathParser.ESCAPE_CHAR + PATH_SEPARATOR);
-		return entry;
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {
@@ -171,20 +138,20 @@ public class JsonPath implements Iterable<JsonPathEntry> {
 	}
 
 	@Override
-	public Iterator<JsonPathEntry> iterator() {
+	public Iterator<Token> iterator() {
 		return path.iterator();
 	}
 
-	public boolean isLastEntry(JsonPathEntry entry) {
+	public boolean isLastEntry(Token entry) {
 		return entry == path.getLast();
 	}
 
-	public String concat(String trailingPart) {
+	public String concatPropertyName(String trailingPart) {
 		String path = toString();
-		if(path.lastIndexOf(PATH_SEPARATOR) == path.length()-1) {
+		if(path.lastIndexOf(SEPARATOR) == path.length()-1) {
 			return path + trailingPart;
 		} else {
-			return path + PATH_SEPARATOR + trailingPart;
+			return path + SEPARATOR + trailingPart;
 		}
 	}
 

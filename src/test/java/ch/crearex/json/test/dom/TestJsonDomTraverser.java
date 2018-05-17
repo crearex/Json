@@ -99,8 +99,8 @@ public class TestJsonDomTraverser {
 		JsonDocument doc = domBuilder.getDocument();
 		doc.traverse(callback);
 		int index = 0;
-		assertThat(pathList.get(index++), is("/"));
-		assertThat(pathList.get(index++), is("/"));
+		assertThat(pathList.get(index++), is("$"));
+		assertThat(pathList.get(index++), is("$"));
 		assertThat(pathList.size(), is(2));
 		assertThat(result, is("<{}>"));
 	}
@@ -114,10 +114,10 @@ public class TestJsonDomTraverser {
 		JsonDocument doc = domBuilder.getDocument();
 		doc.traverse(callback);
 		int index = 0;
-		assertThat(pathList.get(index++), is("/"));
-		assertThat(pathList.get(index++), is("/a"));
-		assertThat(pathList.get(index++), is("/a"));
-		assertThat(pathList.get(index++), is("/"));
+		assertThat(pathList.get(index++), is("$"));
+		assertThat(pathList.get(index++), is("$.a"));
+		assertThat(pathList.get(index++), is("$.a"));
+		assertThat(pathList.get(index++), is("$"));
 		assertThat(pathList.size(), is(4));
 		assertThat(result, is("<{(p=a)(true)}>"));
 	}
@@ -131,12 +131,12 @@ public class TestJsonDomTraverser {
 		JsonDocument doc = domBuilder.getDocument();
 		doc.traverse(callback);
 		int index = 0;
-		assertThat(pathList.get(index++), is("/"));
-		assertThat(pathList.get(index++), is("/a"));
-		assertThat(pathList.get(index++), is("/a"));
-		assertThat(pathList.get(index++), is("/b"));
-		assertThat(pathList.get(index++), is("/b"));
-		assertThat(pathList.get(index++), is("/"));
+		assertThat(pathList.get(index++), is("$"));
+		assertThat(pathList.get(index++), is("$.a"));
+		assertThat(pathList.get(index++), is("$.a"));
+		assertThat(pathList.get(index++), is("$.b"));
+		assertThat(pathList.get(index++), is("$.b"));
+		assertThat(pathList.get(index++), is("$"));
 		assertThat(pathList.size(), is(6));
 		assertThat(result, is("<{(p=a)(true)(p=b)(false)}>"));
 	}
@@ -150,8 +150,8 @@ public class TestJsonDomTraverser {
 		JsonDocument doc = domBuilder.getDocument();
 		doc.traverse(callback);
 		int index = 0;
-		assertThat(pathList.get(index++), is("/"));
-		assertThat(pathList.get(index++), is("/"));
+		assertThat(pathList.get(index++), is("$"));
+		assertThat(pathList.get(index++), is("$"));
 		assertThat(pathList.size(), is(2));
 		assertThat(result, is("<[]>"));
 	}
@@ -165,9 +165,9 @@ public class TestJsonDomTraverser {
 		JsonDocument doc = domBuilder.getDocument();
 		doc.traverse(callback);
 		int index = 0;
-		assertThat(pathList.get(index++), is("/"));
-		assertThat(pathList.get(index++), is("/0"));
-		assertThat(pathList.get(index++), is("/"));
+		assertThat(pathList.get(index++), is("$"));
+		assertThat(pathList.get(index++), is("$[0]"));
+		assertThat(pathList.get(index++), is("$"));
 		assertThat(pathList.size(), is(3));
 		assertThat(result, is("<[(true)]>"));
 	}
@@ -181,10 +181,10 @@ public class TestJsonDomTraverser {
 		JsonDocument doc = domBuilder.getDocument();
 		doc.traverse(callback);
 		int index = 0;
-		assertThat(pathList.get(index++), is("/"));
-		assertThat(pathList.get(index++), is("/0"));
-		assertThat(pathList.get(index++), is("/1"));
-		assertThat(pathList.get(index++), is("/"));
+		assertThat(pathList.get(index++), is("$"));
+		assertThat(pathList.get(index++), is("$[0]"));
+		assertThat(pathList.get(index++), is("$[1]"));
+		assertThat(pathList.get(index++), is("$"));
 		assertThat(pathList.size(), is(4));
 		assertThat(result, is("<[(true)('a')]>"));
 	}
@@ -211,34 +211,34 @@ public class TestJsonDomTraverser {
 		JsonDocument doc = domBuilder.getDocument();
 		doc.traverse(callback);
 		int index = 0;
-		assertThat(pathList.get(index++), is("/"));
-		assertThat(pathList.get(index++), is("/name"));
-		assertThat(pathList.get(index++), is("/name"));
-		assertThat(pathList.get(index++), is("/vorname"));
-		assertThat(pathList.get(index++), is("/vorname"));
-		assertThat(pathList.get(index++), is("/adresse"));
-		assertThat(pathList.get(index++), is("/adresse"));
-		assertThat(pathList.get(index++), is("/adresse/strasse"));
-		assertThat(pathList.get(index++), is("/adresse/strasse"));
-		assertThat(pathList.get(index++), is("/adresse/ort"));
-		assertThat(pathList.get(index++), is("/adresse/ort"));
-		assertThat(pathList.get(index++), is("/adresse/plz"));
-		assertThat(pathList.get(index++), is("/adresse/plz"));
-		assertThat(pathList.get(index++), is("/adresse"));
-		assertThat(pathList.get(index++), is("/aktiv"));
-		assertThat(pathList.get(index++), is("/aktiv"));
-		assertThat(pathList.get(index++), is("/books"));
-		assertThat(pathList.get(index++), is("/books"));
-		assertThat(pathList.get(index++), is("/books/0"));
-		assertThat(pathList.get(index++), is("/books/1"));
-		assertThat(pathList.get(index++), is("/books/2"));
-		assertThat(pathList.get(index++), is("/books/2/name"));
-		assertThat(pathList.get(index++), is("/books/2/name"));
-		assertThat(pathList.get(index++), is("/books/2/ISBN"));
-		assertThat(pathList.get(index++), is("/books/2/ISBN"));
-		assertThat(pathList.get(index++), is("/books/2"));
-		assertThat(pathList.get(index++), is("/books"));
-		assertThat(pathList.get(index++), is("/"));
+		assertThat(pathList.get(index++), is("$"));
+		assertThat(pathList.get(index++), is("$.name"));
+		assertThat(pathList.get(index++), is("$.name"));
+		assertThat(pathList.get(index++), is("$.vorname"));
+		assertThat(pathList.get(index++), is("$.vorname"));
+		assertThat(pathList.get(index++), is("$.adresse"));
+		assertThat(pathList.get(index++), is("$.adresse"));
+		assertThat(pathList.get(index++), is("$.adresse.strasse"));
+		assertThat(pathList.get(index++), is("$.adresse.strasse"));
+		assertThat(pathList.get(index++), is("$.adresse.ort"));
+		assertThat(pathList.get(index++), is("$.adresse.ort"));
+		assertThat(pathList.get(index++), is("$.adresse.plz"));
+		assertThat(pathList.get(index++), is("$.adresse.plz"));
+		assertThat(pathList.get(index++), is("$.adresse"));
+		assertThat(pathList.get(index++), is("$.aktiv"));
+		assertThat(pathList.get(index++), is("$.aktiv"));
+		assertThat(pathList.get(index++), is("$.books"));
+		assertThat(pathList.get(index++), is("$.books"));
+		assertThat(pathList.get(index++), is("$.books[0]"));
+		assertThat(pathList.get(index++), is("$.books[1]"));
+		assertThat(pathList.get(index++), is("$.books[2]"));
+		assertThat(pathList.get(index++), is("$.books[2].name"));
+		assertThat(pathList.get(index++), is("$.books[2].name"));
+		assertThat(pathList.get(index++), is("$.books[2].ISBN"));
+		assertThat(pathList.get(index++), is("$.books[2].ISBN"));
+		assertThat(pathList.get(index++), is("$.books[2]"));
+		assertThat(pathList.get(index++), is("$.books"));
+		assertThat(pathList.get(index++), is("$"));
 		assertThat(pathList.size(), is(28));
 		//assertThat(result, is("<[]>"));
 	}

@@ -3,66 +3,16 @@ package ch.crearex.json;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 
 class JsonPathParser {
 	
-	public abstract static class Token {
-		private StringBuilder name = new StringBuilder();
-		Token() {
-		}
-		Token(String name) {
-			this.name.append(name);
-		}
-		void append(char ch) {
-			this.name.append(ch);
-		}
-		@Override
-		public String toString() {
-			return getName();
-		}
-		String getName() {
-			return name.toString();
-		}
-	}
-
-	public static class RootToken extends Token {
-		RootToken() {
-			super();
-		}
-	}
-
-	public static class RelativeToken extends Token {
-		RelativeToken() {
-			super();
-		}
-	}
-
-	public static class PropertyToken extends Token {
-		PropertyToken() {
-			super();
-		}
-		PropertyToken(String name) {
-			super(name);
-		}
-	}
-
-	public static class IndexToken extends Token {
-		private final int index;
-		IndexToken(int index) {
-			super(""+index);
-			this.index = index;
-		}
-		int getIndex() {
-			return index;
-		}
-	}
-	
 	/**
-	 * The escape character is a tilde (~)
+	 * The escape character is a backslash
 	 */
-	public static final char ESCAPE_CHAR = '~';
+	public static final char ESCAPE_CHAR = '\\';
 	
 	public static final char ROOT_OBJECT = '$';
 	public static final char RELATIVE_OBJECT = '@';
@@ -76,10 +26,11 @@ class JsonPathParser {
 	 */
 	public static final char PATH_SEPARATOR = '/';
 	
-	private static final HashSet<Character> END_OF_PROPERTY = new HashSet<Character>(Arrays.asList(new Character[] {BRACKET_BEGIN, DOT, QUOTE, END_OF_PATH}));
+	private static final HashSet<Character> DOT_END_OF_PROPERTY = new HashSet<Character>(Arrays.asList(new Character[] {BRACKET_BEGIN, DOT, END_OF_PATH}));
+	private static final HashSet<Character> BRACKET_END_OF_PROPERTY = new HashSet<Character>(Arrays.asList(new Character[] {BRACKET_BEGIN, QUOTE, END_OF_PATH}));
 
 	
-	private ArrayList<Token> tokens;
+	private LinkedList<Token> tokens;
 	
 	private ArrayList<String> entries;
 	private String entry;
@@ -87,6 +38,8 @@ class JsonPathParser {
 	private CharParser parser;
 	private int index;
 	private char[] path;
+	private char toBeEscaped = DOT;
+	private HashSet<Character> endOfProperty = DOT_END_OF_PROPERTY;
 	
 	private abstract class CharParser {
 		abstract void parse();
@@ -105,10 +58,27 @@ class JsonPathParser {
 				return END_OF_PATH;
 			}
 			char ch = path[index];
-			// TODO check for escaped characters
+			
+			if(ch == ESCAPE_CHAR) {
+				if(index+1 >= path.length) {
+					throw new JsonPathIllegalSyntaxException("Illegal escaped character in '"+new String(path)+"' at index "+index+".");
+				}
+				if(path[index+1] == ESCAPE_CHAR) {
+					inc();
+				} else if(path[index+1] == toBeEscaped) {
+					inc();
+					ch = toBeEscaped;
+				}
+			}
 			inc();
 			return ch;
 		}
+		
+		boolean isEscaped() {
+			boolean escaped = (index > 1) && (index<=path.length) && (path[index-2] == ESCAPE_CHAR);
+			return escaped;
+		}
+		
 		char nextExpected(char expectedCharacter) {
 			char ch = next();
 			if(ch != expectedCharacter) {
@@ -217,6 +187,8 @@ class JsonPathParser {
 	private class DotEntryParser extends CharParser {
 		@Override
 		public void parse() {
+				toBeEscaped = DOT;
+				endOfProperty = DOT_END_OF_PROPERTY;
 				nextExpected(DOT);
 				nextState(PROPERTY_PARSER);
 		}		
@@ -241,6 +213,8 @@ class JsonPathParser {
 		public void parse() {
 			nextExpected(BRACKET_BEGIN);
 			if(ch() == QUOTE) {
+				toBeEscaped = QUOTE;
+				endOfProperty = BRACKET_END_OF_PROPERTY;
 				inc();
 				nextState(PROPERTY_PARSER);
 			} else {
@@ -254,7 +228,7 @@ class JsonPathParser {
 		public void parse() {
 			StringBuilder name = new StringBuilder();
 			char ch = 0;
-			while(!END_OF_PROPERTY.contains(ch = next())) {
+			while(!endOfProperty.contains(ch = next()) || isEscaped()) {
 				name.append(ch);
 			}
 			dec();
@@ -326,9 +300,9 @@ class JsonPathParser {
 		return entries;
 	}
 	
-	List<Token> parseTokens(String path) {
+	LinkedList<Token> parseTokens(String path) {
 		
-		tokens = new ArrayList<Token>();
+		tokens = new LinkedList<Token>();
 		
 		if(path.length() == 0) {
 			return tokens;

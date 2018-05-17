@@ -82,7 +82,7 @@ public class SchemaTypeFactory implements TypeFactory {
 			String definitionName = entry.getKey();
 			if (!(entry.getValue() instanceof JsonObject)) {
 				throw new JsonSchemaException(
-						"Illegal type for inline schema '" + typeDefinition.getPath().concat(definitionName) + "'!");
+						"Illegal type for inline schema '" + typeDefinition.getPath().concatPropertyName(definitionName) + "'!");
 			}
 			JsonObject internalSchemaTypeDefinition = (JsonObject) entry.getValue();
 

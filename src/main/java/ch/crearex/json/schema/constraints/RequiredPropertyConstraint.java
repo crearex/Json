@@ -26,7 +26,7 @@ public class RequiredPropertyConstraint implements ContainerConstraint {
 		HashSet<String> readPropertyNames = objectValidationData.getReadPropertyNames();
 		for(String requiredProperty: requiredPropertyNames) {
 			if(!readPropertyNames.contains(requiredProperty)) {
-				return new ValidationResult(context.getPath(), "Required Property '" + context.getPath().concat(requiredProperty) + "' missing!");
+				return new ValidationResult(context.getPath(), "Required Property '" + context.getPath().concatPropertyName(requiredProperty) + "' missing!");
 			}
 		}
 		return ValidationResult.OK;

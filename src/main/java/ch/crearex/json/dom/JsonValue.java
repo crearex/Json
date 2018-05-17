@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.PropertyToken;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
@@ -119,16 +120,9 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	
 	@Override
 	public JsonPath getPath() {
-		String pathId = parent.resolvePathStringEntry(this);
-		String path = pathId;
-		JsonContainer child = null;
-		while(parent.hasParent()) {
-			child = parent;
-			parent = parent.getParent();
-			path = parent.resolvePathStringEntry(child) + JsonPath.PATH_SEPARATOR + path;
-		}
-		path = JsonPath.PATH_SEPARATOR + path;
-		return new JsonPath(path);
+		JsonPath jsonPath = parent.getPath();
+		jsonPath.add(parent.getPathEntryForChild(this));
+		return jsonPath;
 	}
 	
 	private String formatDecimal(double value) {
