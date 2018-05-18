@@ -449,5 +449,11 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 	public String getTypeName() {
 		return SchemaConstants.OBJECT_TYPE;
 	}
+
+	@Override
+	public JsonObject clear() {
+		this.properties.clear();
+		return this;
+	}
 	
 }

@@ -350,5 +350,11 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 	public String getTypeName() {
 		return SchemaConstants.ARRAY_TYPE;
 	}
+	
+	@Override
+	public JsonArray clear() {
+		this.children.clear();
+		return this;
+	}
 
 }

@@ -151,6 +151,8 @@ public abstract class JsonContainer implements JsonElement {
 	
 	public abstract JsonContainer getContainer(String propertyName);
 	
+	public abstract JsonContainer clear();
+	
 	protected abstract Token getPathEntryForChild(JsonElement child);
 	
 	protected abstract String resolvePathStringEntry(JsonElement value);
