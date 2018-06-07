@@ -1,8 +1,13 @@
 package ch.crearex.json;
 
-public class IndexToken extends Token {
+/**
+ * Matches an entry in an array.
+ * @author Markus Niedermann
+ *
+ */
+public class IndexPathEntry extends JsonPathEntry {
 	private final int index;
-	public IndexToken(int index) {
+	public IndexPathEntry(int index) {
 		super(""+index);
 		this.index = index;
 	}
@@ -11,10 +16,10 @@ public class IndexToken extends Token {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof IndexToken)) {
+		if (!(obj instanceof IndexPathEntry)) {
             return false;
 		}
-		IndexToken comp = (IndexToken) obj;
+		IndexPathEntry comp = (IndexPathEntry) obj;
 		return this.index == comp.index;
 	}
 	

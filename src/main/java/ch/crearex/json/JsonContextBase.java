@@ -99,7 +99,7 @@ public abstract class JsonContextBase implements JsonContext {
 		@Override
 		public void addToPath(JsonPath path) {
 			if(index>=0 && !done) {
-				path.add(new IndexToken(index));
+				path.add(new IndexPathEntry(index));
 			}
 		}
 		
@@ -123,7 +123,7 @@ public abstract class JsonContextBase implements JsonContext {
 		@Override
 		public void addToPath(JsonPath path) {
 			if(propertyName != null && !done) {
-				path.add(new PropertyToken(propertyName));
+				path.add(new PropertyPathEntry(propertyName));
 			}
 		}
 		
@@ -233,7 +233,7 @@ public abstract class JsonContextBase implements JsonContext {
 	@Override
 	public JsonPath getPath() {
 		JsonPath path = new JsonPath();
-		path.add(new RootToken());
+		path.add(new RootPathEntry());
 		Container item = rootContainer;
 		if(item == null) {
 			return path;

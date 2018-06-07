@@ -12,8 +12,8 @@ import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonUtil;
-import ch.crearex.json.PropertyToken;
-import ch.crearex.json.Token;
+import ch.crearex.json.PropertyPathEntry;
+import ch.crearex.json.JsonPathEntry;
 import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonObject extends JsonContainer implements Iterable<Map.Entry<String, JsonElement>>{
@@ -413,10 +413,10 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 	}
 
 	@Override
-	protected Token getPathEntryForChild(JsonElement child) {
+	protected JsonPathEntry getPathEntryForChild(JsonElement child) {
 		for(Map.Entry<String, JsonElement> entry: properties.entrySet()) {
 			if(entry.getValue() == child) {
-				return new PropertyToken(entry.getKey());
+				return new PropertyPathEntry(entry.getKey());
 			}
 		}
 		throw new JsonAccessException("Pathname unkonwn!");

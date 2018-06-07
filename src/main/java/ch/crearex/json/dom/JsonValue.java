@@ -6,7 +6,7 @@ import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.PropertyToken;
+import ch.crearex.json.PropertyPathEntry;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;

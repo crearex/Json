@@ -1,13 +1,18 @@
 package ch.crearex.json;
 
-public class RootToken extends Token {
-	public RootToken() {
+/**
+ * Matches the JSON-Root Object.
+ * @author Markus Niedermann
+ *
+ */
+public class RootPathEntry extends JsonPathEntry {
+	public RootPathEntry() {
 		super(""+JsonPathParser.ROOT_OBJECT);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof RootToken;
+		return obj instanceof RootPathEntry;
 	}
 	
 	@Override

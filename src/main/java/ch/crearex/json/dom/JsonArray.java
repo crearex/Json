@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import ch.crearex.json.IndexToken;
+import ch.crearex.json.IndexPathEntry;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.Token;
+import ch.crearex.json.JsonPathEntry;
 import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
@@ -155,12 +155,12 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 	}
 
 	@Override
-	protected Token getPathEntryForChild(JsonElement child) {
+	protected JsonPathEntry getPathEntryForChild(JsonElement child) {
 		int index = children.indexOf(child);
 		if(index<0) {
 			throw new JsonAccessException("Pathname unkonwn!");
 		}
-		return new IndexToken(index);
+		return new IndexPathEntry(index);
 	}
 	
 	@Override

@@ -1,14 +1,19 @@
 package ch.crearex.json;
 
-public class PropertyToken extends Token {
+/**
+ * Matches a property.
+ * @author Markus Niedermann
+ *
+ */
+public class PropertyPathEntry extends JsonPathEntry {
 	
 	static final char ESCAPE_CHAR = JsonPathParser.ESCAPE_CHAR;
 	static final char SEPARATOR = JsonPathParser.DOT;
 	
-	public PropertyToken() {
+	public PropertyPathEntry() {
 		super();
 	}
-	public PropertyToken(String name) {
+	public PropertyPathEntry(String name) {
 		super(escapeDotSyntaxName(name));
 	}
 	
@@ -34,10 +39,10 @@ public class PropertyToken extends Token {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof PropertyToken)) {
+		if (!(obj instanceof PropertyPathEntry)) {
             return false;
 		}
-		PropertyToken comp = (PropertyToken) obj;
+		PropertyPathEntry comp = (PropertyPathEntry) obj;
 		String compName = comp.getName();
 		if(compName != null) {
 			return compName.equals(getName());

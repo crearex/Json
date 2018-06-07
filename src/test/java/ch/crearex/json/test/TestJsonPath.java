@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.crearex.json.IndexToken;
+import ch.crearex.json.IndexPathEntry;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.PropertyToken;
-import ch.crearex.json.RelativeToken;
-import ch.crearex.json.RootToken;
+import ch.crearex.json.PropertyPathEntry;
+import ch.crearex.json.CurrentPathEntry;
+import ch.crearex.json.RootPathEntry;
 import ch.crearex.json.impl.CrearexJsonParserFactory;
 
 public class TestJsonPath {
@@ -305,12 +305,12 @@ public class TestJsonPath {
 		
 		assertThat(a, is(b));
 		assertThat(a, not(is(c)));
-		assertThat(a.getLast() instanceof IndexToken, is(true));
-		assertThat(a.getFirst() instanceof RootToken, is(true));
+		assertThat(a.getLast() instanceof IndexPathEntry, is(true));
+		assertThat(a.getFirst() instanceof RootPathEntry, is(true));
 		assertThat(d, is(e));
 		assertThat(d, not(is(f)));
-		assertThat(d.getLast() instanceof PropertyToken, is(true));
-		assertThat(d.getFirst() instanceof RootToken, is(true));
+		assertThat(d.getLast() instanceof PropertyPathEntry, is(true));
+		assertThat(d.getFirst() instanceof RootPathEntry, is(true));
 	}
 	
 	@Test
@@ -325,8 +325,8 @@ public class TestJsonPath {
 		assertThat(a, is(b));
 		assertThat(a, not(is(c)));
 		assertThat(a, not(is(d)));
-		assertThat(a.getLast() instanceof IndexToken, is(true));
-		assertThat(a.getFirst() instanceof RootToken, is(true));
+		assertThat(a.getLast() instanceof IndexPathEntry, is(true));
+		assertThat(a.getFirst() instanceof RootPathEntry, is(true));
 	}
 	
 	@Test
@@ -341,8 +341,8 @@ public class TestJsonPath {
 		assertThat(a, is(b));
 		assertThat(a, not(is(c)));
 		assertThat(a, not(is(d)));
-		assertThat(a.getLast() instanceof PropertyToken, is(true));
-		assertThat(a.getFirst() instanceof RootToken, is(true));
+		assertThat(a.getLast() instanceof PropertyPathEntry, is(true));
+		assertThat(a.getFirst() instanceof RootPathEntry, is(true));
 	}
 	
 	@Test
@@ -361,8 +361,8 @@ public class TestJsonPath {
 		assertThat(a, not(is(d)));
 		assertThat(a, not(is(e)));
 		assertThat(a, not(is(f)));
-		assertThat(a.getLast() instanceof PropertyToken, is(true));
-		assertThat(a.getFirst() instanceof RootToken, is(true));
+		assertThat(a.getLast() instanceof PropertyPathEntry, is(true));
+		assertThat(a.getFirst() instanceof RootPathEntry, is(true));
 	}
 	
 	@Test
@@ -389,8 +389,8 @@ public class TestJsonPath {
 		assertThat(a, not(is(h)));
 		assertThat(a, not(is(i)));
 		assertThat(a, not(is(j)));
-		assertThat(a.getLast() instanceof PropertyToken, is(true));
-		assertThat(a.getFirst() instanceof RelativeToken, is(true));
+		assertThat(a.getLast() instanceof PropertyPathEntry, is(true));
+		assertThat(a.getFirst() instanceof CurrentPathEntry, is(true));
 	}
 	
 	@Test

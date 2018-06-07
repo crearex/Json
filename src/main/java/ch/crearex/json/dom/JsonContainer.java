@@ -1,14 +1,14 @@
 package ch.crearex.json.dom;
 
-import ch.crearex.json.IndexToken;
+import ch.crearex.json.IndexPathEntry;
 import ch.crearex.json.JsonPath;
 import ch.crearex.json.JsonPathException;
 import ch.crearex.json.JsonPrettyFormatter;
 import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.PropertyToken;
-import ch.crearex.json.RelativeToken;
-import ch.crearex.json.RootToken;
-import ch.crearex.json.Token;
+import ch.crearex.json.PropertyPathEntry;
+import ch.crearex.json.CurrentPathEntry;
+import ch.crearex.json.RootPathEntry;
+import ch.crearex.json.JsonPathEntry;
 
 /**
  * Common root class for a {@link JsonObject} and a {@link JsonArray}
@@ -48,33 +48,33 @@ public abstract class JsonContainer implements JsonElement {
 			child = myParent;
 			myParent = child.parent;
 		}
-		path.addFirst(new RootToken());
+		path.addFirst(new RootPathEntry());
 		return path;
 	}
 	
 	public JsonSimpleValue getValue(JsonPath path) {
 		JsonContainer container = this;
-		if(path.getFirst() instanceof RootToken) {
+		if(path.getFirst() instanceof RootPathEntry) {
 			while(container.parent != null) {
 				container = container.parent;
 			}
 		}
-		for(Token entry: path) {
+		for(JsonPathEntry entry: path) {
 			if(path.isLastEntry(entry)) {
-				if((entry instanceof PropertyToken) && (container instanceof JsonObject)) {
+				if((entry instanceof PropertyPathEntry) && (container instanceof JsonObject)) {
 					return ((JsonObject)container).getValue(entry.getName());
-				} else if((entry instanceof IndexToken) && (container instanceof JsonArray)) {
-					return ((JsonArray)container).getValue(((IndexToken)entry).getIndex());
+				} else if((entry instanceof IndexPathEntry) && (container instanceof JsonArray)) {
+					return ((JsonArray)container).getValue(((IndexPathEntry)entry).getIndex());
 				} else {
 					throw new JsonPathException("JSON path '"+path+"' mismatch: " + entry, path);
 				}
 			}
 			
-			if((entry instanceof PropertyToken) && (container instanceof JsonObject)) {
+			if((entry instanceof PropertyPathEntry) && (container instanceof JsonObject)) {
 				container = ((JsonObject)container).getContainer(entry.getName());
-			} else if((entry instanceof IndexToken) && (container instanceof JsonArray)) {
-				container = ((JsonArray)container).getContainer(((IndexToken)entry).getIndex());
-			} else if((entry instanceof RootToken) || (entry instanceof RelativeToken)) {
+			} else if((entry instanceof IndexPathEntry) && (container instanceof JsonArray)) {
+				container = ((JsonArray)container).getContainer(((IndexPathEntry)entry).getIndex());
+			} else if((entry instanceof RootPathEntry) || (entry instanceof CurrentPathEntry)) {
 				// do nothing
 			} else {
 				throw new JsonPathException("JSON path '"+path+"' mismatch: " + entry, path);
@@ -104,22 +104,22 @@ public abstract class JsonContainer implements JsonElement {
 	 */
 	public JsonContainer add(JsonPath path, JsonElement value) {
 		JsonContainer container = this;
-		if(path.getFirst() instanceof RootToken) {
+		if(path.getFirst() instanceof RootPathEntry) {
 			while(this.parent != null) {
 				container = this.parent;
 			}
 		}
 		
-		for(Token entry: path) {
+		for(JsonPathEntry entry: path) {
 			if(path.isLastEntry(entry)) {
 				break;
 			}
 
-			if((entry instanceof PropertyToken) && (container instanceof JsonObject)) {
+			if((entry instanceof PropertyPathEntry) && (container instanceof JsonObject)) {
 				container = ((JsonObject)container).getContainer(entry.getName());
-			} else if((entry instanceof IndexToken) && (container instanceof JsonArray)) {
-				container = ((JsonArray)container).getContainer(((IndexToken)entry).getIndex());
-			} else if((entry instanceof RootToken) || (entry instanceof RelativeToken)) {
+			} else if((entry instanceof IndexPathEntry) && (container instanceof JsonArray)) {
+				container = ((JsonArray)container).getContainer(((IndexPathEntry)entry).getIndex());
+			} else if((entry instanceof RootPathEntry) || (entry instanceof CurrentPathEntry)) {
 				// to nothing
 			} else {
 				throw new JsonPathException("JSON path '"+path+"' mismatch: " + entry, path);
@@ -129,7 +129,7 @@ public abstract class JsonContainer implements JsonElement {
 		if(container instanceof JsonObject) {
 			((JsonObject)container).add(path.getLast().getName(), value);
 		} else if(container instanceof JsonArray) {
-			((JsonArray)container).add(((IndexToken)path.getLast()).getIndex(), value);
+			((JsonArray)container).add(((IndexPathEntry)path.getLast()).getIndex(), value);
 		} else {
 			throw new JsonAccessException("Path " + path + " does not exist!");
 		}
@@ -153,7 +153,7 @@ public abstract class JsonContainer implements JsonElement {
 	
 	public abstract JsonContainer clear();
 	
-	protected abstract Token getPathEntryForChild(JsonElement child);
+	protected abstract JsonPathEntry getPathEntryForChild(JsonElement child);
 	
 	protected abstract String resolvePathStringEntry(JsonElement value);
 }

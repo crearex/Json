@@ -7,7 +7,7 @@ import java.util.LinkedList;
 /**
  * Path to a JSON-Element e.g.
  * <pre>
- * /addr/1/city
+ * $.addr[1].city
  * 
  * for Geneva
  * 
@@ -16,30 +16,25 @@ import java.util.LinkedList;
  * 
  * Array Indices are 0-based.<br>
  * <br>
- * The String representation of a JsonPath contains /-characters as path separatos.
- * If you have to use a / as regular character for a property name, you have to escape
- * it by a ~ in the JsonPath!<br>
- * e.g. If a file path shall be a property name you have to write:
- * <pre>
- * Filesystem: C:/Data/Foo/Bar
- * The corresponding JsonPath entry: C:~/Data~/Foo~/Bar
- * </pre>
- * Use ~~ as escaped sequence for a single ~-character.
+ * The String representation of a JsonPath contains .-characters as path separators.
+ * If you have to use a . as regular character for a property name, you have to escape
+ * it by a \ in the JsonPath!<br>
+ * Use \\ as escaped sequence for a single \-character.
  * 
  * 
  * @author Markus Niedermann
  *
  */
-public class JsonPath implements Iterable<Token> {
+public class JsonPath implements Iterable<JsonPathEntry> {
 		
 	public static final char ESCAPE_CHAR = JsonPathParser.ESCAPE_CHAR;
 	public static final char SEPARATOR = JsonPathParser.DOT;
 	
-	private final LinkedList<Token> path;
+	private final LinkedList<JsonPathEntry> path;
 	private static final JsonPathParser pathParser = new JsonPathParser();
 	
-	public JsonPath(Token[] path) {
-		this.path = new LinkedList<Token>(Arrays.asList(path));
+	public JsonPath(JsonPathEntry[] path) {
+		this.path = new LinkedList<JsonPathEntry>(Arrays.asList(path));
 	}
 	
 	public JsonPath(String path) {
@@ -57,27 +52,27 @@ public class JsonPath implements Iterable<Token> {
 	}
 
 	public JsonPath() {
-		this.path = new LinkedList<Token>();
+		this.path = new LinkedList<JsonPathEntry>();
 	}
 
-	public JsonPath add(Token entry) {
+	public JsonPath add(JsonPathEntry entry) {
 		this.path.add(entry);
 		return this;
 	}
 	
-	public Token removeLast() {
+	public JsonPathEntry removeLast() {
 		return this.path.removeLast();
 	}
 	
-	public Token getLast() {
+	public JsonPathEntry getLast() {
 		return this.path.getLast();
 	}
 	
-	public Token getFirst() {
+	public JsonPathEntry getFirst() {
 		return this.path.getFirst();
 	}
 	
-	public JsonPath addFirst(Token entry) {
+	public JsonPath addFirst(JsonPathEntry entry) {
 		this.path.addFirst(entry);
 		return this;
 	}
@@ -100,12 +95,12 @@ public class JsonPath implements Iterable<Token> {
 	private String toJsonPath() {
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
-		for(Token entry: path) {
+		for(JsonPathEntry entry: path) {
 			if(first) {
 				builder.append(entry.toString());
 				first = false;
 			} else {
-				if(entry instanceof IndexToken) {
+				if(entry instanceof IndexPathEntry) {
 					builder.append(JsonPathParser.BRACKET_BEGIN);
 				} else {
 					builder.append(SEPARATOR);
@@ -113,7 +108,7 @@ public class JsonPath implements Iterable<Token> {
 				
 				builder.append(entry.toString());
 				
-				if(entry instanceof IndexToken) {
+				if(entry instanceof IndexPathEntry) {
 					builder.append(JsonPathParser.BRACKET_END);
 				}
 			}
@@ -138,11 +133,11 @@ public class JsonPath implements Iterable<Token> {
 	}
 
 	@Override
-	public Iterator<Token> iterator() {
+	public Iterator<JsonPathEntry> iterator() {
 		return path.iterator();
 	}
 
-	public boolean isLastEntry(Token entry) {
+	public boolean isLastEntry(JsonPathEntry entry) {
 		return entry == path.getLast();
 	}
 
