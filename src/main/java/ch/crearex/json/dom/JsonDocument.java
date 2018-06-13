@@ -1,13 +1,7 @@
 package ch.crearex.json.dom;
 
-import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.schema.JsonSchemaContext;
-import ch.crearex.json.schema.JsonSchemaException;
-import ch.crearex.json.schema.JsonSchemaValidationException;
-import ch.crearex.json.schema.SchemaConstants;
-import ch.crearex.json.schema.SchemaStack;
-
 import java.util.List;
+import java.util.Objects;
 
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParserFactory;
@@ -15,6 +9,11 @@ import ch.crearex.json.JsonPath;
 import ch.crearex.json.JsonPrettyFormatter;
 import ch.crearex.json.JsonSchema;
 import ch.crearex.json.JsonSchemaCallback;
+import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.schema.JsonSchemaContext;
+import ch.crearex.json.schema.JsonSchemaException;
+import ch.crearex.json.schema.JsonSchemaValidationException;
+import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonDocument {
 
@@ -117,6 +116,17 @@ public class JsonDocument {
 		}
 		return root.getValue(path);
 	}
+	
+	public List<JsonElement> query(JsonPath path) {
+		
+		QueryContext context = new QueryContext(path);
+		if(root == null) {
+			return context.getResult();
+		}
+		
+		root.query(context);
+		return context.getResult();
+	}
 
 	/**
 	 * Validate the JSON Document against the JSON Schema.
@@ -191,5 +201,20 @@ public class JsonDocument {
 			}
 		}
 		return summary.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+        if (!(obj instanceof JsonDocument)) {
+            return false;
+        }
+        JsonDocument other = (JsonDocument) obj;
+        return Objects.equals(root, other.root);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(root);
 	}
 }

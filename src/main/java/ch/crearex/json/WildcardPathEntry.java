@@ -2,33 +2,29 @@ package ch.crearex.json;
 
 import ch.crearex.json.dom.JsonElement;
 
-/**
- * Matches the JSON-Root Object.
- * @author Markus Niedermann
- *
- */
-public class RootPathEntry extends JsonPathEntry {
-	public RootPathEntry() {
-		super(""+JsonPathParser.ROOT_OBJECT);
-	}
-	
+public class WildcardPathEntry extends JsonPathEntry {
+
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof RootPathEntry;
+		if (!(obj instanceof WildcardPathEntry)) {
+            return false;
+		}
+		return true;
 	}
 	
 	@Override
 	public int hashCode() {
-		return (""+JsonPathParser.ROOT_OBJECT).hashCode();
+		return "*".hashCode();
 	}
 
 	@Override
 	public boolean selectProperty(String propertyName, JsonElement value) {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean selectArrayEntry(int index, JsonElement value) {
-		return false;
+		return true;
 	}
+
 }

@@ -1,8 +1,12 @@
 package ch.crearex.json.impl;
 
 import ch.crearex.json.JsonParser;
+
+import java.util.Objects;
+
 import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.dom.JsonArray;
 import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonNullValue extends JsonValImpl implements JsonSimpleValue {

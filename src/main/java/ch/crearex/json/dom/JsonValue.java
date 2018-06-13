@@ -3,13 +3,13 @@ package ch.crearex.json.dom;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
-import ch.crearex.json.JsonSimpleValue;
-import ch.crearex.json.PropertyPathEntry;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
+import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.schema.SchemaConstants;
 
 /**
@@ -242,29 +242,6 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	public void traverse(JsonDomContext context, JsonCallback callback) {
 		context.notifyValue(this);
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof JsonSimpleValue)) {
-            return false;
-		}
-		JsonSimpleValue comp = (JsonSimpleValue) obj;
-		String compRawValue = comp.getRawValue();
-		if(compRawValue != null) {
-			return compRawValue.equals(this.value);
-		} else if(this.value != null) {
-			return false;
-		}
-		return true;
-	}
-	
-	@Override
-	public int hashCode() {
-		if(this.value == null) {
-			return 0;
-		}
-		return this.value.hashCode();
-	}
 
 	@Override
 	public String getRawValue() {
@@ -297,6 +274,47 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 			return new JsonValue(Double.parseDouble(value));
 		}
 		return new JsonValue(value);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+        if (!(obj instanceof JsonSimpleValue)) {
+            return false;
+        }
+        JsonSimpleValue other = (JsonSimpleValue) obj;
+        
+        switch(valueType) {
+		case BOOLEAN:
+			if(!other.isBoolean()) {
+				return false;
+			}
+			return this.asBoolean().equals(other.asBoolean());
+		case NUMBER:
+		case INTEGRAL_NUMBER:
+			if(!other.isNumber()) {
+				return false;
+			}
+			return this.asDouble().equals(other.asDouble());
+		case NULL:
+			if(!other.isNull()) {
+				return false;
+			}
+			return true;
+		case STRING:
+			if(!other.isString()) {
+				return false;
+			}
+			return this.asString().equals(other.asString());
+		default:
+			return false;        
+        }
+
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
 	}
 
 }

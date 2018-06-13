@@ -1,5 +1,7 @@
 package ch.crearex.json;
 
+import ch.crearex.json.dom.JsonElement;
+
 public abstract class JsonPathEntry {
 	private StringBuilder name = new StringBuilder();
 	JsonPathEntry() {
@@ -23,4 +25,7 @@ public abstract class JsonPathEntry {
 	
 	@Override
 	public abstract int hashCode();
+	
+	public abstract boolean selectProperty(String propertyName, JsonElement value);
+	public abstract boolean selectArrayEntry(int index, JsonElement value);
 }

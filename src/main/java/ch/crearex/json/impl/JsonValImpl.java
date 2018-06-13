@@ -2,12 +2,12 @@ package ch.crearex.json.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Objects;
 
-import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonContext;
-import ch.crearex.json.JsonPathEntry;
-import ch.crearex.json.JsonUtil;
+import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonSimpleValue;
+import ch.crearex.json.JsonUtil;
 
 public abstract class JsonValImpl implements JsonSimpleValue {
 
@@ -146,29 +146,22 @@ public abstract class JsonValImpl implements JsonSimpleValue {
 	@Override
 	public boolean isFloatingpoint() {
 		return value.indexOf(DOT) >= 0;
-	}	
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == this) return true;
 		if (!(obj instanceof JsonSimpleValue)) {
             return false;
 		}
-		JsonSimpleValue comp = (JsonSimpleValue) obj;
-		String compRawValue = comp.getRawValue();
-		if(compRawValue != null) {
-			return compRawValue.equals(this.value);
-		} else if(this.value != null) {
-			return false;
-		}
-		return true;
+		JsonSimpleValue other = (JsonSimpleValue) obj;
+		return Objects.equals(getTypeName(), other.getTypeName()) &&
+			   Objects.equals(getRawValue(), other.getRawValue());
 	}
 	
 	@Override
 	public int hashCode() {
-		if(this.value == null) {
-			return 0;
-		}
-		return this.value.hashCode();
+		return Objects.hash(value);
 	}
 
 }

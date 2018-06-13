@@ -150,4 +150,8 @@ public class JsonPath implements Iterable<JsonPathEntry> {
 		}
 	}
 
+	public JsonPathEntry get(int index) {
+		return path.get(index);
+	}
+
 }

@@ -6,19 +6,20 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
+import ch.crearex.json.JsonPathEntry;
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonUtil;
 import ch.crearex.json.PropertyPathEntry;
-import ch.crearex.json.JsonPathEntry;
 import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonObject extends JsonContainer implements Iterable<Map.Entry<String, JsonElement>>{
 
-	private LinkedHashMap<String, JsonElement> properties = new LinkedHashMap<String, JsonElement>();
+	private final LinkedHashMap<String, JsonElement> properties = new LinkedHashMap<String, JsonElement>();
 	
 	public JsonObject() {
 		super(null);
@@ -454,6 +455,66 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 	public JsonObject clear() {
 		this.properties.clear();
 		return this;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null) {
+			return false;
+		}
+		if(this == obj) {
+			return true;
+		}
+		if(!(obj instanceof JsonObject)) {
+			return false;
+		}
+		JsonObject other = (JsonObject)obj;
+		
+//		if(size() != other.size()) {
+//			return false;
+//		}
+//		
+//		for(String name: properties.keySet()) {
+//			JsonElement myElem = properties.get(name);
+//			JsonElement otherElem = other.properties.get(name);
+//			if(myElem==null && otherElem==null) {
+//				continue;
+//			}
+//			if((myElem!=null && otherElem==null) ||
+//			   (myElem==null && otherElem!=null)) {
+//				return false;
+//			}
+//			if(!myElem.equals(otherElem)) {
+//				return false;
+//			}
+//		}
+//		
+//		return true;
+		
+		return Objects.equals(properties, other.properties);
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.properties.hashCode();
+	}
+
+	@Override
+	void query(QueryContext context) {
+		JsonPathEntry pathEntry = context.getJsonPathEntry();
+		for(Map.Entry<String, JsonElement> entry: this.properties.entrySet()) {
+			String propertyName = entry.getKey();
+			JsonElement value = entry.getValue();
+			if(pathEntry.selectProperty(propertyName, value)) {
+				if(!context.isLeafLevel() && value instanceof JsonContainer) {
+					context.incLevel();
+					((JsonContainer)value).query(context);
+					context.decLevel();
+				} else {
+					context.addResultEntry(value);
+				}
+			}
+		}
 	}
 	
 }

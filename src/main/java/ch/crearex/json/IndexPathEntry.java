@@ -1,5 +1,7 @@
 package ch.crearex.json;
 
+import ch.crearex.json.dom.JsonElement;
+
 /**
  * Matches an entry in an array.
  * @author Markus Niedermann
@@ -26,5 +28,13 @@ public class IndexPathEntry extends JsonPathEntry {
 	@Override
 	public int hashCode() {
 		return 31 * index;
+	}
+	@Override
+	public boolean selectProperty(String propertyName, JsonElement value) {
+		return getName().equals(propertyName);
+	}
+	@Override
+	public boolean selectArrayEntry(int index, JsonElement value) {
+		return this.index == index;
 	}
 }

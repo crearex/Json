@@ -5,18 +5,19 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import ch.crearex.json.IndexPathEntry;
 import ch.crearex.json.JsonCallback;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonPath;
-import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonPathEntry;
+import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.schema.SchemaConstants;
 
 public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 	
-	private List<JsonElement> children = new ArrayList<JsonElement>();
+	private final List<JsonElement> children = new ArrayList<JsonElement>();
 
 	public JsonArray() {
 		super(null);
@@ -355,6 +356,39 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 	public JsonArray clear() {
 		this.children.clear();
 		return this;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+        if (!(obj instanceof JsonArray)) {
+            return false;
+        }
+        JsonArray other = (JsonArray) obj;
+        return Objects.equals(children, other.children);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(children);
+	}
+
+	@Override
+	void query(QueryContext context) {
+		JsonPathEntry pathEntry = context.getJsonPathEntry();
+		int index = -1;
+		for(JsonElement value: this.children) {
+			index++;
+			if(pathEntry.selectArrayEntry(index, value)) {
+				if(!context.isLeafLevel() && value instanceof JsonContainer) {
+					context.incLevel();
+					((JsonContainer)value).query(context);
+					context.decLevel();
+				} else {
+					context.addResultEntry(value);
+				}
+			}
+		}
 	}
 
 }

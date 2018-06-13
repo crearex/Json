@@ -1,5 +1,7 @@
 package ch.crearex.json;
 
+import ch.crearex.json.dom.JsonElement;
+
 /**
  * Matches a property.
  * @author Markus Niedermann
@@ -27,14 +29,17 @@ public class PropertyPathEntry extends JsonPathEntry {
 		return entry;
 	}
 	
-	public String getName() {
-		String name = super.getName();
-		if(name.indexOf(JsonPathParser.ESCAPE_CHAR)<0) {
-			return name;
+	static String unexcapeDotSyntxName(String entry) {
+		if(entry.indexOf(JsonPathParser.ESCAPE_CHAR)<0) {
+			return entry;
 		}
-		name = name.replace(""+ ESCAPE_CHAR + SEPARATOR, "" + SEPARATOR);
-		name = name.replace("" + ESCAPE_CHAR + ESCAPE_CHAR, "" + ESCAPE_CHAR);
-		return name;
+		entry = entry.replace(""+ ESCAPE_CHAR + SEPARATOR, "" + SEPARATOR);
+		entry = entry.replace("" + ESCAPE_CHAR + ESCAPE_CHAR, "" + ESCAPE_CHAR);
+		return entry;
+	}
+	
+	public String getName() {
+		return unexcapeDotSyntxName(super.getName());
 	}
 	
 	@Override
@@ -53,5 +58,14 @@ public class PropertyPathEntry extends JsonPathEntry {
 	@Override
 	public int hashCode() {
 		return 71 * getName().hashCode();
+	}
+	
+	@Override
+	public boolean selectProperty(String propertyName, JsonElement value) {
+		return getName().equals(propertyName);
+	}
+	@Override
+	public boolean selectArrayEntry(int index, JsonElement value) {
+		return false;
 	}
 }
