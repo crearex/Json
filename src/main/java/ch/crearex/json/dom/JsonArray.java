@@ -26,6 +26,15 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 	public JsonArray(JsonContainer parent) {
 		super(parent);
 	}
+	
+	@Override
+	public JsonArray clone() {
+		JsonArray clone = new JsonArray();
+		for(JsonElement child: children) {
+			clone.add(child.clone());
+		}
+		return clone;
+	}
 
 	public JsonArray add(JsonElement value) {
 		if(value instanceof JsonContainer) {
@@ -373,6 +382,13 @@ public class JsonArray extends JsonContainer implements Iterable<JsonElement> {
 		return Objects.hash(children);
 	}
 
+	@Override
+	public List<JsonElement> query(JsonPath path) {	
+		QueryContext context = new QueryContext(path);
+		query(context);
+		return context.getResult();
+	}
+	
 	@Override
 	void query(QueryContext context) {
 		JsonPathEntry pathEntry = context.getJsonPathEntry();

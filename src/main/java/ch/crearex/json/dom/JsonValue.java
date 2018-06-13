@@ -29,8 +29,6 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 	public static final JsonValue TRUE = new JsonValue(true);
 	public static final JsonValue FALSE = new JsonValue(false);
 	
-	private final String value;
-	
 	private enum ValueType {
 		STRING(SchemaConstants.STRING_TYPE),
 		NUMBER(SchemaConstants.NUMBER_TYPE),
@@ -46,6 +44,7 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 		}
 	}
 	
+	private final String value;
 	private final ValueType valueType;
 	private JsonContainer parent;
 
@@ -67,6 +66,16 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 		} else {
 			this.valueType = ValueType.STRING;
 		}
+	}
+	
+	private JsonValue(String value, ValueType valueType) {
+		this.value = value;
+		this.valueType = valueType;
+	}
+	
+	@Override
+	public JsonValue clone() {
+		return new JsonValue(value, valueType);
 	}
 	
 	public JsonValue(boolean value) {
@@ -118,6 +127,8 @@ public class JsonValue implements JsonSimpleValue, JsonElement {
 		this.valueType = ValueType.NUMBER;
 	}
 	
+	
+
 	@Override
 	public JsonPath getPath() {
 		JsonPath jsonPath = parent.getPath();

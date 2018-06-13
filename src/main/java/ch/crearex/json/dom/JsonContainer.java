@@ -6,6 +6,9 @@ import ch.crearex.json.JsonPathException;
 import ch.crearex.json.JsonPrettyFormatter;
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.PropertyPathEntry;
+
+import java.util.List;
+
 import ch.crearex.json.CurrentPathEntry;
 import ch.crearex.json.RootPathEntry;
 import ch.crearex.json.JsonPathEntry;
@@ -22,6 +25,9 @@ public abstract class JsonContainer implements JsonElement {
 	protected JsonContainer(JsonContainer parent) {
 		this.parent = parent;
 	}
+		
+	@Override
+	public abstract JsonContainer clone();
 	
 	public boolean isRoot() {
 		return parent == null;
@@ -154,6 +160,8 @@ public abstract class JsonContainer implements JsonElement {
 	public abstract JsonContainer clear();
 	
 	abstract void query(QueryContext context);
+	
+	abstract public List<JsonElement> query(JsonPath path);
 	
 	protected abstract JsonPathEntry getPathEntryForChild(JsonElement child);
 	

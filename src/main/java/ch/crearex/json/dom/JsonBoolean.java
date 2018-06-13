@@ -10,6 +10,13 @@ public class JsonBoolean extends JsonBooleanValue implements JsonSimpleValue, Js
 	public JsonBoolean(JsonContext context, boolean value) {
 		super(context, value);
 	}
+	
+	@Override
+	public JsonBoolean clone() {
+		JsonBoolean clone = new JsonBoolean(getContext(), asBoolean());
+		clone.setReplacedValue(getReplacedValue());
+		return clone;
+	}
 
 	@Override
 	public void traverse(JsonDomContext context, JsonCallback visitor) {

@@ -8,8 +8,9 @@ import ch.crearex.json.JsonPath;
  * @author Markus Niedermann
  * @see JsonDocument#traverse(JsonCallback)
  */
-public interface JsonElement {
+public interface JsonElement extends Cloneable {
 	void traverse(JsonDomContext context, JsonCallback callback);
 	JsonPath getPath();
 	String getTypeName();
+	JsonElement clone();
 }

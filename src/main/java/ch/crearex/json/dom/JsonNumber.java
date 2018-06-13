@@ -11,6 +11,13 @@ public class JsonNumber extends JsonNumberValue implements JsonSimpleValue, Json
 	public JsonNumber(JsonContext context, String value) {
 		super(context, value);
 	}
+	
+	@Override 
+	public JsonNumber clone() {
+		JsonNumber clone = new JsonNumber(getContext(), getRawValue());
+		clone.setReplacedValue(getReplacedValue());
+		return clone;
+	}
 
 	@Override
 	public void traverse(JsonDomContext context, JsonCallback visitor) {

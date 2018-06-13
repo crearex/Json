@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -23,6 +24,15 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 	
 	public JsonObject() {
 		super(null);
+	}
+	
+	@Override
+	public JsonObject clone() {
+		JsonObject clone = new JsonObject();
+		for(Map.Entry<String, JsonElement> entry: properties.entrySet()) {
+			clone.add(entry.getKey(), entry.getValue());
+		}
+		return clone;
 	}
 	
 	public JsonObject(JsonContainer parent) {
@@ -499,6 +509,13 @@ public class JsonObject extends JsonContainer implements Iterable<Map.Entry<Stri
 		return this.properties.hashCode();
 	}
 
+	@Override
+	public List<JsonElement> query(JsonPath path) {	
+		QueryContext context = new QueryContext(path);
+		query(context);
+		return context.getResult();
+	}
+	
 	@Override
 	void query(QueryContext context) {
 		JsonPathEntry pathEntry = context.getJsonPathEntry();

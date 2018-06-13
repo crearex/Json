@@ -31,7 +31,7 @@ public class IndexPathEntry extends JsonPathEntry {
 	}
 	@Override
 	public boolean selectProperty(String propertyName, JsonElement value) {
-		return getName().equals(propertyName);
+		return false;
 	}
 	@Override
 	public boolean selectArrayEntry(int index, JsonElement value) {

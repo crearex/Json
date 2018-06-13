@@ -1,5 +1,6 @@
 package ch.crearex.json.dom;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import ch.crearex.json.schema.JsonSchemaException;
 import ch.crearex.json.schema.JsonSchemaValidationException;
 import ch.crearex.json.schema.SchemaConstants;
 
-public class JsonDocument {
+public class JsonDocument implements Cloneable {
 
 	private JsonContainer root = null;
 	private SchemaValidationStatus validationStatus = SchemaValidationStatus.NOT_VALIDATED;
@@ -31,6 +32,21 @@ public class JsonDocument {
 	
 	public static JsonDocument createArrayDocument() {
 		return new JsonDocument(new JsonArray(null));
+	}
+	
+	public JsonDocument clone() {
+		JsonDocument clone = new JsonDocument();
+		clone.root = root.clone();
+		clone.validationStatus = validationStatus;
+		
+		if(validationErrors != null) {
+			clone.validationErrors = new ArrayList<JsonSchemaValidationException>();
+			for(JsonSchemaValidationException ex: validationErrors) {
+				clone.validationErrors.add(ex);
+			}
+		}
+		
+		return clone;
 	}
 	
 	/**

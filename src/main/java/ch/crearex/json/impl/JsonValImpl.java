@@ -37,6 +37,14 @@ public abstract class JsonValImpl implements JsonSimpleValue {
 		return value;
 	}
 	
+	protected String getReplacedValue() {
+		return replacedValue;
+	}
+	
+	protected void setReplacedValue(String replacedValue) {
+		this.replacedValue = replacedValue;
+	}
+	
 	@Override
 	public String getRawValue() {
 		return value;

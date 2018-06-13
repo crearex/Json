@@ -11,6 +11,13 @@ public class JsonString extends JsonStringValue implements JsonSimpleValue, Json
 	public JsonString(JsonContext context, String value) {
 		super(context, value);
 	}
+	
+	@Override
+	public JsonString clone() {
+		JsonString clone = new JsonString(getContext(), getRawValue());
+		clone.setReplacedValue(getReplacedValue());
+		return clone;
+	}
 
 	@Override
 	public void traverse(JsonDomContext context, JsonCallback visitor) {
