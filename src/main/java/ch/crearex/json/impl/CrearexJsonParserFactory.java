@@ -7,18 +7,18 @@ import java.net.URL;
 
 import ch.crearex.json.JsonBuilderException;
 import ch.crearex.json.JsonCallback;
+import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonContextBase;
 import ch.crearex.json.JsonException;
 import ch.crearex.json.JsonParser;
 import ch.crearex.json.JsonParserFactory;
 import ch.crearex.json.JsonSchema;
 import ch.crearex.json.JsonSchemaCallback;
+import ch.crearex.json.JsonValueFactory;
 import ch.crearex.json.JsonValueFactoryProviderCallback;
 import ch.crearex.json.dom.JsonDocument;
 import ch.crearex.json.dom.JsonDomBuilder;
-import ch.crearex.json.schema.JsonSchemaException;
 import ch.crearex.json.schema.JsonSchemaHandler;
-import ch.crearex.json.schema.SchemaConstants;
 import ch.crearex.json.schema.builder.SchemaTypeMap;
 
 /**
@@ -27,6 +27,9 @@ import ch.crearex.json.schema.builder.SchemaTypeMap;
  *
  */
 public class CrearexJsonParserFactory implements JsonParserFactory {
+	
+	public CrearexJsonParserFactory() {
+	}
 	
 	@Override
 	public JsonParser createJsonParser(JsonCallback callback) {
@@ -124,9 +127,14 @@ public class CrearexJsonParserFactory implements JsonParserFactory {
 			context.setValueFactory(((JsonValueFactoryProviderCallback)callback).createJsonValueFactory(context));
 		} else {
 			context = new JsonContextImpl(callback);
-			context.setValueFactory(new JsonSimpleValueFactory(context));
+			context.setValueFactory(createValueFactory(context));
 		}
 		return new JsonParserImpl(source, context);
+	}
+
+	@Override
+	public JsonValueFactory createValueFactory(JsonContext context) {
+		return new JsonSimpleValueFactory(context);
 	}
 
 }

@@ -143,7 +143,7 @@ package ch.crearex.json;
 import ch.crearex.json.dom.JsonDocument;
 import ch.crearex.json.dom.JsonDomBuilder;
 import ch.crearex.json.dom.JsonDomContext;
-import ch.crearex.json.dom.JsonDomValueFactory;
+import ch.crearex.json.dom.JsonDomValueContextFactory;
 import ch.crearex.json.dom.JsonString;
 import ch.crearex.json.impl.CrearexJson;
 import ch.crearex.json.impl.CrearexJsonParserFactory;

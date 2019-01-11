@@ -1,28 +1,15 @@
 package ch.crearex.json.dom;
 
+import ch.crearex.json.JsonContext;
 import ch.crearex.json.JsonSimpleValue;
 import ch.crearex.json.JsonValueFactory;
-import ch.crearex.json.impl.JsonBooleanValue;
-import ch.crearex.json.impl.JsonNullValue;
-import ch.crearex.json.impl.JsonNumberValue;
-import ch.crearex.json.impl.JsonStringValue;
 
-/**
- * The value factory which creates the {@link JsonSimpleValue}s for a JSON DOM Tree.
- * 
- * @author Markus Niedermann
- *
- */
 public class JsonDomValueFactory implements JsonValueFactory {
 
-	private final JsonDomContext context;
+	private final JsonContext context;
 	
-	public JsonDomValueFactory(JsonDomContext context) {
+	public JsonDomValueFactory(JsonContext context) {
 		this.context = context;
-	}
-	
-	protected JsonDomContext getContext() {
-		return context;
 	}
 	
 	@Override
@@ -44,5 +31,5 @@ public class JsonDomValueFactory implements JsonValueFactory {
 	public JsonSimpleValue createNullValue() {
 		return new JsonNull(context);
 	}
-
+	
 }

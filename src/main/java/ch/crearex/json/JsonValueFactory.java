@@ -1,7 +1,7 @@
 package ch.crearex.json;
 
 import ch.crearex.json.dom.JsonDomBuilder;
-import ch.crearex.json.dom.JsonDomValueFactory;
+import ch.crearex.json.dom.JsonDomValueContextFactory;
 import ch.crearex.json.dom.JsonNull;
 import ch.crearex.json.dom.JsonNumber;
 import ch.crearex.json.dom.JsonString;
@@ -24,7 +24,7 @@ import ch.crearex.json.impl.JsonSimpleValueFactory;
  * <li>{@link JsonNullValue} or {@link JsonNull}</li>
  * </ul>
  * 
- * The {@link JsonDomBuilder} creates it own default factory, {@link JsonDomValueFactory},
+ * The {@link JsonDomBuilder} creates it own default factory, {@link JsonDomValueContextFactory},
  * and makes it available by {@link JsonDomBuilder#createJsonValueFactory(JsonContextBase)}.
  * If you like to change the value factory for the {@link JsonDomBuilder} you also have
  * to extend the {@link JsonDomBuilder} by overloading {@link JsonDomBuilder#createJsonValueFactory(JsonContextBase)}

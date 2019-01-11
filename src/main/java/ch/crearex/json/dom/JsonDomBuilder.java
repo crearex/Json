@@ -44,7 +44,7 @@ public class JsonDomBuilder implements JsonValueFactoryProviderCallback {
 	@Override
 	public JsonValueFactory createJsonValueFactory(JsonContextBase context) {
 		JsonDomContext domContext = (JsonDomContext)context;
-		return new JsonDomValueFactory(domContext);
+		return new JsonDomValueContextFactory(domContext);
 	}
 
 	@Override

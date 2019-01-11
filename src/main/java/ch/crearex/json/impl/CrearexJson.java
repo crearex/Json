@@ -30,7 +30,8 @@ public class CrearexJson implements Json {
 	private final JsonParser parser;
 	
 	public CrearexJson() {
-		this(new CrearexJsonParserFactory());
+		// this(new CrearexJsonParserFactory());
+		this(new CrearexJsonDomValueParserFactroy());
 	}
 	
 	public CrearexJson(JsonParserFactory parserFactory) {

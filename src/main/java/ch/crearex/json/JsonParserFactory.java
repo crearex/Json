@@ -5,6 +5,7 @@ import java.net.URL;
 
 import ch.crearex.json.dom.JsonDomBuilder;
 import ch.crearex.json.impl.CrearexJson;
+import ch.crearex.json.impl.JsonSimpleValueFactory;
 import ch.crearex.json.schema.JsonSchemaValidationException;
 
 /** 
@@ -51,6 +52,16 @@ public interface JsonParserFactory {
 	 */
 	JsonParser createJsonParser(JsonCallback callback, JsonSchema jsonSchema, JsonSchemaCallback schemaCallback);
 		
+	/**
+	 * Implements your own {@link JsonSimpleValueFactory}. Available factories are:
+	 * <ul>
+	 * <li>{@link JsonSimpleValueFactory}</li>
+	 * <li>{@link JsonDomValueContextFactory}</li>
+	 * </ul>
+	 * @param context Contextual information during parsing.
+	 */
+	JsonValueFactory createValueFactory(JsonContext context);
+	
 	JsonSchema createJsonSchema(String jsonSchema);
 	JsonSchema createJsonSchema(File jsonSchema);
 	JsonSchema createJsonSchema(URL jsonSchemaOriginUrl);

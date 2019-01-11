@@ -17,7 +17,7 @@ import ch.crearex.json.JsonValueFactory;
 import ch.crearex.json.dom.JsonDocument;
 import ch.crearex.json.dom.JsonDomBuilder;
 import ch.crearex.json.dom.JsonDomContext;
-import ch.crearex.json.dom.JsonDomValueFactory;
+import ch.crearex.json.dom.JsonDomValueContextFactory;
 import ch.crearex.json.dom.JsonString;
 import ch.crearex.json.impl.CrearexJson;
 import ch.crearex.json.impl.CrearexJsonParserFactory;
@@ -57,7 +57,7 @@ public class TestJavaDoc {
 				// You'll get your customized context
 				JsonDomContext domContext = (JsonDomContext)context;
 				// Customize the value Factory e.g.
-				return new JsonDomValueFactory(domContext) {
+				return new JsonDomValueContextFactory(domContext) {
 					@Override
 					public JsonSimpleValue createStringValue(String value) {
 						return new JsonString(getContext(), value) {

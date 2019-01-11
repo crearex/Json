@@ -33,6 +33,8 @@ public abstract class JsonContainer implements JsonElement {
 		return parent == null;
 	}
 	
+	public abstract int size();
+	
 	public boolean hasParent() {
 		return parent != null;
 	}
