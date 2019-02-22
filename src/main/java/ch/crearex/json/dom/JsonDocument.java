@@ -120,8 +120,12 @@ public class JsonDocument implements Cloneable {
 	}
 	
 	public String prettyPrint() {
+		return prettyPrint(false);
+	}
+	
+	public String prettyPrint(boolean escapeContent) {
 		StringBuffer buffer = new StringBuffer();
-		JsonPrettyFormatter formatter = new JsonPrettyFormatter(buffer);
+		JsonPrettyFormatter formatter = new JsonPrettyFormatter(buffer, escapeContent);
 		traverse(formatter);
 		return buffer.toString();
 	}

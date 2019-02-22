@@ -146,8 +146,12 @@ public abstract class JsonContainer implements JsonElement {
 	}
 
 	public String prettyPrint() {
+		return prettyPrint(true);
+	}
+	
+	public String prettyPrint(boolean escapeContent) {
 		StringBuffer buffer = new StringBuffer();
-		JsonPrettyFormatter formatter = new JsonPrettyFormatter(buffer);
+		JsonPrettyFormatter formatter = new JsonPrettyFormatter(buffer, escapeContent);
 		JsonDocument doc = JsonDocument.createEmptyDocument().setRoot(this);
 		doc.traverse(formatter);
 		return buffer.toString();

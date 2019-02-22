@@ -19,6 +19,7 @@ public class JsonPrettyFormatter implements JsonCallback {
 	public static final String DEFAULT_IDENT = "   ";
 	public static final String EOL = "\r\n";
 	
+	private final boolean escapeContent;
 	private final Writer writer;
 	private String ident = DEFAULT_IDENT;
 	
@@ -40,14 +41,28 @@ public class JsonPrettyFormatter implements JsonCallback {
 	private ArrayList<String> idents = new ArrayList<String>();
 	
 	public JsonPrettyFormatter(OutputStream target) {
-		this(new OutputStreamWriter(target));
+		this(target, true);
+	}
+	
+	public JsonPrettyFormatter(OutputStream target, boolean escapeContent) {
+		this(new OutputStreamWriter(target), escapeContent);
 	}
 	
 	public JsonPrettyFormatter(Writer target) {
+		this(target, true);
+	}
+	
+	public JsonPrettyFormatter(Writer target, boolean escapeContent) {
 		this.writer = target;
+		this.escapeContent = escapeContent;
 	}
 	
 	public JsonPrettyFormatter(final StringBuilder target) {
+		this(target, true);
+	}
+	
+	public JsonPrettyFormatter(final StringBuilder target, boolean escapeContent) {
+		this.escapeContent = escapeContent;
 		this.writer = new Writer() {
 			@Override
 			public void write(char[] cbuf, int offset, int len) throws IOException {
@@ -61,7 +76,8 @@ public class JsonPrettyFormatter implements JsonCallback {
 			}};
 	}
 	
-	public JsonPrettyFormatter(final StringBuffer target) {
+	public JsonPrettyFormatter(final StringBuffer target, boolean escapeContent) {
+		this.escapeContent = escapeContent;
 		this.writer = new Writer() {
 			@Override
 			public void write(char[] cbuf, int offset, int len) throws IOException {
@@ -223,7 +239,11 @@ public class JsonPrettyFormatter implements JsonCallback {
 			}
 			writer.write(beforeProperty);
 			writer.write(JsonParser.QUOTE);
-			writer.write(propertyName);
+			if(escapeContent) {
+				writer.write(JsonUtil.escapeCharacters(propertyName));
+			} else {
+				writer.write(propertyName);
+			}
 			writer.write(JsonParser.QUOTE);
 			writer.write(beforeColon);
 			writer.write(JsonParser.COLON);
@@ -247,7 +267,11 @@ public class JsonPrettyFormatter implements JsonCallback {
 			}
 			if(value.isString()) {
 				writer.write(JsonParser.QUOTE);
-				writer.write(value.asString());
+				if(escapeContent) {
+					writer.write(JsonUtil.escapeCharacters(value.asString()));
+				} else {
+					writer.write(value.asString());
+				}
 				writer.write(JsonParser.QUOTE);
 			} else if(value.isBoolean()) {
 				if(value.asBoolean()) {
